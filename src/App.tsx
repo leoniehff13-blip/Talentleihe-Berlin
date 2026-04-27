@@ -1,9 +1,25 @@
 import { Redirect, Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
+import {
+  IonApp,
+  IonIcon,
+  IonLabel,
+  IonRouterOutlet,
+  IonTabBar,
+  IonTabButton,
+  IonTabs,
+  setupIonicReact,
+} from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import Home from "./pages/Home";
+import { briefcaseOutline, listOutline, personOutline } from "ionicons/icons";
+
 import Lehrstellen from "./pages/Lehrstellen";
 import LehrstelleDetail from "./pages/LehrstelleDetail";
+import LehrstelleForm from "./pages/LehrstelleForm";
+import MeineLehrstellen from "./pages/MeineLehrstellen";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Konto from "./pages/auth/Konto";
+import { AuthProvider } from "./lib/AuthContext";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -28,22 +44,59 @@ setupIonicReact();
 
 const App: React.FC = () => (
   <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route exact path="/home">
-          <Home />
-        </Route>
-        <Route exact path="/lehrstellen">
-          <Lehrstellen />
-        </Route>
-        <Route exact path="/lehrstellen/:id">
-          <LehrstelleDetail />
-        </Route>
-        <Route exact path="/">
-          <Redirect to="/lehrstellen" />
-        </Route>
-      </IonRouterOutlet>
-    </IonReactRouter>
+    <AuthProvider>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/lehrstellen">
+              <Lehrstellen />
+            </Route>
+            <Route exact path="/lehrstellen/:id">
+              <LehrstelleDetail />
+            </Route>
+
+            <Route exact path="/meine-lehrstellen">
+              <MeineLehrstellen />
+            </Route>
+            <Route exact path="/meine-lehrstellen/neu">
+              <LehrstelleForm />
+            </Route>
+            <Route exact path="/meine-lehrstellen/:id/bearbeiten">
+              <LehrstelleForm />
+            </Route>
+
+            <Route exact path="/konto">
+              <Konto />
+            </Route>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route exact path="/registrieren">
+              <Register />
+            </Route>
+
+            <Route exact path="/">
+              <Redirect to="/lehrstellen" />
+            </Route>
+          </IonRouterOutlet>
+
+          <IonTabBar slot="bottom">
+            <IonTabButton tab="lehrstellen" href="/lehrstellen">
+              <IonIcon icon={listOutline} />
+              <IonLabel>Lehrstellen</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="meine-lehrstellen" href="/meine-lehrstellen">
+              <IonIcon icon={briefcaseOutline} />
+              <IonLabel>Meine</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="konto" href="/konto">
+              <IonIcon icon={personOutline} />
+              <IonLabel>Konto</IonLabel>
+            </IonTabButton>
+          </IonTabBar>
+        </IonTabs>
+      </IonReactRouter>
+    </AuthProvider>
   </IonApp>
 );
 
