@@ -34,8 +34,9 @@ export const storage = new Storage(client);
 /* -------- Datenbank- und Collection-Konstanten -------- */
 export const DB_LEHRSTELLEN = "lehrstellen";
 export const COL_APPRENTICESHIPS = "apprenticeships";
+export const COL_PROFILES = "profiles";
 
-/* -------- Typen für die Lehrstellen-Tabelle -------- */
+/* -------- Bundesländer -------- */
 export type Bundesland =
   | "Baden-Württemberg"
   | "Bayern"
@@ -73,6 +74,7 @@ export const BUNDESLAENDER: Bundesland[] = [
   "Thüringen",
 ];
 
+/* -------- Lehrstelle -------- */
 export interface Lehrstelle extends Models.Document {
   gewerk: string;
   firma: string;
@@ -89,4 +91,28 @@ export interface Lehrstelle extends Models.Document {
   stadt: string | null;
   bundesland: Bundesland | null;
   handwerkskammer: string | null;
+}
+
+/* -------- Profil (Talent oder Betrieb) -------- */
+export type ProfileType = "talent" | "betrieb";
+
+export const LEHRJAHRE = [1, 2, 3, 4] as const;
+export type Lehrjahr = (typeof LEHRJAHRE)[number];
+
+export interface Profile extends Models.Document {
+  type: ProfileType;
+  user_id: string;
+  name: string;
+  vorname: string | null;
+  ort: string | null;
+  adresse: string | null;
+  gewerk: string | null;
+  handwerkskammer: string | null;
+  lehrjahr: Lehrjahr | null;
+  unternehmen: string | null;
+  berufsschule: string | null;
+  faehigkeiten: string[];
+  ansprechpartner: string | null;
+  ansprechpartner_email: string | null;
+  spezialisierung: string[];
 }
