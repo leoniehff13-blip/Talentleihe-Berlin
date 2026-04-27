@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-ssr/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Environment variables (Secrets!)
+.env
+.env.local
+.env.*.local
+
+# Capacitor (native Projekte)
+ios/App/Pods/
+ios/App/build/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties

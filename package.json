@@ -1,0 +1,39 @@
+{
+  "name": "win-talentleihe",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "cap:add:ios": "cap add ios",
+    "cap:add:android": "cap add android",
+    "cap:sync": "npm run build && cap sync",
+    "cap:open:ios": "cap open ios",
+    "cap:open:android": "cap open android"
+  },
+  "dependencies": {
+    "@ionic/react": "^8.4.0",
+    "@ionic/react-router": "^8.4.0",
+    "appwrite": "^16.0.2",
+    "ionicons": "^7.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^5.3.4",
+    "react-router-dom": "^5.3.4"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^8.3.1",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/ios": "^6.2.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@types/react-router": "^5.1.20",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^8.0.10"
+  }
+}
