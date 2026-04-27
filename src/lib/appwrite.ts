@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Storage } from "appwrite";
+import { Client, Account, Databases, Storage, type Models } from "appwrite";
 
 /**
  * Appwrite Client – wird einmal initialisiert und überall in der App importiert.
@@ -30,3 +30,63 @@ export const client = new Client()
 export const account = new Account(client);
 export const databases = new Databases(client);
 export const storage = new Storage(client);
+
+/* -------- Datenbank- und Collection-Konstanten -------- */
+export const DB_LEHRSTELLEN = "lehrstellen";
+export const COL_APPRENTICESHIPS = "apprenticeships";
+
+/* -------- Typen für die Lehrstellen-Tabelle -------- */
+export type Bundesland =
+  | "Baden-Württemberg"
+  | "Bayern"
+  | "Berlin"
+  | "Brandenburg"
+  | "Bremen"
+  | "Hamburg"
+  | "Hessen"
+  | "Mecklenburg-Vorpommern"
+  | "Niedersachsen"
+  | "Nordrhein-Westfalen"
+  | "Rheinland-Pfalz"
+  | "Saarland"
+  | "Sachsen"
+  | "Sachsen-Anhalt"
+  | "Schleswig-Holstein"
+  | "Thüringen";
+
+export const BUNDESLAENDER: Bundesland[] = [
+  "Baden-Württemberg",
+  "Bayern",
+  "Berlin",
+  "Brandenburg",
+  "Bremen",
+  "Hamburg",
+  "Hessen",
+  "Mecklenburg-Vorpommern",
+  "Niedersachsen",
+  "Nordrhein-Westfalen",
+  "Rheinland-Pfalz",
+  "Saarland",
+  "Sachsen",
+  "Sachsen-Anhalt",
+  "Schleswig-Holstein",
+  "Thüringen",
+];
+
+export interface Lehrstelle extends Models.Document {
+  gewerk: string;
+  firma: string;
+  ort: string;
+  startdatum: string;
+  enddatum: string | null;
+  kontakt_email: string;
+  spezialisierungen: string[];
+  mindestalter: number | null;
+  vorerfahrung: string | null;
+  aufgabenbeschreibung: string;
+  adresse: string | null;
+  plz: string | null;
+  stadt: string | null;
+  bundesland: Bundesland | null;
+  handwerkskammer: string | null;
+}
