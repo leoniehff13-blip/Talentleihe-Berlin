@@ -10,6 +10,7 @@ import {
   IonSegmentButton,
 } from "@ionic/react";
 import { LEHRJAHRE, type ProfileType } from "../lib/appwrite";
+import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
 
 export interface ProfilFormState {
   type: ProfileType;
@@ -142,12 +143,19 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               />
             </IonItem>
             <IonItem>
-              <IonInput
-                label="Handwerkskammer *"
-                labelPlacement="stacked"
+              <IonLabel position="stacked">Handwerkskammer *</IonLabel>
+              <IonSelect
+                interface="alert"
+                placeholder="— bitte wählen —"
                 value={state.handwerkskammer}
-                onIonInput={(e) => set("handwerkskammer", e.detail.value ?? "")}
-              />
+                onIonChange={(e) => set("handwerkskammer", String(e.detail.value ?? ""))}
+              >
+                {HANDWERKSKAMMERN.map((h) => (
+                  <IonSelectOption key={h} value={h}>
+                    {h}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
             </IonItem>
             <IonItem>
               <IonInput
@@ -198,12 +206,19 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               />
             </IonItem>
             <IonItem>
-              <IonInput
-                label="Handwerkskammer *"
-                labelPlacement="stacked"
+              <IonLabel position="stacked">Handwerkskammer *</IonLabel>
+              <IonSelect
+                interface="alert"
+                placeholder="— bitte wählen —"
                 value={state.handwerkskammer}
-                onIonInput={(e) => set("handwerkskammer", e.detail.value ?? "")}
-              />
+                onIonChange={(e) => set("handwerkskammer", String(e.detail.value ?? ""))}
+              >
+                {HANDWERKSKAMMERN.map((h) => (
+                  <IonSelectOption key={h} value={h}>
+                    {h}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
             </IonItem>
 
             <IonListHeader>

@@ -1,13 +1,145 @@
-/* Ionic Variables and Theming
- * Passe Farben hier zentral an, um den Look der ganzen App zu ändern.
- * https://ionicframework.com/docs/theming/themes
- */
+/* =====================================================================
+ * Theme: Win-Win Talentleihe
+ *
+ * Farbpalette
+ *   #D4E2F7  pale blue        – Seiten-Hintergrund
+ *   #A8C6EE  light blue       – Tertiary, helle Akzente, Chips
+ *   #558DDF  royal blue       – Primary (Buttons, aktive Tabs, Links)
+ *   #142F6C  dark navy        – Secondary, Toolbar, Text
+ *
+ * Schrift
+ *   "TheSans" (commercial, LucasFonts) – Lege die Font-Dateien unter
+ *   /public/fonts/ ab (siehe @font-face unten). Wenn die Dateien fehlen,
+ *   greift automatisch der system-sans-serif-Fallback.
+ * ===================================================================== */
+
+@font-face {
+  font-family: "TheSans";
+  src:
+    url("/fonts/TheSans-Regular.woff2") format("woff2"),
+    url("/fonts/TheSans-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TheSans";
+  src:
+    url("/fonts/TheSans-SemiBold.woff2") format("woff2"),
+    url("/fonts/TheSans-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "TheSans";
+  src:
+    url("/fonts/TheSans-Bold.woff2") format("woff2"),
+    url("/fonts/TheSans-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  --ion-color-primary: #2563eb;
-  --ion-color-primary-rgb: 37, 99, 235;
+  /* ---------- Schrift ---------- */
+  --ion-font-family:
+    "TheSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  /* ---------- Allgemeine Hintergrund-/Text-Farben ---------- */
+  --ion-background-color: #d4e2f7;
+  --ion-background-color-rgb: 212, 226, 247;
+
+  --ion-text-color: #142f6c;
+  --ion-text-color-rgb: 20, 47, 108;
+
+  /* Karten und Listen sollen heller sein als der Seitenhintergrund */
+  --ion-item-background: #ffffff;
+  --ion-card-background: #ffffff;
+
+  /* ---------- Toolbar (Header) ---------- */
+  --ion-toolbar-background: #142f6c;
+  --ion-toolbar-color: #ffffff;
+  --ion-toolbar-color-active: #ffffff;
+  --ion-toolbar-color-unchecked: rgba(255, 255, 255, 0.7);
+
+  /* ---------- Tab-Bar (Footer) ---------- */
+  --ion-tab-bar-background: #ffffff;
+  --ion-tab-bar-color: #142f6c;
+  --ion-tab-bar-color-selected: #558ddf;
+
+  /* ---------- Primary (#558DDF) ---------- */
+  --ion-color-primary: #558ddf;
+  --ion-color-primary-rgb: 85, 141, 223;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #2157cf;
-  --ion-color-primary-tint: #3b73ed;
+  --ion-color-primary-shade: #4b7cc4;
+  --ion-color-primary-tint: #6699e3;
+
+  /* ---------- Secondary (#142F6C) ---------- */
+  --ion-color-secondary: #142f6c;
+  --ion-color-secondary-rgb: 20, 47, 108;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #122860;
+  --ion-color-secondary-tint: #2c447b;
+
+  /* ---------- Tertiary (#A8C6EE) ---------- */
+  --ion-color-tertiary: #a8c6ee;
+  --ion-color-tertiary-rgb: 168, 198, 238;
+  --ion-color-tertiary-contrast: #142f6c;
+  --ion-color-tertiary-contrast-rgb: 20, 47, 108;
+  --ion-color-tertiary-shade: #94aed1;
+  --ion-color-tertiary-tint: #b1ccf0;
+
+  /* ---------- Status-Farben ---------- */
+  --ion-color-success: #2dd36f;
+  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success-contrast: #ffffff;
+  --ion-color-success-contrast-rgb: 255, 255, 255;
+  --ion-color-success-shade: #28ba62;
+  --ion-color-success-tint: #42d77d;
+
+  --ion-color-warning: #ffc409;
+  --ion-color-warning-rgb: 255, 196, 9;
+  --ion-color-warning-contrast: #142f6c;
+  --ion-color-warning-contrast-rgb: 20, 47, 108;
+  --ion-color-warning-shade: #e0ac08;
+  --ion-color-warning-tint: #ffca22;
+
+  --ion-color-danger: #eb445a;
+  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #cf3c4f;
+  --ion-color-danger-tint: #ed576b;
+
+  --ion-color-medium: #6e7a99;
+  --ion-color-medium-rgb: 110, 122, 153;
+  --ion-color-medium-contrast: #ffffff;
+  --ion-color-medium-contrast-rgb: 255, 255, 255;
+  --ion-color-medium-shade: #616b87;
+  --ion-color-medium-tint: #7d87a3;
+
+  --ion-color-light: #d4e2f7;
+  --ion-color-light-rgb: 212, 226, 247;
+  --ion-color-light-contrast: #142f6c;
+  --ion-color-light-contrast-rgb: 20, 47, 108;
+  --ion-color-light-shade: #bac7d9;
+  --ion-color-light-tint: #d8e5f8;
+}
+
+/* Globaler Body-Reset, damit der Hintergrund auch außerhalb von Ionic-Pages stimmt */
+body {
+  background: var(--ion-background-color);
+  color: var(--ion-text-color);
+  font-family: var(--ion-font-family);
+}
+
+/* Links bekommen die Primary-Farbe */
+a {
+  color: var(--ion-color-primary);
 }

@@ -30,6 +30,7 @@ import {
   type Lehrstelle,
   type Bundesland,
 } from "../lib/appwrite";
+import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
 import { useAuth } from "../lib/AuthContext";
 
 interface FormState {
@@ -81,7 +82,7 @@ function fromIso(iso: string | null | undefined): string {
 
 const LehrstelleForm: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const history = useHistory();
   const isEdit = Boolean(id);
 
@@ -89,6 +90,30 @@ const LehrstelleForm: React.FC = () => {
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [prefilled, setPrefilled] = useState(false);
+
+  // Beim Anlegen einer neuen Lehrstelle: Felder aus dem Profil vorbefüllen,
+  // sobald das Profil verfügbar ist. Nur einmal, damit Tipparbeit der Userin
+  // nicht überschrieben wird.
+  useEffect(() => {
+    if (isEdit || prefilled || !profile) return;
+    setForm((prev) => ({
+      ...prev,
+      gewerk: prev.gewerk || profile.gewerk || "",
+      firma:
+        prev.firma ||
+        (profile.type === "betrieb" ? profile.name : profile.unternehmen ?? ""),
+      ort: prev.ort || profile.ort || "",
+      kontakt_email:
+        prev.kontakt_email || profile.ansprechpartner_email || user?.email || "",
+      adresse: prev.adresse || profile.adresse || "",
+      handwerkskammer: prev.handwerkskammer || profile.handwerkskammer || "",
+      spezialisierungen:
+        prev.spezialisierungen ||
+        (profile.spezialisierung ?? []).join(", "),
+    }));
+    setPrefilled(true);
+  }, [isEdit, prefilled, profile, user]);
 
   useEffect(() => {
     if (!isEdit || !id) return;
@@ -367,13 +392,19 @@ const LehrstelleForm: React.FC = () => {
               <IonLabel>Handwerk</IonLabel>
             </IonListHeader>
             <IonItem>
-              <IonInput
-                label="Handwerkskammer"
-                labelPlacement="stacked"
-                placeholder="z. B. Handwerkskammer Hamburg"
+              <IonLabel position="stacked">Handwerkskammer</IonLabel>
+              <IonSelect
+                interface="alert"
+                placeholder="— bitte wählen —"
                 value={form.handwerkskammer}
-                onIonInput={(e) => update("handwerkskammer", e.detail.value ?? "")}
-              />
+                onIonChange={(e) => update("handwerkskammer", String(e.detail.value ?? ""))}
+              >
+                {HANDWERKSKAMMERN.map((h) => (
+                  <IonSelectOption key={h} value={h}>
+                    {h}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
             </IonItem>
           </IonList>
 
