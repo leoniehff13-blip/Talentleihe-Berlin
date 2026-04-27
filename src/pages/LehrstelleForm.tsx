@@ -29,6 +29,7 @@ import {
   BUNDESLAENDER,
   type Lehrstelle,
   type Bundesland,
+  type ApprenticeshipType,
 } from "../lib/appwrite";
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
 import { useAuth } from "../lib/AuthContext";
@@ -40,12 +41,14 @@ interface FormState {
   startdatum: string;
   enddatum: string;
   kontakt_email: string;
-  spezialisierungen: string; // im Formular Komma-separiert
+  spezialisierungen: string;
+  lernziele: string;
   mindestalter: string;
   vorerfahrung: string;
   aufgabenbeschreibung: string;
   adresse: string;
   plz: string;
+  plz_umkreis: string;
   stadt: string;
   bundesland: Bundesland | "";
   handwerkskammer: string;
@@ -59,11 +62,13 @@ const EMPTY: FormState = {
   enddatum: "",
   kontakt_email: "",
   spezialisierungen: "",
+  lernziele: "",
   mindestalter: "",
   vorerfahrung: "",
   aufgabenbeschreibung: "",
   adresse: "",
   plz: "",
+  plz_umkreis: "",
   stadt: "",
   bundesland: "",
   handwerkskammer: "",
@@ -71,7 +76,6 @@ const EMPTY: FormState = {
 
 function toIsoOrNull(date: string): string | null {
   if (!date) return null;
-  // <ion-input type=date> liefert YYYY-MM-DD
   return new Date(date + "T00:00:00.000Z").toISOString();
 }
 
@@ -86,15 +90,36 @@ const LehrstelleForm: React.FC = () => {
   const history = useHistory();
   const isEdit = Boolean(id);
 
+  // Talent → talent_angebot, Betrieb → einsatz. Beim Bearbeiten überschreibt
+  // der gespeicherte Typ diese Vorauswahl.
+  const initialType: ApprenticeshipType =
+    profile?.type === "talent" ? "talent_angebot" : "einsatz";
+  const [docType, setDocType] = useState<ApprenticeshipType>(initialType);
+  const isTalent = docType === "talent_angebot";
+
   const [form, setForm] = useState<FormState>(EMPTY);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prefilled, setPrefilled] = useState(false);
 
-  // Beim Anlegen einer neuen Lehrstelle: Felder aus dem Profil vorbefüllen,
-  // sobald das Profil verfügbar ist. Nur einmal, damit Tipparbeit der Userin
-  // nicht überschrieben wird.
+  const labels = {
+    title: isEdit
+      ? isTalent
+        ? "Talent-Angebot bearbeiten"
+        : "Einsatz bearbeiten"
+      : isTalent
+        ? "Neues Talent-Angebot"
+        : "Neuer Einsatz",
+    save: isEdit
+      ? "Änderungen speichern"
+      : isTalent
+        ? "Talent-Angebot anlegen"
+        : "Einsatz anlegen",
+    backDefault: "/meine-lehrstellen",
+  };
+
+  /* ---------- Vorbefüllung aus Profil (nur Anlegen) ---------- */
   useEffect(() => {
     if (isEdit || prefilled || !profile) return;
     setForm((prev) => ({
@@ -102,12 +127,18 @@ const LehrstelleForm: React.FC = () => {
       gewerk: prev.gewerk || profile.gewerk || "",
       firma:
         prev.firma ||
-        (profile.type === "betrieb" ? profile.name : profile.unternehmen ?? ""),
+        (profile.type === "betrieb"
+          ? profile.name
+          : profile.unternehmen ?? ""),
       ort: prev.ort || profile.ort || "",
       kontakt_email:
-        prev.kontakt_email || profile.ansprechpartner_email || user?.email || "",
+        prev.kontakt_email ||
+        profile.ansprechpartner_email ||
+        user?.email ||
+        "",
       adresse: prev.adresse || profile.adresse || "",
-      handwerkskammer: prev.handwerkskammer || profile.handwerkskammer || "",
+      handwerkskammer:
+        prev.handwerkskammer || profile.handwerkskammer || "",
       spezialisierungen:
         prev.spezialisierungen ||
         (profile.spezialisierung ?? []).join(", "),
@@ -115,6 +146,7 @@ const LehrstelleForm: React.FC = () => {
     setPrefilled(true);
   }, [isEdit, prefilled, profile, user]);
 
+  /* ---------- Bestehenden Datensatz laden (Bearbeiten) ---------- */
   useEffect(() => {
     if (!isEdit || !id) return;
     let cancelled = false;
@@ -126,19 +158,22 @@ const LehrstelleForm: React.FC = () => {
           id!
         );
         if (cancelled) return;
+        setDocType(doc.type ?? "einsatz");
         setForm({
           gewerk: doc.gewerk,
-          firma: doc.firma,
-          ort: doc.ort,
+          firma: doc.firma ?? "",
+          ort: doc.ort ?? "",
           startdatum: fromIso(doc.startdatum),
           enddatum: fromIso(doc.enddatum),
           kontakt_email: doc.kontakt_email,
           spezialisierungen: (doc.spezialisierungen ?? []).join(", "),
+          lernziele: (doc.lernziele ?? []).join(", "),
           mindestalter: doc.mindestalter != null ? String(doc.mindestalter) : "",
           vorerfahrung: doc.vorerfahrung ?? "",
-          aufgabenbeschreibung: doc.aufgabenbeschreibung,
+          aufgabenbeschreibung: doc.aufgabenbeschreibung ?? "",
           adresse: doc.adresse ?? "",
           plz: doc.plz ?? "",
+          plz_umkreis: doc.plz_umkreis != null ? String(doc.plz_umkreis) : "",
           stadt: doc.stadt ?? "",
           bundesland: doc.bundesland ?? "",
           handwerkskammer: doc.handwerkskammer ?? "",
@@ -163,39 +198,68 @@ const LehrstelleForm: React.FC = () => {
     e.preventDefault();
     if (!user) return;
 
-    // Pflichtfelder prüfen
+    // Pflichtfelder pro Modus
     const missing: string[] = [];
     if (!form.gewerk.trim()) missing.push("Gewerk");
-    if (!form.firma.trim()) missing.push("Firma");
-    if (!form.ort.trim()) missing.push("Ort");
+    if (!form.firma.trim()) missing.push(isTalent ? "Name/Ausbildungsbetrieb" : "Firma");
     if (!form.startdatum) missing.push("Startdatum");
     if (!form.kontakt_email.trim()) missing.push("Kontakt-E-Mail");
-    if (!form.aufgabenbeschreibung.trim()) missing.push("Aufgabenbeschreibung");
+
+    if (isTalent) {
+      if (!form.plz.trim()) missing.push("PLZ");
+    } else {
+      if (!form.aufgabenbeschreibung.trim()) missing.push("Aufgabenbeschreibung");
+    }
+
     if (missing.length) {
       setError("Bitte ausfüllen: " + missing.join(", "));
       return;
     }
 
-    const data = {
+    const split = (s: string) =>
+      s.split(",").map((x) => x.trim()).filter(Boolean);
+
+    const data: Record<string, unknown> = {
+      type: docType,
       gewerk: form.gewerk.trim(),
       firma: form.firma.trim(),
-      ort: form.ort.trim(),
       startdatum: toIsoOrNull(form.startdatum),
       enddatum: toIsoOrNull(form.enddatum),
       kontakt_email: form.kontakt_email.trim(),
-      spezialisierungen: form.spezialisierungen
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
-      mindestalter: form.mindestalter ? Number(form.mindestalter) : null,
-      vorerfahrung: form.vorerfahrung.trim() || null,
-      aufgabenbeschreibung: form.aufgabenbeschreibung.trim(),
-      adresse: form.adresse.trim() || null,
-      plz: form.plz.trim() || null,
-      stadt: form.stadt.trim() || null,
-      bundesland: form.bundesland || null,
+      spezialisierungen: split(form.spezialisierungen),
       handwerkskammer: form.handwerkskammer.trim() || null,
     };
+
+    if (isTalent) {
+      Object.assign(data, {
+        ort: form.ort.trim() || form.plz.trim(), // damit Listen-Anzeige nicht leer ist
+        lernziele: split(form.lernziele),
+        plz: form.plz.trim() || null,
+        plz_umkreis: form.plz_umkreis ? Number(form.plz_umkreis) : null,
+        // bewusst NICHT gesetzt: aufgabenbeschreibung, mindestalter, vorerfahrung,
+        // adresse, stadt, bundesland
+        aufgabenbeschreibung: "",
+        mindestalter: null,
+        vorerfahrung: null,
+        adresse: null,
+        stadt: null,
+        bundesland: null,
+      });
+    } else {
+      Object.assign(data, {
+        ort: form.ort.trim() || form.stadt.trim() || "—",
+        lernziele: [],
+        mindestalter: form.mindestalter ? Number(form.mindestalter) : null,
+        vorerfahrung: form.vorerfahrung.trim() || null,
+        aufgabenbeschreibung: form.aufgabenbeschreibung.trim(),
+        adresse: form.adresse.trim() || null,
+        plz: form.plz.trim() || null,
+        plz_umkreis: null,
+        stadt: form.stadt.trim() || null,
+        // bundesland bewusst NICHT gesetzt (aus Formular entfernt)
+        bundesland: null,
+      });
+    }
 
     setSaving(true);
     setError(null);
@@ -240,9 +304,9 @@ const LehrstelleForm: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/meine-lehrstellen" />
+            <IonBackButton defaultHref={labels.backDefault} />
           </IonButtons>
-          <IonTitle>{isEdit ? "Lehrstelle bearbeiten" : "Neue Lehrstelle"}</IonTitle>
+          <IonTitle>{labels.title}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -261,23 +325,27 @@ const LehrstelleForm: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonInput
-                label="Firma *"
+                label={isTalent ? "Name/Ausbildungsbetrieb *" : "Firma *"}
                 labelPlacement="stacked"
                 value={form.firma}
                 onIonInput={(e) => update("firma", e.detail.value ?? "")}
               />
             </IonItem>
+            {/* Ort: nur für Talent als „Wohnort"-Anzeige; Betrieb hat es laut
+                Vorgabe nicht in Basis – stattdessen weiter unten Stadt. */}
+            {isTalent && (
+              <IonItem>
+                <IonInput
+                  label="Wohnort (optional)"
+                  labelPlacement="stacked"
+                  value={form.ort}
+                  onIonInput={(e) => update("ort", e.detail.value ?? "")}
+                />
+              </IonItem>
+            )}
             <IonItem>
               <IonInput
-                label="Ort *"
-                labelPlacement="stacked"
-                value={form.ort}
-                onIonInput={(e) => update("ort", e.detail.value ?? "")}
-              />
-            </IonItem>
-            <IonItem>
-              <IonInput
-                label="Startdatum *"
+                label={isTalent ? "Verfügbar ab *" : "Startdatum *"}
                 labelPlacement="stacked"
                 type="date"
                 value={form.startdatum}
@@ -286,7 +354,7 @@ const LehrstelleForm: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonInput
-                label="Enddatum (optional)"
+                label={isTalent ? "Verfügbar bis (optional)" : "Enddatum (optional)"}
                 labelPlacement="stacked"
                 type="date"
                 value={form.enddatum}
@@ -306,87 +374,114 @@ const LehrstelleForm: React.FC = () => {
               <IonInput
                 label="Spezialisierungen (Komma-getrennt)"
                 labelPlacement="stacked"
-                placeholder="z. B. Massivholz, Restaurierung, Innenausbau"
+                placeholder="z. B. Massivholz, Restaurierung"
                 value={form.spezialisierungen}
                 onIonInput={(e) => update("spezialisierungen", e.detail.value ?? "")}
               />
             </IonItem>
+            {isTalent && (
+              <IonItem>
+                <IonInput
+                  label="Lernziele (Komma-getrennt)"
+                  labelPlacement="stacked"
+                  placeholder="z. B. CNC-Fräse beherrschen, Kundenberatung üben"
+                  value={form.lernziele}
+                  onIonInput={(e) => update("lernziele", e.detail.value ?? "")}
+                />
+              </IonItem>
+            )}
 
-            <IonListHeader>
-              <IonLabel>Aufgaben &amp; Voraussetzungen</IonLabel>
-            </IonListHeader>
-            <IonItem>
-              <IonTextarea
-                label="Konkrete Aufgabenbeschreibung *"
-                labelPlacement="stacked"
-                autoGrow
-                rows={4}
-                value={form.aufgabenbeschreibung}
-                onIonInput={(e) => update("aufgabenbeschreibung", e.detail.value ?? "")}
-              />
-            </IonItem>
-            <IonItem>
-              <IonInput
-                label="Mindestalter"
-                labelPlacement="stacked"
-                type="number"
-                value={form.mindestalter}
-                onIonInput={(e) => update("mindestalter", e.detail.value ?? "")}
-              />
-            </IonItem>
-            <IonItem>
-              <IonTextarea
-                label="Gewünschte Vorerfahrung"
-                labelPlacement="stacked"
-                autoGrow
-                rows={3}
-                value={form.vorerfahrung}
-                onIonInput={(e) => update("vorerfahrung", e.detail.value ?? "")}
-              />
-            </IonItem>
+            {!isTalent && (
+              <>
+                <IonListHeader>
+                  <IonLabel>Aufgaben &amp; Voraussetzungen</IonLabel>
+                </IonListHeader>
+                <IonItem>
+                  <IonTextarea
+                    label="Konkrete Aufgabenbeschreibung *"
+                    labelPlacement="stacked"
+                    autoGrow
+                    rows={4}
+                    value={form.aufgabenbeschreibung}
+                    onIonInput={(e) => update("aufgabenbeschreibung", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonInput
+                    label="Mindestalter"
+                    labelPlacement="stacked"
+                    type="number"
+                    value={form.mindestalter}
+                    onIonInput={(e) => update("mindestalter", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonTextarea
+                    label="Gewünschte Vorerfahrung"
+                    labelPlacement="stacked"
+                    autoGrow
+                    rows={3}
+                    value={form.vorerfahrung}
+                    onIonInput={(e) => update("vorerfahrung", e.detail.value ?? "")}
+                  />
+                </IonItem>
+              </>
+            )}
 
             <IonListHeader>
               <IonLabel>Standort</IonLabel>
             </IonListHeader>
-            <IonItem>
-              <IonInput
-                label="Adresse"
-                labelPlacement="stacked"
-                value={form.adresse}
-                onIonInput={(e) => update("adresse", e.detail.value ?? "")}
-              />
-            </IonItem>
-            <IonItem>
-              <IonInput
-                label="PLZ"
-                labelPlacement="stacked"
-                value={form.plz}
-                onIonInput={(e) => update("plz", e.detail.value ?? "")}
-              />
-            </IonItem>
-            <IonItem>
-              <IonInput
-                label="Stadt"
-                labelPlacement="stacked"
-                value={form.stadt}
-                onIonInput={(e) => update("stadt", e.detail.value ?? "")}
-              />
-            </IonItem>
-            <IonItem>
-              <IonLabel>Bundesland</IonLabel>
-              <IonSelect
-                interface="popover"
-                value={form.bundesland}
-                onIonChange={(e) => update("bundesland", e.detail.value as Bundesland | "")}
-              >
-                <IonSelectOption value="">— bitte wählen —</IonSelectOption>
-                {BUNDESLAENDER.map((b) => (
-                  <IonSelectOption key={b} value={b}>
-                    {b}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
+            {isTalent ? (
+              <>
+                <IonItem>
+                  <IonInput
+                    label="PLZ *"
+                    labelPlacement="stacked"
+                    inputMode="numeric"
+                    value={form.plz}
+                    onIonInput={(e) => update("plz", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonInput
+                    label="Umkreis (km)"
+                    labelPlacement="stacked"
+                    type="number"
+                    placeholder="z. B. 25"
+                    value={form.plz_umkreis}
+                    onIonInput={(e) => update("plz_umkreis", e.detail.value ?? "")}
+                  />
+                </IonItem>
+              </>
+            ) : (
+              <>
+                <IonItem>
+                  <IonInput
+                    label="Adresse"
+                    labelPlacement="stacked"
+                    value={form.adresse}
+                    onIonInput={(e) => update("adresse", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonInput
+                    label="PLZ"
+                    labelPlacement="stacked"
+                    value={form.plz}
+                    onIonInput={(e) => update("plz", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonInput
+                    label="Stadt"
+                    labelPlacement="stacked"
+                    value={form.stadt}
+                    onIonInput={(e) => update("stadt", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                {/* Bundesland bewusst entfernt (laut Vorgabe). */}
+              </>
+            )}
 
             <IonListHeader>
               <IonLabel>Handwerk</IonLabel>
@@ -418,7 +513,7 @@ const LehrstelleForm: React.FC = () => {
 
           <div className="ion-padding">
             <IonButton expand="block" type="submit" disabled={saving}>
-              {saving ? "Speichern…" : isEdit ? "Änderungen speichern" : "Lehrstelle anlegen"}
+              {saving ? "Speichern…" : labels.save}
             </IonButton>
             <IonNote>
               <p style={{ marginTop: 8 }}>* = Pflichtfeld</p>

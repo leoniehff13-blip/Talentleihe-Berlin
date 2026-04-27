@@ -74,8 +74,11 @@ export const BUNDESLAENDER: Bundesland[] = [
   "Thüringen",
 ];
 
-/* -------- Lehrstelle -------- */
+/* -------- Lehrstelle (Einsatz oder Talent-Angebot) -------- */
+export type ApprenticeshipType = "einsatz" | "talent_angebot";
+
 export interface Lehrstelle extends Models.Document {
+  type: ApprenticeshipType;
   gewerk: string;
   firma: string;
   ort: string;
@@ -83,11 +86,13 @@ export interface Lehrstelle extends Models.Document {
   enddatum: string | null;
   kontakt_email: string;
   spezialisierungen: string[];
+  lernziele: string[];
   mindestalter: number | null;
   vorerfahrung: string | null;
   aufgabenbeschreibung: string;
   adresse: string | null;
   plz: string | null;
+  plz_umkreis: number | null;
   stadt: string | null;
   bundesland: Bundesland | null;
   handwerkskammer: string | null;

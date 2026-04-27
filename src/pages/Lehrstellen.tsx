@@ -111,28 +111,30 @@ const Lehrstellen: React.FC = () => {
 
         {!loading && items.length > 0 && (
           <IonList>
-            {items.map((item) => (
-              <IonItem
-                key={item.$id}
-                routerLink={`/lehrstellen/${item.$id}`}
-                detail
-              >
-                <IonLabel>
-                  <h2>{item.gewerk}</h2>
-                  <p>
-                    {item.firma} · {item.ort}
-                  </p>
-                  <IonNote>
-                    Start: {new Date(item.startdatum).toLocaleDateString("de-DE")}
-                  </IonNote>
-                </IonLabel>
-                {item.bundesland && (
-                  <IonBadge color="medium" slot="end">
-                    {item.bundesland}
+            {items.map((item) => {
+              const itemIsTalent = item.type === "talent_angebot";
+              return (
+                <IonItem
+                  key={item.$id}
+                  routerLink={`/lehrstellen/${item.$id}`}
+                  detail
+                >
+                  <IonLabel>
+                    <h2>{item.gewerk}</h2>
+                    <p>
+                      {item.firma} · {item.ort}
+                    </p>
+                    <IonNote>
+                      {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
+                      {new Date(item.startdatum).toLocaleDateString("de-DE")}
+                    </IonNote>
+                  </IonLabel>
+                  <IonBadge color={itemIsTalent ? "tertiary" : "primary"} slot="end">
+                    {itemIsTalent ? "Talent" : "Einsatz"}
                   </IonBadge>
-                )}
-              </IonItem>
-            ))}
+                </IonItem>
+              );
+            })}
           </IonList>
         )}
       </IonContent>

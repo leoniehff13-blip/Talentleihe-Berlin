@@ -17,6 +17,7 @@ import {
   IonItemOptions,
   IonItemOption,
   IonAlert,
+  IonBadge,
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
@@ -31,12 +32,19 @@ import {
 import { useAuth } from "../lib/AuthContext";
 
 const MeineLehrstellen: React.FC = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const history = useHistory();
   const [items, setItems] = useState<Lehrstelle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Lehrstelle | null>(null);
+
+  const isTalent = profile?.type === "talent";
+  const titleText = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
+  const newButtonText = isTalent ? "Erstes Talent-Angebot anlegen" : "Ersten Einsatz anlegen";
+  const emptyText = isTalent
+    ? "Du hast noch kein Talent-Angebot angelegt."
+    : "Du hast noch keinen Einsatz angelegt.";
 
   const load = useCallback(async () => {
     if (!user) {
@@ -47,10 +55,6 @@ const MeineLehrstellen: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Wir filtern lokal: alle Dokumente, in deren Permissions
-      // unsere User-ID als update-berechtigt steht.
-      // Einfachster Ansatz: alles laden und im Frontend filtern.
-      // (Bei vielen Datensätzen würde man einen owner-Spalten-Filter ergänzen.)
       const result = await databases.listDocuments<Lehrstelle>(
         DB_LEHRSTELLEN,
         COL_APPRENTICESHIPS,
@@ -98,12 +102,12 @@ const MeineLehrstellen: React.FC = () => {
       <IonPage>
         <IonHeader>
           <IonToolbar>
-            <IonTitle>Meine Lehrstellen</IonTitle>
+            <IonTitle>Meine Einträge</IonTitle>
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
           <IonText>
-            <p>Bitte logge dich ein, um eigene Lehrstellen anzulegen oder zu verwalten.</p>
+            <p>Bitte logge dich ein, um eigene Einträge anzulegen oder zu verwalten.</p>
           </IonText>
           <IonButton expand="block" onClick={() => history.push("/login")}>
             Zum Login
@@ -117,7 +121,7 @@ const MeineLehrstellen: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Meine Lehrstellen</IonTitle>
+          <IonTitle>{titleText}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => history.push("/meine-lehrstellen/neu")}>
               <IonIcon icon={add} slot="icon-only" />
@@ -143,53 +147,76 @@ const MeineLehrstellen: React.FC = () => {
         {!loading && !error && items.length === 0 && (
           <div className="ion-padding">
             <IonText color="medium">
-              <p>Du hast noch keine Lehrstellen angelegt.</p>
+              <p>{emptyText}</p>
             </IonText>
             <IonButton
               expand="block"
               onClick={() => history.push("/meine-lehrstellen/neu")}
             >
               <IonIcon icon={add} slot="start" />
-              Erste Lehrstelle anlegen
+              {newButtonText}
             </IonButton>
           </div>
         )}
 
         {!loading && items.length > 0 && (
           <IonList>
-            {items.map((item) => (
-              <IonItemSliding key={item.$id}>
-                <IonItem button onClick={() => history.push(`/lehrstellen/${item.$id}`)} detail>
-                  <IonLabel>
-                    <h2>{item.gewerk}</h2>
-                    <p>
-                      {item.firma} · {item.ort}
-                    </p>
-                    <IonNote>
-                      Start: {new Date(item.startdatum).toLocaleDateString("de-DE")}
-                    </IonNote>
-                  </IonLabel>
-                </IonItem>
-                <IonItemOptions side="end">
-                  <IonItemOption
-                    color="primary"
-                    onClick={() => history.push(`/meine-lehrstellen/${item.$id}/bearbeiten`)}
+            {items.map((item) => {
+              const itemIsTalent = item.type === "talent_angebot";
+              return (
+                <IonItemSliding key={item.$id}>
+                  <IonItem
+                    button
+                    onClick={() => history.push(`/lehrstellen/${item.$id}`)}
+                    detail
                   >
-                    <IonIcon slot="icon-only" icon={create} />
-                  </IonItemOption>
-                  <IonItemOption color="danger" onClick={() => setConfirmDelete(item)}>
-                    <IonIcon slot="icon-only" icon={trash} />
-                  </IonItemOption>
-                </IonItemOptions>
-              </IonItemSliding>
-            ))}
+                    <IonLabel>
+                      <h2>{item.gewerk}</h2>
+                      <p>
+                        {item.firma} · {item.ort}
+                      </p>
+                      <IonNote>
+                        {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
+                        {new Date(item.startdatum).toLocaleDateString("de-DE")}
+                      </IonNote>
+                    </IonLabel>
+                    <IonBadge
+                      color={itemIsTalent ? "tertiary" : "primary"}
+                      slot="end"
+                    >
+                      {itemIsTalent ? "Talent" : "Einsatz"}
+                    </IonBadge>
+                  </IonItem>
+                  <IonItemOptions side="end">
+                    <IonItemOption
+                      color="primary"
+                      onClick={() =>
+                        history.push(`/meine-lehrstellen/${item.$id}/bearbeiten`)
+                      }
+                    >
+                      <IonIcon slot="icon-only" icon={create} />
+                    </IonItemOption>
+                    <IonItemOption
+                      color="danger"
+                      onClick={() => setConfirmDelete(item)}
+                    >
+                      <IonIcon slot="icon-only" icon={trash} />
+                    </IonItemOption>
+                  </IonItemOptions>
+                </IonItemSliding>
+              );
+            })}
           </IonList>
         )}
 
         <IonAlert
           isOpen={confirmDelete !== null}
           header="Wirklich löschen?"
-          message={confirmDelete ? `"${confirmDelete.gewerk}" bei ${confirmDelete.firma} wird unwiderruflich entfernt.` : ""}
+          message={
+            confirmDelete
+              ? `"${confirmDelete.gewerk}" bei ${confirmDelete.firma} wird unwiderruflich entfernt.`
+              : ""
+          }
           buttons={[
             { text: "Abbrechen", role: "cancel", handler: () => setConfirmDelete(null) },
             {

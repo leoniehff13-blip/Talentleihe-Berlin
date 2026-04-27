@@ -17,6 +17,7 @@ import {
   IonLabel,
   IonButton,
   IonIcon,
+  IonBadge,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -65,6 +66,8 @@ const LehrstelleDetail: React.FC = () => {
     return new Date(iso).toLocaleDateString("de-DE");
   }
 
+  const isTalent = item?.type === "talent_angebot";
+
   return (
     <IonPage>
       <IonHeader>
@@ -92,21 +95,50 @@ const LehrstelleDetail: React.FC = () => {
           <>
             <IonCard>
               <IonCardHeader>
-                <IonCardSubtitle>{item.firma}</IonCardSubtitle>
+                <IonCardSubtitle>
+                  {item.firma}{" "}
+                  <IonBadge color={isTalent ? "tertiary" : "primary"} style={{ marginLeft: 8 }}>
+                    {isTalent ? "Talent-Angebot" : "Einsatz"}
+                  </IonBadge>
+                </IonCardSubtitle>
                 <IonCardTitle>{item.gewerk}</IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
+                {item.ort && (
+                  <p>
+                    <strong>Ort:</strong> {item.ort}
+                  </p>
+                )}
                 <p>
-                  <strong>Ort:</strong> {item.ort}
-                </p>
-                <p>
-                  <strong>Beginn:</strong> {formatDate(item.startdatum)}
-                  {item.enddatum && <> &middot; <strong>Ende:</strong> {formatDate(item.enddatum)}</>}
+                  <strong>{isTalent ? "Verfügbar ab:" : "Beginn:"}</strong>{" "}
+                  {formatDate(item.startdatum)}
+                  {item.enddatum && (
+                    <>
+                      {" "}
+                      &middot; <strong>{isTalent ? "bis:" : "Ende:"}</strong>{" "}
+                      {formatDate(item.enddatum)}
+                    </>
+                  )}
                 </p>
                 {item.spezialisierungen?.length > 0 && (
                   <div style={{ marginTop: 12 }}>
+                    <p>
+                      <strong>Spezialisierungen:</strong>
+                    </p>
                     {item.spezialisierungen.map((s) => (
                       <IonChip key={s} color="primary">
+                        <IonLabel>{s}</IonLabel>
+                      </IonChip>
+                    ))}
+                  </div>
+                )}
+                {isTalent && item.lernziele?.length > 0 && (
+                  <div style={{ marginTop: 12 }}>
+                    <p>
+                      <strong>Lernziele:</strong>
+                    </p>
+                    {item.lernziele.map((s) => (
+                      <IonChip key={s} color="tertiary">
                         <IonLabel>{s}</IonLabel>
                       </IonChip>
                     ))}
@@ -115,48 +147,64 @@ const LehrstelleDetail: React.FC = () => {
               </IonCardContent>
             </IonCard>
 
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>Aufgaben</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>{item.aufgabenbeschreibung}</IonCardContent>
-            </IonCard>
+            {!isTalent && item.aufgabenbeschreibung && (
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>Aufgaben</IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>{item.aufgabenbeschreibung}</IonCardContent>
+              </IonCard>
+            )}
 
-            <IonCard>
-              <IonCardHeader>
-                <IonCardTitle>Voraussetzungen</IonCardTitle>
-              </IonCardHeader>
-              <IonCardContent>
-                {item.mindestalter != null && (
-                  <p>
-                    <strong>Mindestalter:</strong> {item.mindestalter} Jahre
-                  </p>
-                )}
-                {item.vorerfahrung && (
-                  <p>
-                    <strong>Vorerfahrung:</strong> {item.vorerfahrung}
-                  </p>
-                )}
-                {!item.mindestalter && !item.vorerfahrung && (
-                  <IonText color="medium">
-                    <p>Keine besonderen Voraussetzungen angegeben.</p>
-                  </IonText>
-                )}
-              </IonCardContent>
-            </IonCard>
+            {!isTalent && (item.mindestalter != null || item.vorerfahrung) && (
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>Voraussetzungen</IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>
+                  {item.mindestalter != null && (
+                    <p>
+                      <strong>Mindestalter:</strong> {item.mindestalter} Jahre
+                    </p>
+                  )}
+                  {item.vorerfahrung && (
+                    <p>
+                      <strong>Vorerfahrung:</strong> {item.vorerfahrung}
+                    </p>
+                  )}
+                </IonCardContent>
+              </IonCard>
+            )}
 
             <IonCard>
               <IonCardHeader>
                 <IonCardTitle>Standort</IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
-                {item.adresse && <p>{item.adresse}</p>}
-                {(item.plz || item.stadt) && (
-                  <p>
-                    {item.plz} {item.stadt}
-                  </p>
+                {isTalent ? (
+                  <>
+                    {item.plz && (
+                      <p>
+                        <strong>PLZ:</strong> {item.plz}
+                      </p>
+                    )}
+                    {item.plz_umkreis != null && (
+                      <p>
+                        <strong>Umkreis:</strong> {item.plz_umkreis} km
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    {item.adresse && <p>{item.adresse}</p>}
+                    {(item.plz || item.stadt) && (
+                      <p>
+                        {item.plz} {item.stadt}
+                      </p>
+                    )}
+                    {item.bundesland && <p>{item.bundesland}</p>}
+                  </>
                 )}
-                {item.bundesland && <p>{item.bundesland}</p>}
                 {item.handwerkskammer && (
                   <p style={{ marginTop: 8 }}>
                     <IonText color="medium">{item.handwerkskammer}</IonText>
@@ -172,7 +220,9 @@ const LehrstelleDetail: React.FC = () => {
               <IonCardContent>
                 <IonButton
                   expand="block"
-                  href={`mailto:${item.kontakt_email}?subject=Bewerbung%20${encodeURIComponent(item.gewerk)}`}
+                  href={`mailto:${item.kontakt_email}?subject=${encodeURIComponent(
+                    (isTalent ? "Anfrage zu Talent-Angebot " : "Bewerbung ") + item.gewerk
+                  )}`}
                 >
                   <IonIcon icon={mailOutline} slot="start" />
                   {item.kontakt_email}
