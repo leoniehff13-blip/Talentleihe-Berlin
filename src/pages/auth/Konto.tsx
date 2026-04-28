@@ -17,9 +17,15 @@ import {
   IonText,
   IonList,
   IonItem,
+  IonIcon,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import {
+  briefcaseOutline,
+  documentTextOutline,
+  chevronForward,
+} from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
 import Login from "./Login";
 import {
@@ -43,6 +49,7 @@ const Konto: React.FC = () => {
     if (profile) {
       setForm({
         type: profile.type,
+        anrede: profile.anrede ?? "",
         name: profile.name ?? "",
         vorname: profile.vorname ?? "",
         ort: profile.ort ?? "",
@@ -149,35 +156,38 @@ const Konto: React.FC = () => {
     );
   }
 
-  // Profil-Anzeige
+  // Profil-Anzeige als Hub
+  const isTalent = profile.type === "talent";
+  const headlineName = isTalent
+    ? [profile.anrede, profile.vorname, profile.name].filter(Boolean).join(" ")
+    : profile.name;
+  const anzeigenLabel = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
+
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Konto</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={() => setEditing(true)}>Bearbeiten</IonButton>
+            <IonButton onClick={() => setEditing(true)}>Profil bearbeiten</IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        {/* Profil-Karte */}
         <IonCard>
           <IonCardHeader>
             <IonCardSubtitle>
-              {profile.type === "talent" ? "Talent (Azubi)" : "Betrieb"}
+              {isTalent ? "Talent (Azubi)" : "Betrieb"}
             </IonCardSubtitle>
-            <IonCardTitle>
-              {profile.type === "talent"
-                ? `${profile.vorname ?? ""} ${profile.name}`.trim()
-                : profile.name}
-            </IonCardTitle>
+            <IonCardTitle>{headlineName || "—"}</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
             <p>{user.email}</p>
           </IonCardContent>
         </IonCard>
 
-        {profile.type === "talent" ? (
+        {isTalent ? (
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>Ausbildung</IonCardTitle>
@@ -265,7 +275,11 @@ const Konto: React.FC = () => {
                 <IonItem>
                   <IonLabel>
                     <h3>Ansprechpartner:in</h3>
-                    <p>{profile.ansprechpartner ?? "—"}</p>
+                    <p>
+                      {[profile.anrede, profile.ansprechpartner]
+                        .filter(Boolean)
+                        .join(" ") || "—"}
+                    </p>
                     <p>{profile.ansprechpartner_email ?? ""}</p>
                   </IonLabel>
                 </IonItem>
@@ -288,7 +302,46 @@ const Konto: React.FC = () => {
           </IonCard>
         )}
 
-        <IonButton expand="block" color="medium" onClick={handleLogout}>
+        {/* Hub-Karten */}
+        <IonCard button onClick={() => history.push("/meine-lehrstellen")}>
+          <IonCardContent style={{ display: "flex", alignItems: "center" }}>
+            <IonIcon
+              icon={briefcaseOutline}
+              color="primary"
+              style={{ fontSize: 28, marginRight: 16 }}
+            />
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
+                {anzeigenLabel}
+              </h3>
+              <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
+                Eigene Anzeigen ansehen, anlegen, bearbeiten
+              </p>
+            </div>
+            <IonIcon icon={chevronForward} color="medium" />
+          </IonCardContent>
+        </IonCard>
+
+        <IonCard button onClick={() => history.push("/meine-bewerbungen")}>
+          <IonCardContent style={{ display: "flex", alignItems: "center" }}>
+            <IonIcon
+              icon={documentTextOutline}
+              color="primary"
+              style={{ fontSize: 28, marginRight: 16 }}
+            />
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
+                Meine Bewerbungen
+              </h3>
+              <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
+                Anfragen und Bewerbungen verfolgen
+              </p>
+            </div>
+            <IonIcon icon={chevronForward} color="medium" />
+          </IonCardContent>
+        </IonCard>
+
+        <IonButton expand="block" color="medium" onClick={handleLogout} style={{ marginTop: 16 }}>
           Logout
         </IonButton>
       </IonContent>

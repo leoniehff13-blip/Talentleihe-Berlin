@@ -28,8 +28,9 @@ import {
   COL_APPRENTICESHIPS,
   type Lehrstelle,
 } from "../lib/appwrite";
+import AuthGate from "../components/AuthGate";
 
-const LehrstelleDetail: React.FC = () => {
+const LehrstelleDetailInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [item, setItem] = useState<Lehrstelle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -235,5 +236,11 @@ const LehrstelleDetail: React.FC = () => {
     </IonPage>
   );
 };
+
+const LehrstelleDetail: React.FC = () => (
+  <AuthGate title="Detail" backHref="/lehrstellen">
+    <LehrstelleDetailInner />
+  </AuthGate>
+);
 
 export default LehrstelleDetail;

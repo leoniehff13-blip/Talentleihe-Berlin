@@ -5,6 +5,7 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
+  IonBackButton,
   IonButton,
   IonIcon,
   IonList,
@@ -30,9 +31,10 @@ import {
   type Lehrstelle,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import AuthGate from "../components/AuthGate";
 
-const MeineLehrstellen: React.FC = () => {
-  const { user, profile, loading: authLoading } = useAuth();
+const MeineLehrstellenInner: React.FC = () => {
+  const { user, profile } = useAuth();
   const history = useHistory();
   const [items, setItems] = useState<Lehrstelle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,9 +74,8 @@ const MeineLehrstellen: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    if (authLoading) return;
     load();
-  }, [authLoading, load]);
+  }, [load]);
 
   async function handleDelete(item: Lehrstelle) {
     try {
@@ -85,42 +86,13 @@ const MeineLehrstellen: React.FC = () => {
     }
   }
 
-  if (authLoading) {
-    return (
-      <IonPage>
-        <IonContent className="ion-padding">
-          <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
-            <IonSpinner name="crescent" />
-          </div>
-        </IonContent>
-      </IonPage>
-    );
-  }
-
-  if (!user) {
-    return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Meine Einträge</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="ion-padding">
-          <IonText>
-            <p>Bitte logge dich ein, um eigene Einträge anzulegen oder zu verwalten.</p>
-          </IonText>
-          <IonButton expand="block" onClick={() => history.push("/login")}>
-            Zum Login
-          </IonButton>
-        </IonContent>
-      </IonPage>
-    );
-  }
-
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/konto" />
+          </IonButtons>
           <IonTitle>{titleText}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => history.push("/meine-lehrstellen/neu")}>
@@ -233,5 +205,11 @@ const MeineLehrstellen: React.FC = () => {
     </IonPage>
   );
 };
+
+const MeineLehrstellen: React.FC = () => (
+  <AuthGate title="Meine Anzeigen" backHref="/konto">
+    <MeineLehrstellenInner />
+  </AuthGate>
+);
 
 export default MeineLehrstellen;

@@ -9,11 +9,12 @@ import {
   IonSegment,
   IonSegmentButton,
 } from "@ionic/react";
-import { LEHRJAHRE, type ProfileType } from "../lib/appwrite";
+import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
 
 export interface ProfilFormState {
   type: ProfileType;
+  anrede: Anrede | "";
   name: string;
   vorname: string;
   ort: string;
@@ -31,6 +32,7 @@ export interface ProfilFormState {
 
 export const EMPTY_PROFIL: ProfilFormState = {
   type: "talent",
+  anrede: "",
   name: "",
   vorname: "",
   ort: "",
@@ -82,6 +84,21 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
             <IonListHeader>
               <IonLabel>Persönliche Daten</IonLabel>
             </IonListHeader>
+            <IonItem>
+              <IonLabel position="stacked">Anrede *</IonLabel>
+              <IonSelect
+                interface="popover"
+                placeholder="— bitte wählen —"
+                value={state.anrede}
+                onIonChange={(e) => set("anrede", (e.detail.value as Anrede) ?? "")}
+              >
+                {ANREDEN.map((a) => (
+                  <IonSelectOption key={a} value={a}>
+                    {a}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
             <IonItem>
               <IonInput
                 label="Vorname *"
@@ -225,6 +242,21 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               <IonLabel>Ansprechpartner:in</IonLabel>
             </IonListHeader>
             <IonItem>
+              <IonLabel position="stacked">Anrede Ansprechpartner:in *</IonLabel>
+              <IonSelect
+                interface="popover"
+                placeholder="— bitte wählen —"
+                value={state.anrede}
+                onIonChange={(e) => set("anrede", (e.detail.value as Anrede) ?? "")}
+              >
+                {ANREDEN.map((a) => (
+                  <IonSelectOption key={a} value={a}>
+                    {a}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
+            </IonItem>
+            <IonItem>
               <IonInput
                 label="Name Ansprechpartner:in *"
                 labelPlacement="stacked"
@@ -261,6 +293,7 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
 export function validateProfil(state: ProfilFormState): string[] {
   const missing: string[] = [];
   if (state.type === "talent") {
+    if (!state.anrede) missing.push("Anrede");
     if (!state.vorname.trim()) missing.push("Vorname");
     if (!state.name.trim()) missing.push("Name");
     if (!state.ort.trim()) missing.push("Wohnort");
@@ -274,6 +307,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.adresse.trim()) missing.push("Adresse");
     if (!state.gewerk.trim()) missing.push("Gewerk");
     if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
+    if (!state.anrede) missing.push("Anrede Ansprechpartner:in");
     if (!state.ansprechpartner.trim()) missing.push("Ansprechpartner:in");
     if (!state.ansprechpartner_email.trim()) missing.push("E-Mail Ansprechpartner:in");
   }
@@ -287,6 +321,7 @@ export function profilStateToInput(state: ProfilFormState) {
     s.split(",").map((x) => x.trim()).filter(Boolean);
   return {
     type: state.type,
+    anrede: state.anrede || null,
     name: state.name.trim(),
     vorname: isTalent ? state.vorname.trim() || null : null,
     ort: isTalent ? state.ort.trim() || null : null,

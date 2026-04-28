@@ -10,12 +10,20 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { briefcaseOutline, listOutline, personOutline } from "ionicons/icons";
+import {
+  homeOutline,
+  listOutline,
+  informationCircleOutline,
+  personOutline,
+} from "ionicons/icons";
 
+import Homepage from "./pages/Homepage";
 import Lehrstellen from "./pages/Lehrstellen";
 import LehrstelleDetail from "./pages/LehrstelleDetail";
 import LehrstelleForm from "./pages/LehrstelleForm";
 import MeineLehrstellen from "./pages/MeineLehrstellen";
+import MeineBewerbungen from "./pages/MeineBewerbungen";
+import Informationen from "./pages/Informationen";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Konto from "./pages/auth/Konto";
@@ -48,11 +56,19 @@ const App: React.FC = () => (
       <IonReactRouter>
         <IonTabs>
           <IonRouterOutlet>
+            <Route exact path="/home">
+              <Homepage />
+            </Route>
+
             <Route exact path="/lehrstellen">
               <Lehrstellen />
             </Route>
             <Route exact path="/lehrstellen/:id">
               <LehrstelleDetail />
+            </Route>
+
+            <Route exact path="/informationen">
+              <Informationen />
             </Route>
 
             <Route exact path="/meine-lehrstellen">
@@ -63,6 +79,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/meine-lehrstellen/:id/bearbeiten">
               <LehrstelleForm />
+            </Route>
+            <Route exact path="/meine-bewerbungen">
+              <MeineBewerbungen />
             </Route>
 
             <Route exact path="/konto">
@@ -76,18 +95,22 @@ const App: React.FC = () => (
             </Route>
 
             <Route exact path="/">
-              <Redirect to="/lehrstellen" />
+              <Redirect to="/home" />
             </Route>
           </IonRouterOutlet>
 
           <IonTabBar slot="bottom">
-            <IonTabButton tab="lehrstellen" href="/lehrstellen">
-              <IonIcon icon={listOutline} />
-              <IonLabel>Lehrstellen</IonLabel>
+            <IonTabButton tab="home" href="/home">
+              <IonIcon icon={homeOutline} />
+              <IonLabel>Home</IonLabel>
             </IonTabButton>
-            <IonTabButton tab="meine-lehrstellen" href="/meine-lehrstellen">
-              <IonIcon icon={briefcaseOutline} />
-              <IonLabel>Meine</IonLabel>
+            <IonTabButton tab="talentleihe" href="/lehrstellen">
+              <IonIcon icon={listOutline} />
+              <IonLabel>Talentleihe</IonLabel>
+            </IonTabButton>
+            <IonTabButton tab="informationen" href="/informationen">
+              <IonIcon icon={informationCircleOutline} />
+              <IonLabel>Infos</IonLabel>
             </IonTabButton>
             <IonTabButton tab="konto" href="/konto">
               <IonIcon icon={personOutline} />

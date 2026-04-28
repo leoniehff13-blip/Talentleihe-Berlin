@@ -27,12 +27,14 @@ import {
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   BUNDESLAENDER,
+  MINDESTALTER_OPTIONS,
   type Lehrstelle,
   type Bundesland,
   type ApprenticeshipType,
 } from "../lib/appwrite";
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
 import { useAuth } from "../lib/AuthContext";
+import AuthGate from "../components/AuthGate";
 
 interface FormState {
   gewerk: string;
@@ -84,7 +86,7 @@ function fromIso(iso: string | null | undefined): string {
   return iso.substring(0, 10);
 }
 
-const LehrstelleForm: React.FC = () => {
+const LehrstelleFormInner: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const { user, profile } = useAuth();
   const history = useHistory();
@@ -407,13 +409,20 @@ const LehrstelleForm: React.FC = () => {
                   />
                 </IonItem>
                 <IonItem>
-                  <IonInput
-                    label="Mindestalter"
-                    labelPlacement="stacked"
-                    type="number"
+                  <IonLabel position="stacked">Mindestalter</IonLabel>
+                  <IonSelect
+                    interface="popover"
+                    placeholder="— bitte wählen —"
                     value={form.mindestalter}
-                    onIonInput={(e) => update("mindestalter", e.detail.value ?? "")}
-                  />
+                    onIonChange={(e) => update("mindestalter", String(e.detail.value ?? ""))}
+                  >
+                    <IonSelectOption value="">kein Mindestalter</IonSelectOption>
+                    {MINDESTALTER_OPTIONS.map((alter) => (
+                      <IonSelectOption key={alter} value={String(alter)}>
+                        ab {alter}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
                 </IonItem>
                 <IonItem>
                   <IonTextarea
@@ -524,5 +533,11 @@ const LehrstelleForm: React.FC = () => {
     </IonPage>
   );
 };
+
+const LehrstelleForm: React.FC = () => (
+  <AuthGate title="Anzeige" backHref="/meine-lehrstellen">
+    <LehrstelleFormInner />
+  </AuthGate>
+);
 
 export default LehrstelleForm;

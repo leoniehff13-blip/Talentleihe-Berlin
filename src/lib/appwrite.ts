@@ -104,11 +104,17 @@ export type ProfileType = "talent" | "betrieb";
 export const LEHRJAHRE = [1, 2, 3, 4] as const;
 export type Lehrjahr = (typeof LEHRJAHRE)[number];
 
+export const ANREDEN = ["Herr", "Frau", "Enby", "möchte ich nicht angeben"] as const;
+export type Anrede = (typeof ANREDEN)[number];
+
+export const MINDESTALTER_OPTIONS = [16, 18, 21] as const;
+
 export interface Profile extends Models.Document {
   type: ProfileType;
   user_id: string;
   name: string;
   vorname: string | null;
+  anrede: Anrede | null;
   ort: string | null;
   adresse: string | null;
   gewerk: string | null;
