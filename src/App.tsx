@@ -23,6 +23,7 @@ import LehrstelleDetail from "./pages/LehrstelleDetail";
 import LehrstelleForm from "./pages/LehrstelleForm";
 import MeineLehrstellen from "./pages/MeineLehrstellen";
 import MeineBewerbungen from "./pages/MeineBewerbungen";
+import BewerbungenZurAnzeige from "./pages/BewerbungenZurAnzeige";
 import Informationen from "./pages/Informationen";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -82,6 +83,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/meine-bewerbungen">
               <MeineBewerbungen />
+            </Route>
+            <Route exact path="/meine-lehrstellen/:id/bewerbungen">
+              <BewerbungenZurAnzeige />
             </Route>
 
             <Route exact path="/konto">

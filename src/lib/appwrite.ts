@@ -35,6 +35,7 @@ export const storage = new Storage(client);
 export const DB_LEHRSTELLEN = "lehrstellen";
 export const COL_APPRENTICESHIPS = "apprenticeships";
 export const COL_PROFILES = "profiles";
+export const COL_BEWERBUNGEN = "bewerbungen";
 
 /* -------- Bundesländer -------- */
 export type Bundesland =
@@ -108,6 +109,50 @@ export const ANREDEN = ["Herr", "Frau", "Enby", "möchte ich nicht angeben"] as 
 export type Anrede = (typeof ANREDEN)[number];
 
 export const MINDESTALTER_OPTIONS = [16, 18, 21] as const;
+
+/* -------- Bewerbungen -------- */
+export type BewerbungStatus =
+  | "ausstehend"
+  | "angenommen"
+  | "abgelehnt"
+  | "zurueckgezogen";
+
+export const BEWERBUNG_STATUS_LABEL: Record<BewerbungStatus, string> = {
+  ausstehend: "Ausstehend",
+  angenommen: "Angenommen",
+  abgelehnt: "Abgelehnt",
+  zurueckgezogen: "Zurückgezogen",
+};
+
+export const BEWERBUNG_STATUS_COLOR: Record<BewerbungStatus, string> = {
+  ausstehend: "warning",
+  angenommen: "success",
+  abgelehnt: "danger",
+  zurueckgezogen: "medium",
+};
+
+export interface Bewerbung extends Models.Document {
+  apprenticeship_id: string;
+  apprenticeship_titel: string | null;
+  applicant_user_id: string;
+  applicant_name: string | null;
+  posting_owner_id: string;
+  nachricht: string;
+  status: BewerbungStatus;
+}
+
+/**
+ * Liest aus den Permissions eines Dokuments die User-ID heraus,
+ * die das Update-Recht hat (= Anbietender).
+ * Permissions sehen aus wie: 'update("user:abc123")'
+ */
+export function extractOwnerId(permissions: string[]): string | null {
+  for (const perm of permissions) {
+    const match = perm.match(/^update\("user:([^"]+)"\)$/);
+    if (match) return match[1];
+  }
+  return null;
+}
 
 export interface Profile extends Models.Document {
   type: ProfileType;

@@ -49,11 +49,29 @@ const EMPTY_FILTERS: Filters = {
 };
 
 const LehrstellenInner: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const [items, setItems] = useState<Lehrstelle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+
+  // Welcher Anzeigentyp soll je nach Rolle gezeigt werden?
+  // Talent (Azubi) sieht Angebote der Betriebe → "einsatz"
+  // Betrieb sieht Angebote der Azubis → "talent_angebot"
+  // Wer noch kein Profil hat, sieht alles, mit einem Hinweis-Banner.
+  const angezeigterTyp: "einsatz" | "talent_angebot" | null =
+    profile?.type === "talent"
+      ? "einsatz"
+      : profile?.type === "betrieb"
+        ? "talent_angebot"
+        : null;
+
+  const subtitleText =
+    angezeigterTyp === "einsatz"
+      ? "Aktuelle Einsätze von Betrieben"
+      : angezeigterTyp === "talent_angebot"
+        ? "Aktuelle Talent-Angebote von Azubis"
+        : "Alle aktuellen Angebote";
 
   const load = useCallback(async () => {
     if (!user) {
@@ -65,6 +83,11 @@ const LehrstellenInner: React.FC = () => {
     setError(null);
     try {
       const queries: string[] = [Query.orderDesc("startdatum"), Query.limit(100)];
+
+      // Rollenspezifischer Typ-Filter
+      if (angezeigterTyp) {
+        queries.push(Query.equal("type", angezeigterTyp));
+      }
 
       // Server-seitige Filter, die Appwrite direkt unterstützt
       if (filters.startVon) {
@@ -103,7 +126,7 @@ const LehrstellenInner: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [filters, user]);
+  }, [filters, user, angezeigterTyp]);
 
   useEffect(() => {
     load();
@@ -126,6 +149,29 @@ const LehrstellenInner: React.FC = () => {
         <IonRefresher slot="fixed" onIonRefresh={(e) => load().finally(() => e.detail.complete())}>
           <IonRefresherContent />
         </IonRefresher>
+
+        <div
+          style={{
+            padding: "12px 16px 4px",
+            color: "var(--ion-color-secondary)",
+            fontWeight: 600,
+          }}
+        >
+          {subtitleText}
+          {!profile && user && (
+            <div
+              style={{
+                marginTop: 6,
+                fontWeight: 400,
+                fontSize: 13,
+                color: "var(--ion-color-medium)",
+              }}
+            >
+              Tipp: Vervollständige dein Profil unter „Konto", damit du gezielt
+              die für dich passenden Anzeigen siehst.
+            </div>
+          )}
+        </div>
 
         <IonAccordionGroup>
           <IonAccordion value="filter">
@@ -221,7 +267,15 @@ const LehrstellenInner: React.FC = () => {
         {!loading && !error && items.length === 0 && (
           <div className="ion-padding">
             <IonText color="medium">
-              <p>Keine Treffer für diese Filter.</p>
+              <p>
+                {filterCount
+                  ? "Keine Treffer für diese Filter."
+                  : angezeigterTyp === "einsatz"
+                    ? "Aktuell sind keine Einsätze von Betrieben ausgeschrieben."
+                    : angezeigterTyp === "talent_angebot"
+                      ? "Aktuell stehen keine Talent-Angebote von Azubis online."
+                      : "Aktuell sind keine Anzeigen vorhanden."}
+              </p>
             </IonText>
           </div>
         )}

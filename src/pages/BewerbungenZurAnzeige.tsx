@@ -1,0 +1,241 @@
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonText,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonList,
+  IonItem,
+  IonLabel,
+  IonBadge,
+  IonNote,
+  IonSpinner,
+  IonButton,
+  IonIcon,
+} from "@ionic/react";
+import { useEffect, useState, useCallback } from "react";
+import { useParams } from "react-router";
+import { Query } from "appwrite";
+import {
+  checkmarkOutline,
+  closeOutline,
+  mailOutline,
+} from "ionicons/icons";
+import {
+  databases,
+  DB_LEHRSTELLEN,
+  COL_APPRENTICESHIPS,
+  COL_BEWERBUNGEN,
+  BEWERBUNG_STATUS_LABEL,
+  BEWERBUNG_STATUS_COLOR,
+  type Bewerbung,
+  type Lehrstelle,
+} from "../lib/appwrite";
+import AuthGate from "../components/AuthGate";
+
+const BewerbungenZurAnzeigeInner: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const [anzeige, setAnzeige] = useState<Lehrstelle | null>(null);
+  const [bewerbungen, setBewerbungen] = useState<Bewerbung[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [anz, bws] = await Promise.all([
+        databases.getDocument<Lehrstelle>(DB_LEHRSTELLEN, COL_APPRENTICESHIPS, id),
+        databases.listDocuments<Bewerbung>(DB_LEHRSTELLEN, COL_BEWERBUNGEN, [
+          Query.equal("apprenticeship_id", id),
+          Query.orderDesc("$createdAt"),
+          Query.limit(100),
+        ]),
+      ]);
+      setAnzeige(anz);
+      setBewerbungen(bws.documents);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  async function setStatus(b: Bewerbung, status: Bewerbung["status"]) {
+    try {
+      await databases.updateDocument(DB_LEHRSTELLEN, COL_BEWERBUNGEN, b.$id, { status });
+      setBewerbungen((prev) =>
+        prev.map((x) => (x.$id === b.$id ? { ...x, status } : x))
+      );
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton defaultHref="/meine-lehrstellen" />
+          </IonButtons>
+          <IonTitle>Bewerbungen</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        {loading && (
+          <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
+            <IonSpinner name="crescent" />
+          </div>
+        )}
+
+        {error && (
+          <div className="ion-padding">
+            <IonText color="danger">
+              <p>{error}</p>
+            </IonText>
+          </div>
+        )}
+
+        {anzeige && (
+          <div className="ion-padding" style={{ paddingBottom: 0 }}>
+            <IonText color="medium">
+              <p style={{ margin: 0 }}>Bewerbungen zu</p>
+            </IonText>
+            <h2
+              style={{
+                margin: "4px 0 16px",
+                fontSize: 18,
+                fontWeight: 700,
+                color: "var(--ion-color-secondary)",
+              }}
+            >
+              {anzeige.gewerk} bei {anzeige.firma}
+            </h2>
+          </div>
+        )}
+
+        {!loading && bewerbungen.length === 0 && (
+          <div className="ion-padding">
+            <IonCard>
+              <IonCardHeader>
+                <IonCardTitle>Noch keine Bewerbungen</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <IonText color="medium">
+                  <p>
+                    Sobald sich jemand auf diese Anzeige bewirbt, taucht sie
+                    hier auf.
+                  </p>
+                </IonText>
+              </IonCardContent>
+            </IonCard>
+          </div>
+        )}
+
+        {!loading && bewerbungen.length > 0 && (
+          <IonList>
+            {bewerbungen.map((b) => {
+              const offen = b.status === "ausstehend";
+              return (
+                <IonCard key={b.$id}>
+                  <IonCardHeader>
+                    <IonCardTitle
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: 16,
+                      }}
+                    >
+                      <span>{b.applicant_name ?? "Unbekannt"}</span>
+                      <IonBadge color={BEWERBUNG_STATUS_COLOR[b.status]}>
+                        {BEWERBUNG_STATUS_LABEL[b.status]}
+                      </IonBadge>
+                    </IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    <IonNote>
+                      Eingegangen am{" "}
+                      {new Date(b.$createdAt).toLocaleDateString("de-DE")}
+                    </IonNote>
+                    <p style={{ marginTop: 12, whiteSpace: "pre-wrap" }}>
+                      {b.nachricht}
+                    </p>
+
+                    {offen && (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          marginTop: 16,
+                        }}
+                      >
+                        <IonButton
+                          color="success"
+                          expand="block"
+                          onClick={() => setStatus(b, "angenommen")}
+                          style={{ flex: 1 }}
+                        >
+                          <IonIcon slot="start" icon={checkmarkOutline} />
+                          Annehmen
+                        </IonButton>
+                        <IonButton
+                          color="danger"
+                          fill="outline"
+                          expand="block"
+                          onClick={() => setStatus(b, "abgelehnt")}
+                          style={{ flex: 1 }}
+                        >
+                          <IonIcon slot="start" icon={closeOutline} />
+                          Ablehnen
+                        </IonButton>
+                      </div>
+                    )}
+
+                    {b.status === "angenommen" && anzeige && (
+                      <IonButton
+                        expand="block"
+                        href={`mailto:${anzeige.kontakt_email}?subject=${encodeURIComponent(
+                          `Zusage: ${anzeige.gewerk}`
+                        )}`}
+                        style={{ marginTop: 12 }}
+                      >
+                        <IonIcon slot="start" icon={mailOutline} />
+                        Per E-Mail antworten
+                      </IonButton>
+                    )}
+                  </IonCardContent>
+                  <IonItem lines="none">
+                    <IonLabel color="medium" style={{ fontSize: 12 }}>
+                      Bewerber-ID: {b.applicant_user_id}
+                    </IonLabel>
+                  </IonItem>
+                </IonCard>
+              );
+            })}
+          </IonList>
+        )}
+      </IonContent>
+    </IonPage>
+  );
+};
+
+const BewerbungenZurAnzeige: React.FC = () => (
+  <AuthGate title="Bewerbungen" backHref="/meine-lehrstellen">
+    <BewerbungenZurAnzeigeInner />
+  </AuthGate>
+);
+
+export default BewerbungenZurAnzeige;

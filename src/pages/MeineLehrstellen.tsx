@@ -22,7 +22,7 @@ import {
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { add, create, trash } from "ionicons/icons";
+import { add, create, trash, peopleOutline } from "ionicons/icons";
 import { Query } from "appwrite";
 import {
   databases,
@@ -160,6 +160,14 @@ const MeineLehrstellenInner: React.FC = () => {
                     </IonBadge>
                   </IonItem>
                   <IonItemOptions side="end">
+                    <IonItemOption
+                      color="tertiary"
+                      onClick={() =>
+                        history.push(`/meine-lehrstellen/${item.$id}/bewerbungen`)
+                      }
+                    >
+                      <IonIcon slot="icon-only" icon={peopleOutline} />
+                    </IonItemOption>
                     <IonItemOption
                       color="primary"
                       onClick={() =>

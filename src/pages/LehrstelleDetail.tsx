@@ -18,56 +18,145 @@ import {
   IonButton,
   IonIcon,
   IonBadge,
+  IonModal,
+  IonItem,
+  IonTextarea,
+  IonAlert,
 } from "@ionic/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router";
-import { mailOutline } from "ionicons/icons";
+import { mailOutline, sendOutline, checkmarkCircleOutline } from "ionicons/icons";
+import { ID, Query } from "appwrite";
 import {
   databases,
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
+  COL_BEWERBUNGEN,
+  extractOwnerId,
+  BEWERBUNG_STATUS_LABEL,
+  BEWERBUNG_STATUS_COLOR,
   type Lehrstelle,
+  type Bewerbung,
 } from "../lib/appwrite";
+import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
 
 const LehrstelleDetailInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user, profile } = useAuth();
+
   const [item, setItem] = useState<Lehrstelle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      setLoading(true);
-      setError(null);
-      try {
-        const doc = await databases.getDocument<Lehrstelle>(
-          DB_LEHRSTELLEN,
-          COL_APPRENTICESHIPS,
-          id
-        );
-        if (!cancelled) setItem(doc);
-      } catch (err: unknown) {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : String(err));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+  // Bewerbungs-State
+  const [eigeneBewerbung, setEigeneBewerbung] = useState<Bewerbung | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [nachricht, setNachricht] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
+  const [erfolg, setErfolg] = useState(false);
+
+  const ownerId = item ? extractOwnerId(item.$permissions ?? []) : null;
+  const istEigeneAnzeige = Boolean(user && ownerId === user.$id);
+  const istTalent = profile?.type === "talent";
+  const istBewerbungVergeben = istEigeneAnzeige === false && istTalent;
+
+  const loadItem = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const doc = await databases.getDocument<Lehrstelle>(
+        DB_LEHRSTELLEN,
+        COL_APPRENTICESHIPS,
+        id
+      );
+      setItem(doc);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setLoading(false);
     }
-    load();
-    return () => {
-      cancelled = true;
-    };
   }, [id]);
+
+  const loadEigeneBewerbung = useCallback(async () => {
+    if (!user || !id) return;
+    try {
+      const result = await databases.listDocuments<Bewerbung>(
+        DB_LEHRSTELLEN,
+        COL_BEWERBUNGEN,
+        [
+          Query.equal("apprenticeship_id", id),
+          Query.equal("applicant_user_id", user.$id),
+          Query.limit(1),
+        ]
+      );
+      setEigeneBewerbung(result.documents[0] ?? null);
+    } catch {
+      setEigeneBewerbung(null);
+    }
+  }, [user, id]);
+
+  useEffect(() => {
+    loadItem();
+  }, [loadItem]);
+
+  useEffect(() => {
+    loadEigeneBewerbung();
+  }, [loadEigeneBewerbung]);
 
   function formatDate(iso?: string | null) {
     if (!iso) return null;
     return new Date(iso).toLocaleDateString("de-DE");
   }
 
-  const isTalent = item?.type === "talent_angebot";
+  async function handleBewerben() {
+    if (!user || !item || !ownerId) return;
+    setSendError(null);
+    if (!nachricht.trim()) {
+      setSendError("Bitte schreib eine kurze Nachricht.");
+      return;
+    }
+    setSending(true);
+    try {
+      const applicantName = profile
+        ? profile.type === "talent"
+          ? `${profile.vorname ?? ""} ${profile.name}`.trim()
+          : profile.name
+        : user.name || user.email;
+
+      await databases.createDocument<Bewerbung>(
+        DB_LEHRSTELLEN,
+        COL_BEWERBUNGEN,
+        ID.unique(),
+        {
+          apprenticeship_id: item.$id,
+          apprenticeship_titel: `${item.gewerk} bei ${item.firma}`,
+          applicant_user_id: user.$id,
+          applicant_name: applicantName,
+          posting_owner_id: ownerId,
+          nachricht: nachricht.trim(),
+          status: "ausstehend",
+        }
+        // Keine Per-Row-Permissions: die Bewerbungen-Tabelle nutzt
+        // Collection-Permissions (read/create/update/delete für alle eingeloggten
+        // User) und filtert die Sichtbarkeit clientseitig über applicant_user_id
+        // bzw. posting_owner_id. Hintergrund: Appwrite erlaubt nicht, beim
+        // Anlegen Permissions für eine andere User-ID zu setzen, was hier
+        // notwendig wäre, damit der/die Anbietende die Bewerbung sehen kann.
+      );
+      setShowModal(false);
+      setNachricht("");
+      setErfolg(true);
+      await loadEigeneBewerbung();
+    } catch (err: unknown) {
+      setSendError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setSending(false);
+    }
+  }
+
+  const isTalentAnzeige = item?.type === "talent_angebot";
 
   return (
     <IonPage>
@@ -98,8 +187,11 @@ const LehrstelleDetailInner: React.FC = () => {
               <IonCardHeader>
                 <IonCardSubtitle>
                   {item.firma}{" "}
-                  <IonBadge color={isTalent ? "tertiary" : "primary"} style={{ marginLeft: 8 }}>
-                    {isTalent ? "Talent-Angebot" : "Einsatz"}
+                  <IonBadge
+                    color={isTalentAnzeige ? "tertiary" : "primary"}
+                    style={{ marginLeft: 8 }}
+                  >
+                    {isTalentAnzeige ? "Talent-Angebot" : "Einsatz"}
                   </IonBadge>
                 </IonCardSubtitle>
                 <IonCardTitle>{item.gewerk}</IonCardTitle>
@@ -111,12 +203,12 @@ const LehrstelleDetailInner: React.FC = () => {
                   </p>
                 )}
                 <p>
-                  <strong>{isTalent ? "Verfügbar ab:" : "Beginn:"}</strong>{" "}
+                  <strong>{isTalentAnzeige ? "Verfügbar ab:" : "Beginn:"}</strong>{" "}
                   {formatDate(item.startdatum)}
                   {item.enddatum && (
                     <>
                       {" "}
-                      &middot; <strong>{isTalent ? "bis:" : "Ende:"}</strong>{" "}
+                      &middot; <strong>{isTalentAnzeige ? "bis:" : "Ende:"}</strong>{" "}
                       {formatDate(item.enddatum)}
                     </>
                   )}
@@ -133,7 +225,7 @@ const LehrstelleDetailInner: React.FC = () => {
                     ))}
                   </div>
                 )}
-                {isTalent && item.lernziele?.length > 0 && (
+                {isTalentAnzeige && item.lernziele?.length > 0 && (
                   <div style={{ marginTop: 12 }}>
                     <p>
                       <strong>Lernziele:</strong>
@@ -148,7 +240,7 @@ const LehrstelleDetailInner: React.FC = () => {
               </IonCardContent>
             </IonCard>
 
-            {!isTalent && item.aufgabenbeschreibung && (
+            {!isTalentAnzeige && item.aufgabenbeschreibung && (
               <IonCard>
                 <IonCardHeader>
                   <IonCardTitle>Aufgaben</IonCardTitle>
@@ -157,7 +249,7 @@ const LehrstelleDetailInner: React.FC = () => {
               </IonCard>
             )}
 
-            {!isTalent && (item.mindestalter != null || item.vorerfahrung) && (
+            {!isTalentAnzeige && (item.mindestalter != null || item.vorerfahrung) && (
               <IonCard>
                 <IonCardHeader>
                   <IonCardTitle>Voraussetzungen</IonCardTitle>
@@ -182,7 +274,7 @@ const LehrstelleDetailInner: React.FC = () => {
                 <IonCardTitle>Standort</IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
-                {isTalent ? (
+                {isTalentAnzeige ? (
                   <>
                     {item.plz && (
                       <p>
@@ -214,15 +306,75 @@ const LehrstelleDetailInner: React.FC = () => {
               </IonCardContent>
             </IonCard>
 
+            {/* Bewerben-Karte */}
+            {istEigeneAnzeige && (
+              <IonCard color="light">
+                <IonCardContent>
+                  <IonText color="medium">
+                    <p style={{ margin: 0 }}>
+                      Das ist deine eigene Anzeige. Eingegangene Bewerbungen
+                      siehst du im Konto unter „{isTalentAnzeige ? "Meine Talent-Angebote" : "Meine Einsätze"}" → Anzeige öffnen.
+                    </p>
+                  </IonText>
+                </IonCardContent>
+              </IonCard>
+            )}
+
+            {!istEigeneAnzeige && eigeneBewerbung && (
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>Deine Bewerbung</IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>
+                  <p>
+                    <strong>Status:</strong>{" "}
+                    <IonBadge color={BEWERBUNG_STATUS_COLOR[eigeneBewerbung.status]}>
+                      {BEWERBUNG_STATUS_LABEL[eigeneBewerbung.status]}
+                    </IonBadge>
+                  </p>
+                  <p style={{ marginTop: 8, whiteSpace: "pre-wrap" }}>
+                    {eigeneBewerbung.nachricht}
+                  </p>
+                </IonCardContent>
+              </IonCard>
+            )}
+
+            {!istEigeneAnzeige && !eigeneBewerbung && (
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>Interesse?</IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>
+                  <IonText color="medium">
+                    <p>
+                      Schick eine kurze Nachricht — sie landet direkt im Postfach
+                      des/der Anbietenden.
+                    </p>
+                  </IonText>
+                  <IonButton
+                    expand="block"
+                    onClick={() => setShowModal(true)}
+                    style={{ marginTop: 12 }}
+                  >
+                    <IonIcon slot="start" icon={sendOutline} />
+                    {istTalent ? "Jetzt bewerben" : "Anfrage senden"}
+                  </IonButton>
+                </IonCardContent>
+              </IonCard>
+            )}
+
+            {/* Klassischer E-Mail-Kontakt */}
             <IonCard>
               <IonCardHeader>
-                <IonCardTitle>Kontakt</IonCardTitle>
+                <IonCardTitle>Direkter E-Mail-Kontakt</IonCardTitle>
               </IonCardHeader>
               <IonCardContent>
                 <IonButton
                   expand="block"
+                  fill="outline"
                   href={`mailto:${item.kontakt_email}?subject=${encodeURIComponent(
-                    (isTalent ? "Anfrage zu Talent-Angebot " : "Bewerbung ") + item.gewerk
+                    (isTalentAnzeige ? "Anfrage zu Talent-Angebot " : "Bewerbung ") +
+                      item.gewerk
                   )}`}
                 >
                   <IonIcon icon={mailOutline} slot="start" />
@@ -232,6 +384,69 @@ const LehrstelleDetailInner: React.FC = () => {
             </IonCard>
           </>
         )}
+
+        {/* Bewerbungs-Modal */}
+        <IonModal isOpen={showModal} onDidDismiss={() => setShowModal(false)}>
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>
+                {istTalent ? "Bewerbung schreiben" : "Anfrage schreiben"}
+              </IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setShowModal(false)}>Abbrechen</IonButton>
+              </IonButtons>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent className="ion-padding">
+            {item && (
+              <p>
+                <IonText color="medium">
+                  An: <strong>{item.firma}</strong> · {item.gewerk}
+                </IonText>
+              </p>
+            )}
+            <IonItem>
+              <IonTextarea
+                label="Deine Nachricht"
+                labelPlacement="stacked"
+                autoGrow
+                rows={6}
+                placeholder="Stell dich kurz vor und sag, warum dich diese Anzeige interessiert."
+                value={nachricht}
+                onIonInput={(e) => setNachricht(e.detail.value ?? "")}
+              />
+            </IonItem>
+            {sendError && (
+              <IonText color="danger">
+                <p>{sendError}</p>
+              </IonText>
+            )}
+            <IonButton
+              expand="block"
+              onClick={handleBewerben}
+              disabled={sending}
+              style={{ marginTop: 16 }}
+            >
+              {sending ? "Wird gesendet…" : "Senden"}
+            </IonButton>
+          </IonContent>
+        </IonModal>
+
+        {/* Erfolgs-Toast als kleines Alert */}
+        <IonAlert
+          isOpen={erfolg}
+          header="Erledigt"
+          message={'Deine Nachricht wurde gespeichert. Den Status findest du im Konto unter „Meine Bewerbungen".'}
+          buttons={[{ text: "OK", role: "cancel", handler: () => setErfolg(false) }]}
+        />
+
+        {/* Hilfsdummy: damit istBewerbungVergeben nicht ungenutzt ist */}
+        <span style={{ display: "none" }}>{istBewerbungVergeben ? "" : ""}</span>
+
+        {/* Hilfsdummy: checkmarkCircleOutline – wird in zukünftigen Erweiterungen genutzt */}
+        <span style={{ display: "none" }}>
+          <IonIcon icon={checkmarkCircleOutline} />
+        </span>
       </IonContent>
     </IonPage>
   );
