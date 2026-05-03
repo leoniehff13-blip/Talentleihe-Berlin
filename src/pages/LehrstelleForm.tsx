@@ -33,6 +33,7 @@ import {
   type ApprenticeshipType,
 } from "../lib/appwrite";
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
+import { GEWERKE } from "../lib/gewerke";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
 
@@ -318,12 +319,19 @@ const LehrstelleFormInner: React.FC = () => {
               <IonLabel>Basis</IonLabel>
             </IonListHeader>
             <IonItem>
-              <IonInput
-                label="Gewerk *"
-                labelPlacement="stacked"
+              <IonLabel position="stacked">Gewerk *</IonLabel>
+              <IonSelect
+                interface="alert"
+                placeholder="— bitte wählen —"
                 value={form.gewerk}
-                onIonInput={(e) => update("gewerk", e.detail.value ?? "")}
-              />
+                onIonChange={(e) => update("gewerk", String(e.detail.value ?? ""))}
+              >
+                {GEWERKE.map((g) => (
+                  <IonSelectOption key={g} value={g}>
+                    {g}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
             </IonItem>
             <IonItem>
               <IonInput

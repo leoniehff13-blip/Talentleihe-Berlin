@@ -19,6 +19,9 @@ import {
   IonAccordion,
   IonAccordionGroup,
   IonButton,
+  IonSegment,
+  IonSegmentButton,
+  IonRange,
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import { Query } from "appwrite";
@@ -31,9 +34,13 @@ import {
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
+import LehrstellenMap from "../components/LehrstellenMap";
+import { geocode, buildItemQuery, haversineKm } from "../lib/geocode";
+import { GEWERKE, gewerkStamm } from "../lib/gewerke";
 
 interface Filters {
-  ort: string;
+  ortOrPlz: string;
+  umkreis: number; // km
   gewerk: string;
   startVon: string;
   startBis: string;
@@ -41,12 +48,15 @@ interface Filters {
 }
 
 const EMPTY_FILTERS: Filters = {
-  ort: "",
+  ortOrPlz: "",
+  umkreis: 50,
   gewerk: "",
   startVon: "",
   startBis: "",
   mindestalter: "",
 };
+
+type ViewMode = "liste" | "karte";
 
 const LehrstellenInner: React.FC = () => {
   const { user, profile } = useAuth();
@@ -54,6 +64,8 @@ const LehrstellenInner: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [view, setView] = useState<ViewMode>("liste");
+  const [geoStatus, setGeoStatus] = useState<string | null>(null);
 
   // Welcher Anzeigentyp soll je nach Rolle gezeigt werden?
   // Talent (Azubi) sieht Angebote der Betriebe → "einsatz"
@@ -111,20 +123,54 @@ const LehrstellenInner: React.FC = () => {
         queries
       );
 
-      // Client-seitige Filter (Substring-Suche)
-      const ortLower = filters.ort.trim().toLowerCase();
-      const gewerkLower = filters.gewerk.trim().toLowerCase();
-      const filtered = result.documents.filter((d) => {
-        if (ortLower && !(d.ort ?? "").toLowerCase().includes(ortLower)) return false;
-        if (gewerkLower && !(d.gewerk ?? "").toLowerCase().includes(gewerkLower)) return false;
+      // Client-seitige Filter (Gewerk: tolerante Stamm-Übereinstimmung,
+      // damit ältere Einträge wie "Tischler/in" beim Filterwert "Tischler/-in"
+      // gefunden werden)
+      const gewerkStammSel = gewerkStamm(filters.gewerk);
+      let filtered = result.documents.filter((d) => {
+        if (gewerkStammSel) {
+          const itemStamm = gewerkStamm(d.gewerk ?? "");
+          if (!itemStamm.includes(gewerkStammSel) && !gewerkStammSel.includes(itemStamm)) {
+            return false;
+          }
+        }
         return true;
       });
+
+      // Geografischer Filter (Ort/PLZ + Umkreis)
+      const suche = filters.ortOrPlz.trim();
+      if (suche) {
+        setGeoStatus(`Suche „${suche}" wird geocodiert…`);
+        const searchCoords = await geocode(suche + ", Deutschland");
+        if (!searchCoords) {
+          setGeoStatus(`Standort „${suche}" konnte nicht gefunden werden.`);
+          // Liste leer lassen
+          setItems([]);
+          return;
+        }
+
+        const inRange: Lehrstelle[] = [];
+        for (let i = 0; i < filtered.length; i++) {
+          setGeoStatus(`Prüfe Anzeige ${i + 1} von ${filtered.length}…`);
+          const item = filtered[i];
+          const q = buildItemQuery(item);
+          if (!q) continue;
+          const itemCoords = await geocode(q);
+          if (itemCoords && haversineKm(searchCoords, itemCoords) <= filters.umkreis) {
+            inRange.push(item);
+          }
+        }
+        filtered = inRange;
+        setGeoStatus(null);
+      }
 
       setItems(filtered);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
+      // geoStatus nicht hier zurücksetzen, damit eine Fehlermeldung ("Standort nicht gefunden")
+      // sichtbar bleibt; bei Erfolg wird er oben bereits auf null gesetzt.
     }
   }, [filters, user, angezeigterTyp]);
 
@@ -136,13 +182,30 @@ const LehrstellenInner: React.FC = () => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }
 
-  const filterCount = Object.entries(filters).filter(([, v]) => v).length;
+  // umkreis zählt nicht als eigener Filter, weil er nur in Verbindung mit ortOrPlz wirkt
+  const filterCount = Object.entries(filters).filter(([k, v]) => {
+    if (k === "umkreis") return false;
+    return Boolean(v);
+  }).length;
 
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
           <IonTitle>Talentleihe</IonTitle>
+        </IonToolbar>
+        <IonToolbar>
+          <IonSegment
+            value={view}
+            onIonChange={(e) => setView((e.detail.value as ViewMode) ?? "liste")}
+          >
+            <IonSegmentButton value="liste">
+              <IonLabel>Liste</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="karte">
+              <IonLabel>Karte</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -184,21 +247,51 @@ const LehrstellenInner: React.FC = () => {
               <IonList>
                 <IonItem>
                   <IonInput
-                    label="Ort"
+                    label="Ort oder PLZ"
                     labelPlacement="stacked"
-                    placeholder="z. B. Hamburg"
-                    value={filters.ort}
-                    onIonInput={(e) => setFilter("ort", e.detail.value ?? "")}
+                    placeholder="z. B. Bielefeld oder 33602"
+                    value={filters.ortOrPlz}
+                    onIonInput={(e) => setFilter("ortOrPlz", e.detail.value ?? "")}
                   />
                 </IonItem>
                 <IonItem>
-                  <IonInput
-                    label="Gewerk"
-                    labelPlacement="stacked"
-                    placeholder="z. B. Tischler"
+                  <IonLabel position="stacked">
+                    Umkreis: {filters.umkreis} km
+                  </IonLabel>
+                  <IonRange
+                    min={0}
+                    max={200}
+                    step={5}
+                    snaps
+                    ticks={false}
+                    pin={true}
+                    pinFormatter={(v: number) => `${v} km`}
+                    value={filters.umkreis}
+                    onIonInput={(e) => {
+                      const v = (e.detail.value as number) ?? 50;
+                      setFilter("umkreis", v);
+                    }}
+                    disabled={!filters.ortOrPlz.trim()}
+                  >
+                    <IonLabel slot="start" style={{ fontSize: 12 }}>0</IonLabel>
+                    <IonLabel slot="end" style={{ fontSize: 12 }}>200</IonLabel>
+                  </IonRange>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Gewerk</IonLabel>
+                  <IonSelect
+                    interface="alert"
+                    placeholder="Alle Gewerke"
                     value={filters.gewerk}
-                    onIonInput={(e) => setFilter("gewerk", e.detail.value ?? "")}
-                  />
+                    onIonChange={(e) => setFilter("gewerk", String(e.detail.value ?? ""))}
+                  >
+                    <IonSelectOption value="">Alle Gewerke</IonSelectOption>
+                    {GEWERKE.map((g) => (
+                      <IonSelectOption key={g} value={g}>
+                        {g}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
                 </IonItem>
                 <IonItem>
                   <IonInput
@@ -251,8 +344,21 @@ const LehrstellenInner: React.FC = () => {
         </IonAccordionGroup>
 
         {loading && (
-          <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 8,
+              padding: 32,
+            }}
+          >
             <IonSpinner name="crescent" />
+            {geoStatus && (
+              <IonText color="medium">
+                <p style={{ margin: 0, fontSize: 13 }}>{geoStatus}</p>
+              </IonText>
+            )}
           </div>
         )}
 
@@ -268,19 +374,21 @@ const LehrstellenInner: React.FC = () => {
           <div className="ion-padding">
             <IonText color="medium">
               <p>
-                {filterCount
-                  ? "Keine Treffer für diese Filter."
-                  : angezeigterTyp === "einsatz"
-                    ? "Aktuell sind keine Einsätze von Betrieben ausgeschrieben."
-                    : angezeigterTyp === "talent_angebot"
-                      ? "Aktuell stehen keine Talent-Angebote von Azubis online."
-                      : "Aktuell sind keine Anzeigen vorhanden."}
+                {geoStatus
+                  ? geoStatus
+                  : filterCount
+                    ? "Keine Treffer für diese Filter."
+                    : angezeigterTyp === "einsatz"
+                      ? "Aktuell sind keine Einsätze von Betrieben ausgeschrieben."
+                      : angezeigterTyp === "talent_angebot"
+                        ? "Aktuell stehen keine Talent-Angebote von Azubis online."
+                        : "Aktuell sind keine Anzeigen vorhanden."}
               </p>
             </IonText>
           </div>
         )}
 
-        {!loading && items.length > 0 && (
+        {!loading && items.length > 0 && view === "liste" && (
           <IonList>
             {items.map((item) => {
               const itemIsTalent = item.type === "talent_angebot";
@@ -307,6 +415,19 @@ const LehrstellenInner: React.FC = () => {
               );
             })}
           </IonList>
+        )}
+
+        {!loading && items.length > 0 && view === "karte" && (
+          <div className="ion-padding" style={{ paddingTop: 8 }}>
+            <LehrstellenMap items={items} />
+            <IonText color="medium">
+              <p style={{ fontSize: 12, marginTop: 8 }}>
+                Tipp: Beim ersten Laden werden die Adressen einmalig geocodiert
+                (max. 1 pro Sekunde). Beim nächsten Mal sind alle Pins sofort
+                da. Klick auf einen Pin öffnet die Anzeige.
+              </p>
+            </IonText>
+          </div>
         )}
       </IonContent>
     </IonPage>

@@ -11,6 +11,7 @@ import {
 } from "@ionic/react";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
+import { GEWERKE } from "../lib/gewerke";
 
 export interface ProfilFormState {
   type: ProfileType;
@@ -128,13 +129,19 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               <IonLabel>Ausbildung</IonLabel>
             </IonListHeader>
             <IonItem>
-              <IonInput
-                label="Gewerk *"
-                labelPlacement="stacked"
-                placeholder="z.B. Tischler/in"
+              <IonLabel position="stacked">Gewerk *</IonLabel>
+              <IonSelect
+                interface="alert"
+                placeholder="— bitte wählen —"
                 value={state.gewerk}
-                onIonInput={(e) => set("gewerk", e.detail.value ?? "")}
-              />
+                onIonChange={(e) => set("gewerk", String(e.detail.value ?? ""))}
+              >
+                {GEWERKE.map((g) => (
+                  <IonSelectOption key={g} value={g}>
+                    {g}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Lehrjahr *</IonLabel>
@@ -215,12 +222,19 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               />
             </IonItem>
             <IonItem>
-              <IonInput
-                label="Gewerk *"
-                labelPlacement="stacked"
+              <IonLabel position="stacked">Gewerk *</IonLabel>
+              <IonSelect
+                interface="alert"
+                placeholder="— bitte wählen —"
                 value={state.gewerk}
-                onIonInput={(e) => set("gewerk", e.detail.value ?? "")}
-              />
+                onIonChange={(e) => set("gewerk", String(e.detail.value ?? ""))}
+              >
+                {GEWERKE.map((g) => (
+                  <IonSelectOption key={g} value={g}>
+                    {g}
+                  </IonSelectOption>
+                ))}
+              </IonSelect>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Handwerkskammer *</IonLabel>
