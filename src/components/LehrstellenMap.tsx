@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { IonText } from "@ionic/react";
 import type { Lehrstelle } from "../lib/appwrite";
 
@@ -66,6 +67,7 @@ async function geocode(query: string): Promise<Coords | null> {
 }
 
 const LehrstellenMap: React.FC<Props> = ({ items }) => {
+  const history = useHistory();
   const containerRef = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
@@ -161,11 +163,24 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
           marker.bindPopup(
             `<div style="min-width:180px">
               <div style="font-size:11px;color:#666">${typeLabel}</div>
-              <div style="font-weight:700;color:#142F6C">${safeGewerk}</div>
+              <div style="font-weight:700;color:#0b1f4a">${safeGewerk}</div>
               <div style="margin:4px 0 8px">${safeFirma} · ${safeOrt}</div>
-              <a href="/lehrstellen/${item.$id}" style="color:#558DDF;font-weight:600">Anzeige öffnen →</a>
+              <a href="/lehrstellen/${item.$id}" data-lehrstelle-id="${item.$id}" class="ww-popup-link" style="color:#3a88fe;font-weight:600;cursor:pointer">Anzeige öffnen →</a>
             </div>`
           );
+          // Beim Öffnen des Popups den Klick auf den Link abfangen,
+          // damit React-Router navigieren kann (kein Full-Page-Reload).
+          marker.on("popupopen", (e: { popup: { getElement: () => HTMLElement | null } }) => {
+            const popupEl = e.popup.getElement();
+            if (!popupEl) return;
+            const link = popupEl.querySelector(".ww-popup-link") as HTMLAnchorElement | null;
+            if (!link) return;
+            link.onclick = (ev: MouseEvent) => {
+              ev.preventDefault();
+              const id = link.getAttribute("data-lehrstelle-id");
+              if (id) history.push(`/lehrstellen/${id}`);
+            };
+          });
           marker.addTo(layer);
         }
 
