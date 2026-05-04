@@ -1,25 +1,5 @@
-import {
-  IonContent,
-  IonHeader,
-  IonPage,
-  IonTitle,
-  IonToolbar,
-  IonCard,
-  IonCardContent,
-  IonIcon,
-  IonText,
-  IonButton,
-} from "@ionic/react";
+import { IonContent, IonPage } from "@ionic/react";
 import { useHistory } from "react-router-dom";
-import {
-  searchOutline,
-  personAddOutline,
-  briefcaseOutline,
-  arrowForwardOutline,
-  schoolOutline,
-  businessOutline,
-  handLeftOutline,
-} from "ionicons/icons";
 import { useAuth } from "../lib/AuthContext";
 
 const Homepage: React.FC = () => {
@@ -30,251 +10,623 @@ const Homepage: React.FC = () => {
   const istTalent = profile?.type === "talent";
   const istBetrieb = profile?.type === "betrieb";
 
-  // Aktionskarte abhängig vom Login-Status
-  let aktionsKarte: { titel: string; text: string; cta: string; ziel: string; icon: string };
-  if (!istEingeloggt) {
-    aktionsKarte = {
-      titel: "Konto anlegen",
-      text: "Erstelle in zwei Minuten ein Profil als Talent oder Betrieb und sei sichtbar.",
-      cta: "Jetzt registrieren",
-      ziel: "/registrieren",
-      icon: personAddOutline,
-    };
-  } else if (istTalent) {
-    aktionsKarte = {
-      titel: "Eigenes Talent-Angebot",
-      text: "Zeig Betrieben, was du kannst, was du lernen willst und wann du verfügbar bist.",
-      cta: "Talent-Angebot anlegen",
-      ziel: "/meine-lehrstellen",
-      icon: briefcaseOutline,
-    };
-  } else if (istBetrieb) {
-    aktionsKarte = {
-      titel: "Einsatz ausschreiben",
-      text: "Beschreibe einen offenen Einsatz und erreiche passende Talente in deiner Region.",
-      cta: "Einsatz anlegen",
-      ziel: "/meine-lehrstellen",
-      icon: briefcaseOutline,
-    };
-  } else {
-    // Eingeloggt, aber noch kein Profil
-    aktionsKarte = {
-      titel: "Profil vervollständigen",
-      text: "Damit dich andere finden können, ergänze noch wenige Angaben in deinem Profil.",
-      cta: "Profil ergänzen",
-      ziel: "/konto",
-      icon: personAddOutline,
-    };
-  }
+  // Primärer CTA, abhängig vom Login-Zustand
+  const ctaPrimary = !istEingeloggt
+    ? { label: "Profil anlegen", href: "/registrieren" }
+    : istTalent
+      ? { label: "Talent-Angebot anlegen", href: "/meine-lehrstellen" }
+      : istBetrieb
+        ? { label: "Einsatz ausschreiben", href: "/meine-lehrstellen" }
+        : { label: "Profil ergänzen", href: "/konto" };
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Win-Win Talentleihe</IonTitle>
-        </IonToolbar>
-      </IonHeader>
       <IonContent fullscreen>
-        {/* HERO */}
-        <div
-          style={{
+        <style>{`
+          .ww-page {
+            --gold: #3a88fe;
+            --gold-light: #6aaaff;
+            --blue-deep: #0b1f4a;
+            --cream: #f7f5f0;
+            --text-dark: #0d1b38;
+            --text-mid: #4a5568;
+            --font-display: "Syne", sans-serif;
+            --font-body: "DM Sans", sans-serif;
+            background: var(--cream);
+            color: var(--text-dark);
+            font-family: var(--font-body);
+          }
+
+          /* HERO */
+          .ww-hero {
+            position: relative;
+            width: 100%;
+            min-height: 86vh;
+            display: flex;
+            align-items: flex-end;
+            overflow: hidden;
+            background: var(--blue-deep);
+          }
+          .ww-hero-bg {
+            position: absolute;
+            inset: 0;
             background:
-              "linear-gradient(135deg, var(--ion-color-secondary) 0%, var(--ion-color-primary) 100%)",
-            color: "#ffffff",
-            padding: "32px 20px 40px",
-            textAlign: "center",
-          }}
-        >
-          <IonIcon
-            icon={handLeftOutline}
-            style={{ fontSize: 56, marginBottom: 12 }}
-          />
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 700 }}>
-            Talente verleihen,
-            <br />
-            Erfahrung gewinnen.
-          </h1>
-          <p
-            style={{
-              margin: "12px auto 0",
-              maxWidth: 480,
-              opacity: 0.92,
-              lineHeight: 1.5,
-            }}
-          >
-            Die Plattform für Handwerks-Azubis und -Betriebe, die voneinander
-            lernen wollen — temporär, fair und auf Augenhöhe.
-          </p>
-        </div>
+              repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(255,255,255,0.025) 40px, rgba(255,255,255,0.025) 42px),
+              linear-gradient(160deg, #0b1f4a 0%, #1a3a7c 50%, #0b1f4a 100%);
+          }
+          .ww-hero-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(160deg, rgba(11,31,74,0.55) 0%, rgba(11,31,74,0.3) 45%, rgba(11,31,74,0.85) 100%);
+          }
+          .ww-hero-tag {
+            position: absolute; top: 28px; right: clamp(20px, 5vw, 60px);
+            font-family: var(--font-body);
+            font-size: 0.6rem;
+            letter-spacing: 0.15em;
+            color: var(--gold-light);
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border: 1px solid var(--gold);
+            border-radius: 3px;
+            z-index: 2;
+          }
+          .ww-hero-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: clamp(60px, 8vw, 100px) clamp(20px, 6vw, 80px) clamp(48px, 6vw, 80px);
+          }
+          .ww-hero-kicker {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+          }
+          .ww-hero-kicker::before {
+            content: "";
+            display: block;
+            width: 36px;
+            height: 1px;
+            background: var(--gold);
+          }
+          .ww-hero-headline {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(2.5rem, 9vw, 5.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+            color: white;
+            max-width: 14ch;
+          }
+          .ww-hero-headline em {
+            font-style: normal;
+            color: var(--gold);
+          }
+          .ww-hero-sub {
+            font-family: var(--font-body);
+            font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.78);
+            max-width: 48ch;
+            line-height: 1.65;
+            margin-top: 24px;
+          }
+          .ww-hero-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+          }
+          .ww-btn-primary {
+            background: var(--gold);
+            color: var(--blue-deep);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.02em;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s, transform 0.15s;
+          }
+          .ww-btn-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+          }
+          .ww-btn-ghost {
+            background: transparent;
+            color: white;
+            font-family: var(--font-body);
+            font-weight: 400;
+            font-size: 0.9rem;
+            padding: 14px 28px;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: border-color 0.2s, color 0.2s, transform 0.15s;
+          }
+          .ww-btn-ghost:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-2px);
+          }
+          .ww-hero-stats {
+            display: flex;
+            gap: clamp(20px, 4vw, 48px);
+            margin-top: clamp(40px, 6vw, 64px);
+            flex-wrap: wrap;
+          }
+          .ww-hero-stat-number {
+            font-family: var(--font-display);
+            font-size: clamp(1.6rem, 5vw, 2.5rem);
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.04em;
+            line-height: 1;
+          }
+          .ww-hero-stat-number span { color: var(--gold); }
+          .ww-hero-stat-label {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.55);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 6px;
+          }
 
-        {/* HAUPT-CTA */}
-        <div className="ion-padding">
-          <IonCard
-            button
-            color="primary"
-            onClick={() => history.push("/lehrstellen")}
-          >
-            <IonCardContent
-              style={{ display: "flex", alignItems: "center", color: "#fff" }}
-            >
-              <IonIcon
-                icon={searchOutline}
-                style={{ fontSize: 32, marginRight: 16 }}
-              />
-              <div style={{ flex: 1 }}>
-                <h2 style={{ margin: 0, fontSize: 18, fontWeight: 700 }}>
-                  Talentleihe entdecken
-                </h2>
-                <p style={{ margin: "4px 0 0", opacity: 0.9 }}>
-                  Aktuelle Einsätze und Talent-Angebote durchstöbern
-                </p>
-              </div>
-              <IonIcon icon={arrowForwardOutline} style={{ fontSize: 22 }} />
-            </IonCardContent>
-          </IonCard>
+          /* INTRO BAND */
+          .ww-intro-band {
+            background: var(--blue-deep);
+            padding: 28px clamp(20px, 6vw, 80px);
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            flex-wrap: wrap;
+          }
+          .ww-intro-band-label {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            white-space: nowrap;
+          }
+          .ww-intro-band-divider {
+            width: 1px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.15);
+          }
+          .ww-intro-band-chambers {
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            flex-wrap: wrap;
+          }
+          .ww-chamber-tag {
+            font-family: var(--font-body);
+            font-size: 0.78rem;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.2s;
+          }
+          .ww-chamber-tag:hover {
+            color: var(--gold);
+          }
 
-          <IonCard button onClick={() => history.push(aktionsKarte.ziel)}>
-            <IonCardContent
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <IonIcon
-                icon={aktionsKarte.icon}
-                color="primary"
-                style={{ fontSize: 32, marginRight: 16 }}
-              />
-              <div style={{ flex: 1 }}>
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color: "var(--ion-color-secondary)",
+          /* HOW IT WORKS */
+          .ww-how {
+            background: var(--cream);
+            padding: clamp(64px, 9vw, 120px) clamp(20px, 6vw, 80px);
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+          }
+          @media (min-width: 720px) {
+            .ww-how {
+              grid-template-columns: 1fr 1fr;
+              gap: 64px;
+            }
+          }
+          .ww-section-kicker {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+          }
+          .ww-section-kicker::before {
+            content: "";
+            display: block;
+            width: 28px;
+            height: 1px;
+            background: var(--gold);
+          }
+          .ww-section-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            letter-spacing: -0.035em;
+            line-height: 1.05;
+            color: var(--text-dark);
+          }
+          .ww-how-intro p {
+            font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+            font-weight: 300;
+            color: var(--text-mid);
+            line-height: 1.7;
+            margin-top: 20px;
+            max-width: 42ch;
+          }
+          .ww-how-cta {
+            margin-top: 28px;
+          }
+          .ww-how-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+          }
+          .ww-how-step {
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 16px;
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+          }
+          .ww-how-step:last-child { border-bottom: none; }
+          .ww-how-step-num {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: -0.05em;
+            color: var(--gold);
+            line-height: 1;
+            padding-top: 2px;
+          }
+          .ww-how-step-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+          }
+          .ww-how-step-body {
+            font-size: 0.88rem;
+            font-weight: 300;
+            color: var(--text-mid);
+            line-height: 1.6;
+          }
+
+          /* OUTRO */
+          .ww-outro {
+            background: var(--blue-deep);
+            color: white;
+            padding: clamp(60px, 8vw, 100px) clamp(20px, 6vw, 80px);
+            text-align: center;
+          }
+          .ww-outro-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+            letter-spacing: -0.035em;
+            line-height: 1.1;
+          }
+          .ww-outro-title em {
+            font-style: normal;
+            color: var(--gold);
+          }
+          .ww-outro-sub {
+            font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 16px;
+            line-height: 1.65;
+            max-width: 52ch;
+            margin-left: auto;
+            margin-right: auto;
+          }
+          .ww-outro-actions {
+            margin-top: 28px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+        `}</style>
+
+        <div className="ww-page">
+          {/* HERO */}
+          <section className="ww-hero">
+            <div className="ww-hero-bg" />
+            <span className="ww-hero-tag">Beta</span>
+
+            <div className="ww-hero-content">
+              <div className="ww-hero-kicker">Talentleihe für das Handwerk</div>
+              <h1 className="ww-hero-headline">
+                Talent trifft
+                <br />
+                <em>Handwerk.</em>
+              </h1>
+              <p className="ww-hero-sub">
+                Win/Win verbindet Auszubildende und Handwerksbetriebe — deutschlandweit,
+                durch alle Handwerkskammern. Flexibel. Fair. Zukunftssicher.
+              </p>
+
+              <div className="ww-hero-actions">
+                <a
+                  className="ww-btn-primary"
+                  href={ctaPrimary.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    history.push(ctaPrimary.href);
                   }}
                 >
-                  {aktionsKarte.titel}
-                </h2>
-                <p style={{ margin: "4px 0 0", color: "var(--ion-color-medium)" }}>
-                  {aktionsKarte.text}
-                </p>
+                  {ctaPrimary.label}
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M3 8h10M9 4l4 4-4 4"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </a>
+                <a
+                  className="ww-btn-ghost"
+                  href="/lehrstellen"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    history.push("/lehrstellen");
+                  }}
+                >
+                  Talentleihe entdecken
+                </a>
               </div>
-              <IonIcon icon={arrowForwardOutline} color="medium" style={{ fontSize: 22 }} />
-            </IonCardContent>
-          </IonCard>
-        </div>
 
-        {/* WIE FUNKTIONIERT'S */}
-        <div className="ion-padding" style={{ paddingTop: 8 }}>
-          <h2
-            style={{
-              fontSize: 18,
-              fontWeight: 700,
-              color: "var(--ion-color-secondary)",
-              marginBottom: 12,
-            }}
-          >
-            So funktioniert's
-          </h2>
+              <div className="ww-hero-stats">
+                <div>
+                  <div className="ww-hero-stat-number">
+                    53<span>+</span>
+                  </div>
+                  <div className="ww-hero-stat-label">Handwerkskammern</div>
+                </div>
+                <div>
+                  <div className="ww-hero-stat-number">
+                    115<span>+</span>
+                  </div>
+                  <div className="ww-hero-stat-label">Ausbildungsberufe</div>
+                </div>
+                <div>
+                  <div className="ww-hero-stat-number">
+                    360<span>k</span>
+                  </div>
+                  <div className="ww-hero-stat-label">Auszubildende</div>
+                </div>
+              </div>
+            </div>
+          </section>
 
-          <Schritt
-            nummer={1}
-            icon={personAddOutline}
-            titel="Profil anlegen"
-            text="Als Talent oder Betrieb in zwei Minuten registriert. Wir merken uns Gewerk, Handwerkskammer und Region."
-          />
-          <Schritt
-            nummer={2}
-            icon={schoolOutline}
-            titel="Anzeige veröffentlichen"
-            text="Talente posten ihre Verfügbarkeit und Lernziele, Betriebe schreiben Einsätze aus."
-          />
-          <Schritt
-            nummer={3}
-            icon={businessOutline}
-            titel="Direkt Kontakt"
-            text="Über die Detailseite per E-Mail anschreiben — ohne Umwege, ohne Vermittlungsgebühren."
-          />
-        </div>
+          {/* INTRO BAND */}
+          <div className="ww-intro-band">
+            <div className="ww-intro-band-label">Kammern</div>
+            <div className="ww-intro-band-divider" />
+            <div className="ww-intro-band-chambers">
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-berlin.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Berlin
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-muenchen.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK München
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-hamburg.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Hamburg
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-koeln.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Köln
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-rhein-main.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Frankfurt
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-stuttgart.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Stuttgart
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-duesseldorf.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Düsseldorf
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-leipzig.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Leipzig
+              </a>
+              <a
+                className="ww-chamber-tag"
+                href="https://www.zdh.de/ueber-uns/handwerksorganisationen/handwerkskammern/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                + 45 weitere
+              </a>
+            </div>
+          </div>
 
-        {/* SEKUNDÄRE LINKS */}
-        <div className="ion-padding" style={{ paddingTop: 0 }}>
-          <IonButton
-            expand="block"
-            fill="outline"
-            color="secondary"
-            onClick={() => history.push("/informationen")}
-          >
-            Mehr Informationen
-          </IonButton>
-          {!istEingeloggt && (
-            <IonButton
-              expand="block"
-              fill="clear"
-              color="medium"
-              onClick={() => history.push("/login")}
-              style={{ marginTop: 4 }}
-            >
-              Schon registriert? Hier einloggen
-            </IonButton>
-          )}
+          {/* HOW IT WORKS */}
+          <section className="ww-how">
+            <div className="ww-how-intro">
+              <div className="ww-section-kicker">So funktioniert's</div>
+              <h2 className="ww-section-title">
+                Einfach.
+                <br />
+                Transparent.
+                <br />
+                Effektiv.
+              </h2>
+              <p>
+                Win/Win macht die Talentleihe im Handwerk einfach: Auszubildende
+                können zeitweise in anderen Betrieben arbeiten — beide Seiten
+                gewinnen.
+              </p>
+
+              <div className="ww-how-cta">
+                <a
+                  className="ww-btn-primary"
+                  href="/informationen"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    history.push("/informationen");
+                  }}
+                  style={{ background: "var(--blue-deep)", color: "white" }}
+                >
+                  Mehr Informationen
+                </a>
+              </div>
+            </div>
+
+            <div className="ww-how-steps">
+              <div className="ww-how-step">
+                <div className="ww-how-step-num">01</div>
+                <div>
+                  <div className="ww-how-step-title">Profil erstellen</div>
+                  <div className="ww-how-step-body">
+                    Azubi oder Betrieb registrieren, Fähigkeiten und Bedarf
+                    eintragen — in wenigen Minuten startklar.
+                  </div>
+                </div>
+              </div>
+              <div className="ww-how-step">
+                <div className="ww-how-step-num">02</div>
+                <div>
+                  <div className="ww-how-step-title">Match finden</div>
+                  <div className="ww-how-step-body">
+                    Passende Betriebe oder Azubis nach Region, Gewerk und
+                    Verfügbarkeit filtern — auf Karte oder in der Liste.
+                  </div>
+                </div>
+              </div>
+              <div className="ww-how-step">
+                <div className="ww-how-step-num">03</div>
+                <div>
+                  <div className="ww-how-step-title">Anfrage senden</div>
+                  <div className="ww-how-step-body">
+                    Direkt im Detail einer Anzeige Kontakt aufnehmen.
+                    Bewerbungen und Anfragen sind im Konto jederzeit
+                    nachvollziehbar.
+                  </div>
+                </div>
+              </div>
+              <div className="ww-how-step">
+                <div className="ww-how-step-num">04</div>
+                <div>
+                  <div className="ww-how-step-title">Los geht's</div>
+                  <div className="ww-how-step-body">
+                    Sobald beide Seiten zusagen, wechselt der Azubi temporär den
+                    Betrieb. Beide gewinnen neue Erfahrungen und Verbindungen.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* OUTRO */}
+          <section className="ww-outro">
+            <h2 className="ww-outro-title">
+              Zeit, dein <em>Handwerk</em>
+              <br />
+              neu zu denken.
+            </h2>
+            <p className="ww-outro-sub">
+              Egal ob du als Azubi neue Erfahrungen sammeln oder als Betrieb
+              passende Talente entdecken willst — Win/Win bringt euch zusammen.
+            </p>
+            <div className="ww-outro-actions">
+              <a
+                className="ww-btn-primary"
+                href={ctaPrimary.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  history.push(ctaPrimary.href);
+                }}
+              >
+                {ctaPrimary.label}
+              </a>
+              {!istEingeloggt && (
+                <a
+                  className="ww-btn-ghost"
+                  href="/login"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    history.push("/login");
+                  }}
+                >
+                  Schon Konto? Einloggen
+                </a>
+              )}
+            </div>
+          </section>
         </div>
       </IonContent>
     </IonPage>
   );
 };
-
-const Schritt: React.FC<{
-  nummer: number;
-  icon: string;
-  titel: string;
-  text: string;
-}> = ({ nummer, icon, titel, text }) => (
-  <div
-    style={{
-      display: "flex",
-      alignItems: "flex-start",
-      background: "#fff",
-      borderRadius: 12,
-      padding: 14,
-      marginBottom: 10,
-      gap: 14,
-    }}
-  >
-    <div
-      style={{
-        width: 36,
-        height: 36,
-        borderRadius: "50%",
-        background: "var(--ion-color-tertiary)",
-        color: "var(--ion-color-secondary)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontWeight: 700,
-        flexShrink: 0,
-      }}
-    >
-      {nummer}
-    </div>
-    <div style={{ flex: 1 }}>
-      <h3
-        style={{
-          margin: 0,
-          fontSize: 15,
-          fontWeight: 700,
-          color: "var(--ion-color-secondary)",
-          display: "flex",
-          alignItems: "center",
-          gap: 8,
-        }}
-      >
-        <IonIcon icon={icon} color="primary" style={{ fontSize: 18 }} />
-        {titel}
-      </h3>
-      <IonText color="medium">
-        <p style={{ margin: "4px 0 0", fontSize: 14, lineHeight: 1.4 }}>{text}</p>
-      </IonText>
-    </div>
-  </div>
-);
 
 export default Homepage;
