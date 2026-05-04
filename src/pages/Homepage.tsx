@@ -501,7 +501,7 @@ const Homepage: React.FC = () => {
               </a>
               <a
                 className="ww-chamber-tag"
-                href="https://www.zdh.de/ueber-uns/handwerksorganisationen/handwerkskammern/"
+                href="https://www.zdh.de/ueber-uns/organisationen-des-handwerks/handwerkskammern/adressen-der-handwerkskammern/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
