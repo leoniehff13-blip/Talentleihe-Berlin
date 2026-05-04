@@ -9,8 +9,10 @@ import type { Lehrstelle } from "../lib/appwrite";
  * Ergebnisse werden in sessionStorage gecached.
  */
 
-// Globale Leaflet-Variable, die per CDN in index.html eingebunden wurde
-declare const L: typeof import("leaflet");
+// Globale Leaflet-Variable, die per CDN in index.html eingebunden wurde.
+// Wir verwenden `any`, damit kein @types/leaflet als npm-Paket nötig ist.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const L: any;
 
 interface Props {
   items: Lehrstelle[];
@@ -65,8 +67,10 @@ async function geocode(query: string): Promise<Coords | null> {
 
 const LehrstellenMap: React.FC<Props> = ({ items }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<ReturnType<typeof L.map> | null>(null);
-  const markersLayerRef = useRef<ReturnType<typeof L.layerGroup> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const markersLayerRef = useRef<any>(null);
 
   const [progress, setProgress] = useState({ done: 0, total: items.length });
   const [error, setError] = useState<string | null>(null);
