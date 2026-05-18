@@ -153,3 +153,7 @@ ion-toolbar ion-segment-button {
   --indicator-color: #ffffff;
   --background-checked: rgba(255, 255, 255, 0.18);
 }
+
+ion-tab-bar {
+  display: none;
+}

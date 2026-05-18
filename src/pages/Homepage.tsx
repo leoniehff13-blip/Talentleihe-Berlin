@@ -291,7 +291,7 @@ const Homepage: React.FC = () => {
           }
           .ww-how-step {
             display: grid;
-            grid-template-columns: 56px 1fr;
+            grid-template-columns: 80px 1fr;
             gap: 16px;
             padding: 24px 0;
             border-bottom: 1px solid rgba(0, 0, 0, 0.07);

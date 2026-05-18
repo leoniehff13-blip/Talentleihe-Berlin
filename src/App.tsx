@@ -1,21 +1,12 @@
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
-  IonIcon,
-  IonLabel,
   IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
   IonTabs,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import {
-  homeOutline,
-  listOutline,
-  informationCircleOutline,
-  personOutline,
-} from "ionicons/icons";
+import TopNav from "./components/TopNav";
 
 import Homepage from "./pages/Homepage";
 import Lehrstellen from "./pages/Lehrstellen";
@@ -55,6 +46,7 @@ const App: React.FC = () => (
   <IonApp>
     <AuthProvider>
       <IonReactRouter>
+        <TopNav />
         <IonTabs>
           <IonRouterOutlet>
             <Route exact path="/home">
@@ -103,24 +95,6 @@ const App: React.FC = () => (
             </Route>
           </IonRouterOutlet>
 
-          <IonTabBar slot="bottom">
-            <IonTabButton tab="home" href="/home">
-              <IonIcon icon={homeOutline} />
-              <IonLabel>Home</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="talentleihe" href="/lehrstellen">
-              <IonIcon icon={listOutline} />
-              <IonLabel>Talentleihe</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="informationen" href="/informationen">
-              <IonIcon icon={informationCircleOutline} />
-              <IonLabel>Infos</IonLabel>
-            </IonTabButton>
-            <IonTabButton tab="konto" href="/konto">
-              <IonIcon icon={personOutline} />
-              <IonLabel>Konto</IonLabel>
-            </IonTabButton>
-          </IonTabBar>
         </IonTabs>
       </IonReactRouter>
     </AuthProvider>
