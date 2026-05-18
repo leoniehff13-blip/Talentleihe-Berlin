@@ -87,7 +87,7 @@ const TopNav: React.FC = () => {
         <div style={{
           height: "52px",
           background: showBg ? "#ffffff" : "transparent",
-          boxShadow: showBg ? "0 1px 8px rgba(0,0,0,0.08)" : "none",
+          boxShadow: showBg ? "0 1px 8px rgba(30,54,122,0.10)" : "none",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
@@ -99,16 +99,16 @@ const TopNav: React.FC = () => {
           <span
             onClick={() => navigate("/home")}
             style={{
-              fontFamily: '"Syne", sans-serif',
+              fontFamily: '"Quicksand", sans-serif',
               fontWeight: 800,
               fontSize: "1.4rem",
               letterSpacing: "-0.04em",
-              color: "#3a88fe",
+              color: "#47BCC2",
               cursor: "pointer",
               userSelect: "none",
             }}
           >
-            WT
+            TL
           </span>
 
           {/* Desktop-Navigation */}
@@ -120,20 +120,20 @@ const TopNav: React.FC = () => {
                   key={href}
                   onClick={() => navigate(href)}
                   style={{
-                    fontFamily: '"Syne", sans-serif',
+                    fontFamily: '"Quicksand", sans-serif',
                     fontSize: "1.0rem",
-                    letterSpacing: "0.15em",
+                    letterSpacing: "0.08em",
                     textTransform: "uppercase",
-                    color: active ? "#3a88fe" : "#6aaaff",
+                    color: active ? "#47BCC2" : "#4a6080",
                     background: "transparent",
                     border: "none",
                     padding: "8px 0",
                     cursor: "pointer",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     transition: "color 0.15s",
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "#3a88fe"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = active ? "#3a88fe" : "#6aaaff"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = "#47BCC2"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = active ? "#47BCC2" : "#4a6080"; }}
                 >
                   {label}
                 </button>
@@ -163,9 +163,9 @@ const TopNav: React.FC = () => {
             {[0, 1, 2].map(i => (
               <span key={i} style={{
                 display: "block",
-                width: menuOpen ? "22px" : "22px",
+                width: "22px",
                 height: "2px",
-                background: "#3a88fe",
+                background: "#47BCC2",
                 borderRadius: "2px",
                 transition: "transform 0.2s, opacity 0.2s",
                 transform: menuOpen
@@ -183,8 +183,8 @@ const TopNav: React.FC = () => {
         {menuOpen && (
           <div className="topnav-dropdown" style={{
             background: "#ffffff",
-            borderTop: "1px solid rgba(0,0,0,0.06)",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.10)",
+            borderTop: "1px solid rgba(30,54,122,0.08)",
+            boxShadow: "0 8px 24px rgba(30,54,122,0.12)",
             display: "flex",
             flexDirection: "column",
           }}>
@@ -195,15 +195,15 @@ const TopNav: React.FC = () => {
                   key={href}
                   onClick={() => navigate(href)}
                   style={{
-                    fontFamily: '"Syne", sans-serif',
+                    fontFamily: '"Quicksand", sans-serif',
                     fontSize: "0.85rem",
-                    letterSpacing: "0.15em",
+                    letterSpacing: "0.1em",
                     textTransform: "uppercase",
-                    fontWeight: 800,
-                    color: active ? "#3a88fe" : "#0d1b38",
-                    background: active ? "rgba(58,136,254,0.06)" : "transparent",
+                    fontWeight: 700,
+                    color: active ? "#47BCC2" : "#1E367A",
+                    background: active ? "rgba(71,188,194,0.10)" : "transparent",
                     border: "none",
-                    borderBottom: "1px solid rgba(0,0,0,0.05)",
+                    borderBottom: "1px solid rgba(30,54,122,0.06)",
                     padding: "18px clamp(16px, 5vw, 60px)",
                     textAlign: "left",
                     cursor: "pointer",

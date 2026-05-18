@@ -94,7 +94,7 @@ const LehrstellenInner: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const queries: string[] = [Query.orderDesc("startdatum"), Query.limit(100)];
+      const queries: string[] = [Query.orderDesc("startdatum"), Query.limit(100), Query.equal("bundesland", "Berlin")];
 
       // Rollenspezifischer Typ-Filter
       if (angezeigterTyp) {

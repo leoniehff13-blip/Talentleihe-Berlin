@@ -1,124 +1,116 @@
 /* =====================================================================
- * Theme: Win/Win Talentleihe
+ * Theme: Talentleihe Berlin
  *
- * Farbpalette (aus dem Design-Handoff)
- *   #f7f5f0  cream         – Seiten-Hintergrund
- *   #ffffff  white         – Karten und Listen
- *   #0b1f4a  blue-deep     – Toolbar, Footer-artige Bereiche
- *   #1a3a7c  blue-mid      – Sekundäre Akzente
- *   #2952b3  blue-light
- *   #3a88fe  accent        – Buttons, Links, aktive Tabs
- *   #6aaaff  accent-light
- *   #0d1b38  text-dark     – Schrifttext
- *   #4a5568  text-mid      – Sekundärer Text
+ * Farbpalette
+ *   #47BCC2  teal          – Primäre Akzentfarbe, Buttons, Links
+ *   #96B740  green         – Sekundäre Akzentfarbe, Erfolg
+ *   #1E367A  blue          – Toolbar, Überschriften, tiefer Text
+ *   #ffffff  white         – Seitenhintergrund & Karten
  *
- * Schriften
- *   Display  : "Syne"   (700/800 für Headlines)
- *   Body     : "DM Sans" (300/400/500)
+ * Schrift
+ *   Quicksand (Google Fonts) – alle Gewichte 300–700
  * ===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
 
 :root {
   /* ---------- App-spezifische Custom-Properties ---------- */
-  --ww-cream: #f7f5f0;
-  --ww-white: #ffffff;
-  --ww-blue-deep: #0b1f4a;
-  --ww-blue-mid: #1a3a7c;
-  --ww-blue-light: #2952b3;
-  --ww-accent: #3a88fe;
-  --ww-accent-light: #6aaaff;
-  --ww-text-dark: #0d1b38;
-  --ww-text-mid: #4a5568;
-  --ww-text-light: #8896b3;
+  --tb-teal:       #47BCC2;
+  --tb-teal-light: #70D0D5;
+  --tb-green:      #96B740;
+  --tb-blue:       #1E367A;
+  --tb-blue-mid:   #2a4a9a;
+  --tb-bg:         #ffffff;
+  --tb-white:      #ffffff;
+  --tb-text:       #1E367A;
+  --tb-text-mid:   #4a6080;
+  --tb-text-light: #8096b8;
 
-  --ww-font-display: "Syne", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
-  --ww-font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, sans-serif;
+  --tb-font: "Quicksand", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* ---------- Schrift (Ionic-Standard) ---------- */
-  --ion-font-family: var(--ww-font-body);
+  --ion-font-family: var(--tb-font);
 
-  /* ---------- Allgemeine Hintergrund-/Text-Farben ---------- */
-  --ion-background-color: var(--ww-cream);
-  --ion-background-color-rgb: 247, 245, 240;
+  /* ---------- Hintergrund / Text ---------- */
+  --ion-background-color: var(--tb-bg);
+  --ion-background-color-rgb: 255, 255, 255;
 
-  --ion-text-color: var(--ww-text-dark);
-  --ion-text-color-rgb: 13, 27, 56;
+  --ion-text-color: var(--tb-text);
+  --ion-text-color-rgb: 30, 54, 122;
 
-  /* Karten und Listen sollen heller sein als der Seitenhintergrund */
-  --ion-item-background: var(--ww-white);
-  --ion-card-background: var(--ww-white);
+  --ion-item-background: var(--tb-white);
+  --ion-card-background: var(--tb-white);
 
   /* ---------- Toolbar (Header) ---------- */
-  --ion-toolbar-background: var(--ww-blue-deep);
+  --ion-toolbar-background: var(--tb-blue);
   --ion-toolbar-color: #ffffff;
   --ion-toolbar-color-active: #ffffff;
   --ion-toolbar-color-unchecked: rgba(255, 255, 255, 0.7);
 
   /* ---------- Tab-Bar (Footer) ---------- */
-  --ion-tab-bar-background: var(--ww-white);
-  --ion-tab-bar-color: var(--ww-blue-deep);
-  --ion-tab-bar-color-selected: var(--ww-accent);
+  --ion-tab-bar-background: var(--tb-white);
+  --ion-tab-bar-color: var(--tb-blue);
+  --ion-tab-bar-color-selected: var(--tb-teal);
 
-  /* ---------- Primary (#3a88fe) ---------- */
-  --ion-color-primary: #3a88fe;
-  --ion-color-primary-rgb: 58, 136, 254;
+  /* ---------- Primary (#47BCC2 – Teal) ---------- */
+  --ion-color-primary: #47BCC2;
+  --ion-color-primary-rgb: 71, 188, 194;
   --ion-color-primary-contrast: #ffffff;
   --ion-color-primary-contrast-rgb: 255, 255, 255;
-  --ion-color-primary-shade: #3378e0;
-  --ion-color-primary-tint: #4e94fe;
+  --ion-color-primary-shade: #3ea8ad;
+  --ion-color-primary-tint: #59c3c8;
 
-  /* ---------- Secondary (#0b1f4a) ---------- */
-  --ion-color-secondary: #0b1f4a;
-  --ion-color-secondary-rgb: 11, 31, 74;
+  /* ---------- Secondary (#1E367A – Dunkelblau) ---------- */
+  --ion-color-secondary: #1E367A;
+  --ion-color-secondary-rgb: 30, 54, 122;
   --ion-color-secondary-contrast: #ffffff;
   --ion-color-secondary-contrast-rgb: 255, 255, 255;
-  --ion-color-secondary-shade: #0a1b41;
-  --ion-color-secondary-tint: #23355c;
+  --ion-color-secondary-shade: #1a306b;
+  --ion-color-secondary-tint: #354a87;
 
-  /* ---------- Tertiary (#6aaaff) ---------- */
-  --ion-color-tertiary: #6aaaff;
-  --ion-color-tertiary-rgb: 106, 170, 255;
-  --ion-color-tertiary-contrast: #0d1b38;
-  --ion-color-tertiary-contrast-rgb: 13, 27, 56;
-  --ion-color-tertiary-shade: #5e96e0;
-  --ion-color-tertiary-tint: #79b3ff;
+  /* ---------- Tertiary (#96B740 – Grün) ---------- */
+  --ion-color-tertiary: #96B740;
+  --ion-color-tertiary-rgb: 150, 183, 64;
+  --ion-color-tertiary-contrast: #ffffff;
+  --ion-color-tertiary-contrast-rgb: 255, 255, 255;
+  --ion-color-tertiary-shade: #84a138;
+  --ion-color-tertiary-tint: #a0be53;
 
   /* ---------- Status-Farben ---------- */
-  --ion-color-success: #2dd36f;
-  --ion-color-success-rgb: 45, 211, 111;
+  --ion-color-success: #96B740;
+  --ion-color-success-rgb: 150, 183, 64;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255, 255, 255;
-  --ion-color-success-shade: #28ba62;
-  --ion-color-success-tint: #42d77d;
+  --ion-color-success-shade: #84a138;
+  --ion-color-success-tint: #a0be53;
 
-  --ion-color-warning: #ffc409;
-  --ion-color-warning-rgb: 255, 196, 9;
-  --ion-color-warning-contrast: #0d1b38;
-  --ion-color-warning-contrast-rgb: 13, 27, 56;
-  --ion-color-warning-shade: #e0ac08;
-  --ion-color-warning-tint: #ffca22;
+  --ion-color-warning: #f0a030;
+  --ion-color-warning-rgb: 240, 160, 48;
+  --ion-color-warning-contrast: #ffffff;
+  --ion-color-warning-contrast-rgb: 255, 255, 255;
+  --ion-color-warning-shade: #d08c2a;
+  --ion-color-warning-tint: #f2aa45;
 
-  --ion-color-danger: #eb445a;
-  --ion-color-danger-rgb: 235, 68, 90;
+  --ion-color-danger: #e05060;
+  --ion-color-danger-rgb: 224, 80, 96;
   --ion-color-danger-contrast: #ffffff;
   --ion-color-danger-contrast-rgb: 255, 255, 255;
-  --ion-color-danger-shade: #cf3c4f;
-  --ion-color-danger-tint: #ed576b;
+  --ion-color-danger-shade: #c44555;
+  --ion-color-danger-tint: #e36270;
 
-  --ion-color-medium: #4a5568;
-  --ion-color-medium-rgb: 74, 85, 104;
+  --ion-color-medium: #4a6080;
+  --ion-color-medium-rgb: 74, 96, 128;
   --ion-color-medium-contrast: #ffffff;
   --ion-color-medium-contrast-rgb: 255, 255, 255;
-  --ion-color-medium-shade: #424b5c;
-  --ion-color-medium-tint: #5c6678;
+  --ion-color-medium-shade: #415570;
+  --ion-color-medium-tint: #5c708d;
 
-  --ion-color-light: #f7f5f0;
-  --ion-color-light-rgb: 247, 245, 240;
-  --ion-color-light-contrast: #0d1b38;
-  --ion-color-light-contrast-rgb: 13, 27, 56;
-  --ion-color-light-shade: #d9d8d3;
-  --ion-color-light-tint: #f8f6f1;
+  --ion-color-light: #EFF1F6;
+  --ion-color-light-rgb: 239, 241, 246;
+  --ion-color-light-contrast: #1E367A;
+  --ion-color-light-contrast-rgb: 30, 54, 122;
+  --ion-color-light-shade: #d2d4da;
+  --ion-color-light-tint: #f1f3f7;
 }
 
 /* Globaler Body-Reset */
@@ -128,30 +120,25 @@ body {
   font-family: var(--ion-font-family);
 }
 
-/* Links bekommen die Akzent-Farbe */
 a {
   color: var(--ion-color-primary);
 }
 
-/* Display-Schrift überall, wo Headlines vorkommen */
-h1,
-h2,
-h3,
-h4,
+h1, h2, h3, h4,
 ion-card-title,
 ion-title {
-  font-family: var(--ww-font-display);
+  font-family: var(--tb-font);
+  font-weight: 800;
   letter-spacing: -0.02em;
 }
 
-/* Segment-Buttons in den dunklen Toolbars (Hintergrund navy) brauchen
-   weiße Schrift, sonst sind sie kaum lesbar. */
+/* Segment-Buttons in dunkler Toolbar */
 ion-toolbar ion-segment-button {
   --color: rgba(255, 255, 255, 0.7);
   --color-checked: #ffffff;
   --color-hover: #ffffff;
-  --indicator-color: #ffffff;
-  --background-checked: rgba(255, 255, 255, 0.18);
+  --indicator-color: #47BCC2;
+  --background-checked: rgba(71, 188, 194, 0.22);
 }
 
 ion-tab-bar {

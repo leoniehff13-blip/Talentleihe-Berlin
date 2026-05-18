@@ -24,14 +24,14 @@ const Homepage: React.FC = () => {
       <IonContent fullscreen>
         <style>{`
           .ww-page {
-            --gold: #3a88fe;
-            --gold-light: #6aaaff;
-            --blue-deep: #0b1f4a;
-            --cream: #f7f5f0;
-            --text-dark: #0d1b38;
-            --text-mid: #4a5568;
-            --font-display: "Syne", sans-serif;
-            --font-body: "DM Sans", sans-serif;
+            --gold: #47BCC2;
+            --gold-light: #70D0D5;
+            --blue-deep: #1E367A;
+            --cream: #ffffff;
+            --text-dark: #1E367A;
+            --text-mid: #4a6080;
+            --font-display: "Nunito", sans-serif;
+            --font-body: "Nunito", sans-serif;
             background: var(--cream);
             color: var(--text-dark);
             font-family: var(--font-body);
@@ -45,27 +45,25 @@ const Homepage: React.FC = () => {
             display: flex;
             align-items: flex-end;
             overflow: hidden;
-            background: var(--blue-deep);
+            background: var(--cream);
           }
           .ww-hero-bg {
             position: absolute;
             inset: 0;
-            background:
-              repeating-linear-gradient(-45deg, transparent, transparent 40px, rgba(255,255,255,0.025) 40px, rgba(255,255,255,0.025) 42px),
-              linear-gradient(160deg, #0b1f4a 0%, #1a3a7c 50%, #0b1f4a 100%);
+            background: linear-gradient(135deg, #EFF1F6 0%, #e4f5f6 60%, #EFF1F6 100%);
           }
           .ww-hero-bg::after {
             content: "";
             position: absolute;
             inset: 0;
-            background: linear-gradient(160deg, rgba(11,31,74,0.55) 0%, rgba(11,31,74,0.3) 45%, rgba(11,31,74,0.85) 100%);
+            background: none;
           }
           .ww-hero-tag {
             position: absolute; top: 28px; right: clamp(20px, 5vw, 60px);
             font-family: var(--font-body);
             font-size: 0.6rem;
             letter-spacing: 0.15em;
-            color: var(--gold-light);
+            color: var(--gold);
             text-transform: uppercase;
             padding: 4px 8px;
             border: 1px solid var(--gold);
@@ -103,7 +101,7 @@ const Homepage: React.FC = () => {
             font-size: clamp(2.5rem, 9vw, 5.5rem);
             line-height: 0.95;
             letter-spacing: -0.04em;
-            color: white;
+            color: var(--text-dark);
             max-width: 14ch;
           }
           .ww-hero-headline em {
@@ -114,7 +112,7 @@ const Homepage: React.FC = () => {
             font-family: var(--font-body);
             font-size: clamp(0.95rem, 1.6vw, 1.2rem);
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.78);
+            color: var(--text-mid);
             max-width: 48ch;
             line-height: 1.65;
             margin-top: 24px;
@@ -148,12 +146,12 @@ const Homepage: React.FC = () => {
           }
           .ww-btn-ghost {
             background: transparent;
-            color: white;
+            color: var(--blue-deep);
             font-family: var(--font-body);
             font-weight: 400;
             font-size: 0.9rem;
             padding: 14px 28px;
-            border: 1px solid rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(30, 54, 122, 0.35);
             border-radius: 4px;
             cursor: pointer;
             text-decoration: none;
@@ -177,7 +175,7 @@ const Homepage: React.FC = () => {
             font-family: var(--font-display);
             font-size: clamp(1.6rem, 5vw, 2.5rem);
             font-weight: 800;
-            color: white;
+            color: var(--text-dark);
             letter-spacing: -0.04em;
             line-height: 1;
           }
@@ -185,7 +183,7 @@ const Homepage: React.FC = () => {
           .ww-hero-stat-label {
             font-size: 0.7rem;
             font-weight: 400;
-            color: rgba(255, 255, 255, 0.55);
+            color: var(--text-mid);
             letter-spacing: 0.08em;
             text-transform: uppercase;
             margin-top: 6px;
@@ -364,15 +362,15 @@ const Homepage: React.FC = () => {
             <span className="ww-hero-tag">Beta</span>
 
             <div className="ww-hero-content">
-              <div className="ww-hero-kicker">Talentleihe für das Handwerk</div>
+              <div className="ww-hero-kicker">Talentleihe für das Berliner Handwerk</div>
               <h1 className="ww-hero-headline">
                 Talent trifft
                 <br />
                 <em>Handwerk.</em>
               </h1>
               <p className="ww-hero-sub">
-                Win/Win verbindet Auszubildende und Handwerksbetriebe — deutschlandweit,
-                durch alle Handwerkskammern. Flexibel. Fair. Zukunftssicher.
+                Talentleihe Berlin verbindet Auszubildende und Betriebe in der Hauptstadtregion
+                — vermittelt durch die Handwerkskammer Berlin. Flexibel. Fair. Zukunftssicher.
               </p>
 
               <div className="ww-hero-actions">
@@ -410,9 +408,9 @@ const Homepage: React.FC = () => {
               <div className="ww-hero-stats">
                 <div>
                   <div className="ww-hero-stat-number">
-                    53<span>+</span>
+                    1
                   </div>
-                  <div className="ww-hero-stat-label">Handwerkskammern</div>
+                  <div className="ww-hero-stat-label">Handwerkskammer Berlin</div>
                 </div>
                 <div>
                   <div className="ww-hero-stat-number">
@@ -432,80 +430,16 @@ const Homepage: React.FC = () => {
 
           {/* INTRO BAND */}
           <div className="ww-intro-band">
-            <div className="ww-intro-band-label">Kammern</div>
+            <div className="ww-intro-band-label">Partner</div>
             <div className="ww-intro-band-divider" />
-            <div className="ww-intro-band-chambers">
+                        <div className="ww-intro-band-chambers">
               <a
                 className="ww-chamber-tag"
                 href="https://www.hwk-berlin.de"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                HWK Berlin
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-muenchen.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK München
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-hamburg.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Hamburg
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-koeln.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Köln
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-rhein-main.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Frankfurt
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-stuttgart.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Stuttgart
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-duesseldorf.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Düsseldorf
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-leipzig.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Leipzig
-              </a>
-              <a
-                className="ww-chamber-tag"
-                href="https://www.zdh.de/ueber-uns/organisationen-des-handwerks/handwerkskammern/adressen-der-handwerkskammern/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                + 45 weitere
+                hwk-berlin.de
               </a>
             </div>
           </div>
@@ -522,7 +456,7 @@ const Homepage: React.FC = () => {
                 Effektiv.
               </h2>
               <p>
-                Win/Win macht die Talentleihe im Handwerk einfach: Auszubildende
+                Talentleihe Berlin macht den Austausch im Handwerk einfach: Auszubildende
                 können zeitweise in anderen Betrieben arbeiten — beide Seiten
                 gewinnen.
               </p>
@@ -535,7 +469,7 @@ const Homepage: React.FC = () => {
                     e.preventDefault();
                     history.push("/informationen");
                   }}
-                  style={{ background: "var(--blue-deep)", color: "white" }}
+                  style={{ background: "#96B740", color: "white" }}
                 >
                   Mehr Informationen
                 </a>
@@ -554,7 +488,7 @@ const Homepage: React.FC = () => {
                 </div>
               </div>
               <div className="ww-how-step">
-                <div className="ww-how-step-num">02</div>
+                <div className="ww-how-step-num" style={{ color: "#96B740" }}>02</div>
                 <div>
                   <div className="ww-how-step-title">Match finden</div>
                   <div className="ww-how-step-body">
@@ -575,7 +509,7 @@ const Homepage: React.FC = () => {
                 </div>
               </div>
               <div className="ww-how-step">
-                <div className="ww-how-step-num">04</div>
+                <div className="ww-how-step-num" style={{ color: "#96B740" }}>04</div>
                 <div>
                   <div className="ww-how-step-title">Los geht's</div>
                   <div className="ww-how-step-body">
@@ -596,7 +530,7 @@ const Homepage: React.FC = () => {
             </h2>
             <p className="ww-outro-sub">
               Egal ob du als Azubi neue Erfahrungen sammeln oder als Betrieb
-              passende Talente entdecken willst — Win/Win bringt euch zusammen.
+              passende Talente entdecken willst — Talentleihe Berlin bringt euch zusammen.
             </p>
             <div className="ww-outro-actions">
               <a

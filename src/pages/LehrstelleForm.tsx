@@ -73,7 +73,7 @@ const EMPTY: FormState = {
   plz: "",
   plz_umkreis: "",
   stadt: "",
-  bundesland: "",
+  bundesland: "Berlin",
   handwerkskammer: "",
 };
 
