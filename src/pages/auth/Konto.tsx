@@ -33,6 +33,8 @@ import {
   EMPTY_PROFIL,
   validateProfil,
   profilStateToInput,
+  adresseAufteilen,
+  ortAufteilen,
   type ProfilFormState,
 } from "../../components/ProfilFormFields";
 
@@ -52,8 +54,15 @@ const Konto: React.FC = () => {
         anrede: profile.anrede ?? "",
         name: profile.name ?? "",
         vorname: profile.vorname ?? "",
-        ort: profile.ort ?? "",
-        adresse: profile.adresse ?? "",
+        ...(() => {
+          if (profile.type === "talent") {
+            const { plz, ort } = ortAufteilen(profile.ort ?? "");
+            return { plz, ort, strasse: "", hausnummer: "", adresse: "" };
+          } else {
+            const { strasse, hausnummer, plz, ort } = adresseAufteilen(profile.adresse ?? "");
+            return { strasse, hausnummer, plz, ort, adresse: "" };
+          }
+        })(),
         gewerk: profile.gewerk ?? "",
         handwerkskammer: profile.handwerkskammer ?? "",
         lehrjahr: profile.lehrjahr != null ? String(profile.lehrjahr) : "",
@@ -227,7 +236,7 @@ const Konto: React.FC = () => {
                 <IonItem>
                   <IonLabel>
                     <h3>Wohnort</h3>
-                    <p>{profile.ort ?? "—"}</p>
+                    <p>{profile.ort ? profile.ort : "—"}</p>
                   </IonLabel>
                 </IonItem>
                 {profile.faehigkeiten?.length > 0 && (
@@ -257,7 +266,7 @@ const Konto: React.FC = () => {
                 <IonItem>
                   <IonLabel>
                     <h3>Adresse</h3>
-                    <p>{profile.adresse ?? "—"}</p>
+                    <p style={{ whiteSpace: "pre-line" }}>{profile.adresse ?? "—"}</p>
                   </IonLabel>
                 </IonItem>
                 <IonItem>

@@ -19,6 +19,9 @@ export interface ProfilFormState {
   name: string;
   vorname: string;
   ort: string;
+  plz: string;
+  strasse: string;
+  hausnummer: string;
   adresse: string;
   gewerk: string;
   handwerkskammer: string;
@@ -37,6 +40,9 @@ export const EMPTY_PROFIL: ProfilFormState = {
   name: "",
   vorname: "",
   ort: "",
+  plz: "",
+  strasse: "",
+  hausnummer: "",
   adresse: "",
   gewerk: "",
   handwerkskammer: "",
@@ -48,6 +54,30 @@ export const EMPTY_PROFIL: ProfilFormState = {
   ansprechpartner_email: "",
   spezialisierung: "",
 };
+
+/** Hilfsfunktionen zum Kombinieren und Parsen der Adressfelder. */
+export function adresseZusammenfuegen(strasse: string, hausnummer: string, plz: string, ort: string) {
+  return `${strasse} ${hausnummer}, ${plz} ${ort}`.trim();
+}
+
+export function adresseAufteilen(adresse: string) {
+  const [teil1 = "", teil2 = ""] = adresse.split(", ");
+  const lastSpace = teil1.lastIndexOf(" ");
+  const strasse = lastSpace > 0 ? teil1.slice(0, lastSpace) : teil1;
+  const hausnummer = lastSpace > 0 ? teil1.slice(lastSpace + 1) : "";
+  const firstSpace = teil2.indexOf(" ");
+  const plz = firstSpace > 0 ? teil2.slice(0, firstSpace) : "";
+  const ort = firstSpace > 0 ? teil2.slice(firstSpace + 1) : teil2;
+  return { strasse, hausnummer, plz, ort };
+}
+
+export function ortAufteilen(ort: string) {
+  const firstSpace = ort.indexOf(" ");
+  if (firstSpace > 0 && /^\d{5}$/.test(ort.slice(0, firstSpace))) {
+    return { plz: ort.slice(0, firstSpace), ort: ort.slice(firstSpace + 1) };
+  }
+  return { plz: "", ort };
+}
 
 interface Props {
   state: ProfilFormState;
@@ -117,12 +147,22 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               />
             </IonItem>
             <IonItem>
-              <IonInput
-                label="Wohnort *"
-                labelPlacement="stacked"
-                value={state.ort}
-                onIonInput={(e) => set("ort", e.detail.value ?? "")}
-              />
+              <div style={{ width: "100%", display: "grid", gridTemplateColumns: "90px 1fr", gap: "12px" }}>
+                <IonInput
+                  label="PLZ *"
+                  labelPlacement="stacked"
+                  inputmode="numeric"
+                  maxlength={5}
+                  value={state.plz}
+                  onIonInput={(e) => set("plz", e.detail.value ?? "")}
+                />
+                <IonInput
+                  label="Wohnort *"
+                  labelPlacement="stacked"
+                  value={state.ort}
+                  onIonInput={(e) => set("ort", e.detail.value ?? "")}
+                />
+              </div>
             </IonItem>
 
             <IonListHeader>
@@ -213,13 +253,38 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               />
             </IonItem>
             <IonItem>
-              <IonInput
-                label="Adresse *"
-                labelPlacement="stacked"
-                placeholder="Straße, PLZ, Stadt"
-                value={state.adresse}
-                onIonInput={(e) => set("adresse", e.detail.value ?? "")}
-              />
+              <div style={{ width: "100%", display: "grid", gridTemplateColumns: "1fr 90px", gap: "12px" }}>
+                <IonInput
+                  label="Straße *"
+                  labelPlacement="stacked"
+                  value={state.strasse}
+                  onIonInput={(e) => set("strasse", e.detail.value ?? "")}
+                />
+                <IonInput
+                  label="Nr. *"
+                  labelPlacement="stacked"
+                  value={state.hausnummer}
+                  onIonInput={(e) => set("hausnummer", e.detail.value ?? "")}
+                />
+              </div>
+            </IonItem>
+            <IonItem>
+              <div style={{ width: "100%", display: "grid", gridTemplateColumns: "90px 1fr", gap: "12px" }}>
+                <IonInput
+                  label="PLZ *"
+                  labelPlacement="stacked"
+                  inputmode="numeric"
+                  maxlength={5}
+                  value={state.plz}
+                  onIonInput={(e) => set("plz", e.detail.value ?? "")}
+                />
+                <IonInput
+                  label="Ort *"
+                  labelPlacement="stacked"
+                  value={state.ort}
+                  onIonInput={(e) => set("ort", e.detail.value ?? "")}
+                />
+              </div>
             </IonItem>
             <IonItem>
               <IonLabel position="stacked">Gewerk *</IonLabel>
@@ -310,6 +375,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.anrede) missing.push("Anrede");
     if (!state.vorname.trim()) missing.push("Vorname");
     if (!state.name.trim()) missing.push("Name");
+    if (!state.plz.trim()) missing.push("PLZ");
     if (!state.ort.trim()) missing.push("Wohnort");
     if (!state.gewerk.trim()) missing.push("Gewerk");
     if (!state.lehrjahr) missing.push("Lehrjahr");
@@ -318,7 +384,10 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.berufsschule.trim()) missing.push("Berufsschule");
   } else {
     if (!state.name.trim()) missing.push("Firmenname");
-    if (!state.adresse.trim()) missing.push("Adresse");
+    if (!state.strasse.trim()) missing.push("Straße");
+    if (!state.hausnummer.trim()) missing.push("Hausnummer");
+    if (!state.plz.trim()) missing.push("PLZ");
+    if (!state.ort.trim()) missing.push("Ort");
     if (!state.gewerk.trim()) missing.push("Gewerk");
     if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
     if (!state.anrede) missing.push("Anrede Ansprechpartner:in");
@@ -338,8 +407,8 @@ export function profilStateToInput(state: ProfilFormState) {
     anrede: state.anrede || null,
     name: state.name.trim(),
     vorname: isTalent ? state.vorname.trim() || null : null,
-    ort: isTalent ? state.ort.trim() || null : null,
-    adresse: !isTalent ? state.adresse.trim() || null : null,
+    ort: isTalent ? `${state.plz.trim()} ${state.ort.trim()}`.trim() || null : null,
+    adresse: !isTalent ? adresseZusammenfuegen(state.strasse.trim(), state.hausnummer.trim(), state.plz.trim(), state.ort.trim()) || null : null,
     gewerk: state.gewerk.trim() || null,
     handwerkskammer: state.handwerkskammer.trim() || null,
     lehrjahr: isTalent && state.lehrjahr ? (Number(state.lehrjahr) as 1 | 2 | 3 | 4) : null,
