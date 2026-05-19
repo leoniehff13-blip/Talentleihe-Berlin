@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function signup(name: string, email: string, password: string) {
     const created = await account.create(ID.unique(), email, password, name);
     await account.createEmailPasswordSession(email, password);
+    await refresh();
     return created;
   }
 
