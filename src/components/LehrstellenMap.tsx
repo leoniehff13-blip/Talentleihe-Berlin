@@ -89,8 +89,8 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
     }
 
     const map = L.map(containerRef.current, {
-      center: [51.16, 10.45], // Mitte von Deutschland
-      zoom: 6,
+      center: [52.52, 13.405], // Berlin
+      zoom: 11,
     });
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
