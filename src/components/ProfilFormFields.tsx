@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   IonItem,
   IonInput,
@@ -8,6 +9,14 @@ import {
   IonListHeader,
   IonSegment,
   IonSegmentButton,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonSearchbar,
+  IonButtons,
+  IonButton,
 } from "@ionic/react";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
@@ -45,7 +54,7 @@ export const EMPTY_PROFIL: ProfilFormState = {
   hausnummer: "",
   adresse: "",
   gewerk: "",
-  handwerkskammer: "",
+  handwerkskammer: "Handwerkskammer Berlin",
   lehrjahr: "",
   unternehmen: "",
   berufsschule: "",
@@ -79,10 +88,111 @@ export function ortAufteilen(ort: string) {
   return { plz: "", ort };
 }
 
+// ── Suchbares Gewerk-Auswahlfeld ──────────────────────────────────────────────
+function GewerkPicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const filtered = GEWERKE.filter((g) =>
+    g.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const close = () => { setOpen(false); setSearch(""); };
+
+  return (
+    <>
+      <IonItem button detail={false} onClick={() => setOpen(true)}>
+        <IonLabel position="stacked">Gewerk *</IonLabel>
+        <div style={{
+          padding: "10px 0 6px",
+          color: value ? "var(--ion-text-color, #1E367A)" : "#999",
+          fontSize: "1rem",
+        }}>
+          {value || "— bitte wählen —"}
+        </div>
+      </IonItem>
+
+      <IonModal isOpen={open} onDidDismiss={close}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Gewerk wählen</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={close}>Schließen</IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonToolbar>
+            <IonSearchbar
+              value={search}
+              onIonInput={(e) => setSearch(e.detail.value ?? "")}
+              placeholder="Gewerk suchen …"
+              debounce={80}
+            />
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonList>
+            {filtered.length === 0 && (
+              <IonItem>
+                <IonLabel color="medium" style={{ fontStyle: "italic" }}>
+                  Keine Treffer
+                </IonLabel>
+              </IonItem>
+            )}
+            {filtered.map((g) => (
+              <IonItem
+                key={g}
+                button
+                detail={false}
+                onClick={() => { onChange(g); close(); }}
+                style={g === value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+              >
+                <IonLabel>{g}</IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        </IonContent>
+      </IonModal>
+    </>
+  );
+}
+
+// ── Handwerkskammer-Feld (oben, Berlin vorausgewählt) ─────────────────────────
+function HandwerkskammerField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <>
+      <IonListHeader>
+        <IonLabel>Handwerkskammer</IonLabel>
+      </IonListHeader>
+      <IonItem>
+        <IonLabel position="stacked">Handwerkskammer *</IonLabel>
+        <IonSelect
+          interface="alert"
+          placeholder="— bitte wählen —"
+          value={value}
+          onIonChange={(e) => onChange(String(e.detail.value ?? ""))}
+        >
+          {HANDWERKSKAMMERN.map((h) => (
+            <IonSelectOption key={h} value={h} disabled={h !== "Handwerkskammer Berlin"}>
+              {h}
+            </IonSelectOption>
+          ))}
+        </IonSelect>
+      </IonItem>
+      <IonItem lines="full" style={{ "--min-height": "auto", "--padding-top": "4px", "--padding-bottom": "10px" }}>
+        <IonLabel>
+          <p style={{ color: "#f0a030", fontSize: "0.78rem", margin: 0, lineHeight: 1.4 }}>
+            Leider kann aktuell noch keine kammerübergreifende Verbundausbildung stattfinden.
+          </p>
+        </IonLabel>
+      </IonItem>
+    </>
+  );
+}
+
+// ── Haupt-Formular ────────────────────────────────────────────────────────────
 interface Props {
   state: ProfilFormState;
   onChange: (next: ProfilFormState) => void;
-  /** Type-Auswahl ausblenden (z.B. wenn der Profil-Typ schon feststeht). */
   hideTypeSwitch?: boolean;
 }
 
@@ -110,6 +220,12 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
       )}
 
       <IonList>
+        {/* Handwerkskammer immer ganz oben */}
+        <HandwerkskammerField
+          value={state.handwerkskammer}
+          onChange={(v) => set("handwerkskammer", v)}
+        />
+
         {state.type === "talent" ? (
           <>
             <IonListHeader>
@@ -124,9 +240,7 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 onIonChange={(e) => set("anrede", (e.detail.value as Anrede) ?? "")}
               >
                 {ANREDEN.map((a) => (
-                  <IonSelectOption key={a} value={a}>
-                    {a}
-                  </IonSelectOption>
+                  <IonSelectOption key={a} value={a}>{a}</IonSelectOption>
                 ))}
               </IonSelect>
             </IonItem>
@@ -168,21 +282,10 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
             <IonListHeader>
               <IonLabel>Ausbildung</IonLabel>
             </IonListHeader>
-            <IonItem>
-              <IonLabel position="stacked">Gewerk *</IonLabel>
-              <IonSelect
-                interface="alert"
-                placeholder="— bitte wählen —"
-                value={state.gewerk}
-                onIonChange={(e) => set("gewerk", String(e.detail.value ?? ""))}
-              >
-                {GEWERKE.map((g) => (
-                  <IonSelectOption key={g} value={g}>
-                    {g}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
+            <GewerkPicker
+              value={state.gewerk}
+              onChange={(v) => set("gewerk", v)}
+            />
             <IonItem>
               <IonLabel position="stacked">Lehrjahr *</IonLabel>
               <IonSelect
@@ -205,21 +308,6 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 value={state.unternehmen}
                 onIonInput={(e) => set("unternehmen", e.detail.value ?? "")}
               />
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Handwerkskammer *</IonLabel>
-              <IonSelect
-                interface="alert"
-                placeholder="— bitte wählen —"
-                value={state.handwerkskammer}
-                onIonChange={(e) => set("handwerkskammer", String(e.detail.value ?? ""))}
-              >
-                {HANDWERKSKAMMERN.map((h) => (
-                  <IonSelectOption key={h} value={h}>
-                    {h}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
             </IonItem>
             <IonItem>
               <IonInput
@@ -286,36 +374,10 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 />
               </div>
             </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Gewerk *</IonLabel>
-              <IonSelect
-                interface="alert"
-                placeholder="— bitte wählen —"
-                value={state.gewerk}
-                onIonChange={(e) => set("gewerk", String(e.detail.value ?? ""))}
-              >
-                {GEWERKE.map((g) => (
-                  <IonSelectOption key={g} value={g}>
-                    {g}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
-            <IonItem>
-              <IonLabel position="stacked">Handwerkskammer *</IonLabel>
-              <IonSelect
-                interface="alert"
-                placeholder="— bitte wählen —"
-                value={state.handwerkskammer}
-                onIonChange={(e) => set("handwerkskammer", String(e.detail.value ?? ""))}
-              >
-                {HANDWERKSKAMMERN.map((h) => (
-                  <IonSelectOption key={h} value={h}>
-                    {h}
-                  </IonSelectOption>
-                ))}
-              </IonSelect>
-            </IonItem>
+            <GewerkPicker
+              value={state.gewerk}
+              onChange={(v) => set("gewerk", v)}
+            />
 
             <IonListHeader>
               <IonLabel>Ansprechpartner:in</IonLabel>
@@ -329,9 +391,7 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 onIonChange={(e) => set("anrede", (e.detail.value as Anrede) ?? "")}
               >
                 {ANREDEN.map((a) => (
-                  <IonSelectOption key={a} value={a}>
-                    {a}
-                  </IonSelectOption>
+                  <IonSelectOption key={a} value={a}>{a}</IonSelectOption>
                 ))}
               </IonSelect>
             </IonItem>
@@ -418,6 +478,6 @@ export function profilStateToInput(state: ProfilFormState) {
     ansprechpartner: !isTalent ? state.ansprechpartner.trim() || null : null,
     ansprechpartner_email: !isTalent ? state.ansprechpartner_email.trim() || null : null,
     spezialisierung: !isTalent ? split(state.spezialisierung) : [],
-    user_id: "", // wird im AuthContext.saveProfile beim Anlegen gesetzt
+    user_id: "",
   };
 }
