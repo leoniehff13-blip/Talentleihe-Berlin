@@ -98,17 +98,21 @@ const TopNav: React.FC = () => {
           {/* Logo */}
           <span
             onClick={() => navigate("/home")}
-            style={{
-              fontFamily: '"Quicksand", sans-serif',
-              fontWeight: 800,
-              fontSize: "1.4rem",
-              letterSpacing: "-0.04em",
-              color: "#47BCC2",
-              cursor: "pointer",
-              userSelect: "none",
-            }}
+            style={{ cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center" }}
+            aria-label="Talentleihe Berlin – Startseite"
           >
-            TL
+            <svg width="38" height="38" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
+              <rect x="0" y="0" width="512" height="512" rx="96" fill="#1E367A"/>
+              <g transform="translate(256,148) rotate(-35)" fill="#47BCC2">
+                <rect x="-13" y="-15" width="26" height="88" rx="7"/>
+                <rect x="-44" y="-62" width="88" height="50" rx="9"/>
+                <rect x="36" y="-55" width="24" height="20" rx="4"/>
+              </g>
+              <text x="256" y="370" textAnchor="middle"
+                fontFamily="Quicksand, Arial Rounded MT Bold, Arial, sans-serif"
+                fontWeight="800" fontSize="210" letterSpacing="-6" fill="white">TL</text>
+              <rect x="106" y="412" width="300" height="16" rx="8" fill="#96B740"/>
+            </svg>
           </span>
 
           {/* Desktop-Navigation */}
