@@ -99,11 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       COL_PROFILES,
       ID.unique(),
       { ...data, user_id: user.$id },
-      [
-        Permission.read(Role.any()),
-        Permission.update(Role.user(user.$id)),
-        Permission.delete(Role.user(user.$id)),
-      ]
+
     );
     setProfile(created);
     return created;
