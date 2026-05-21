@@ -288,9 +288,22 @@ const Informationen: React.FC = () => {
             <Bullet color={C.blue}>Weltweit als Best Practice anerkannt (u. a. Vorbild für China, Schweiz, Österreich)</Bullet>
 
             <div style={{ background: C.tealLight, borderRadius: "10px", padding: "12px 14px", marginTop: "14px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              {[["DQR Niveau 3", "2-jähr. Ausbildung"], ["DQR Niveau 4", "3–3,5-jähr. Ausbildung"], ["53 Kammern", "regional zuständig"]].map(([val, label]) => (
-                <div key={val} style={{ textAlign: "center", flex: "1 1 100px" }}>
-                  <div style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "1rem" }}>{val}</div>
+              {[
+                ["DQR Niveau 3", "2-jähr. Ausbildung", true],
+                ["DQR Niveau 4", "3–3,5-jähr. Ausbildung", true],
+                ["53 Kammern", "regional zuständig", false],
+              ].map(([val, label, isDqr]) => (
+                <div key={val as string} style={{ textAlign: "center", flex: "1 1 100px" }}>
+                  {isDqr ? (
+                    <a
+                      href="https://www.zdh.de/ueber-uns/fachbereich-berufliche-bildung/ausbildung/bildungspolitische-positionen/dqr-deutscher-qualifikationsrahmen-fuer-lebenslanges-lernen/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "1rem", textDecoration: "underline", textDecorationColor: `${C.teal}60` }}
+                    >{val}</a>
+                  ) : (
+                    <div style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "1rem" }}>{val}</div>
+                  )}
                   <div style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.75rem", color: C.textMid }}>{label}</div>
                 </div>
               ))}
@@ -326,6 +339,18 @@ const Informationen: React.FC = () => {
             <Bullet>Klare Verantwortlichkeiten durch gesetzliche Regelung</Bullet>
             <Bullet>Erweiterte Lernorte und Praxiserfahrung für Auszubildende</Bullet>
             <Bullet>Reduziert Kosten bei Ausbildungsabbrüchen und Wechseln</Bullet>
+
+            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, margin: "16px 0 0", lineHeight: 1.55 }}>
+              Weiterführende Informationen zur Verbundausbildung im Handwerk findest du beim{" "}
+              <a
+                href="https://www.zdh.de/ueber-uns/fachbereich-berufliche-bildung/ausbildung/verbundausbildung/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: C.teal, fontWeight: 700, textDecoration: "underline", textDecorationColor: `${C.teal}60` }}
+              >
+                Zentralverband des Deutschen Handwerks (ZDH)
+              </a>.
+            </p>
           </InfoCard>
 
           {/* ── 3. ZDH ── */}
@@ -364,10 +389,39 @@ const Informationen: React.FC = () => {
             <Bullet>Gestaltung des Kooperationsvertrages</Bullet>
             <Bullet>Beantragung und Abrechnung der Fördermittel</Bullet>
 
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", marginTop: "14px" }}>
+            <a
+              href="https://verbundberatung-berlin.de/kontakt/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginTop: "14px",
+                background: C.teal,
+                color: "#fff",
+                borderRadius: "10px",
+                padding: "12px 16px",
+                fontFamily: '"Quicksand", sans-serif',
+                fontWeight: 700,
+                fontSize: "0.9rem",
+                textDecoration: "none",
+              }}
+            >
+              <span>📞</span>
+              <span>Kontakt zur Verbundberatung Berlin</span>
+              <span style={{ marginLeft: "auto", opacity: 0.8 }}>→</span>
+            </a>
+
+            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", marginTop: "10px" }}>
               <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.9rem" }}>📌 Marktplatz Verbundausbildung</p>
               <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
-                <strong>verbundberatung-berlin.de/marktplatz</strong> – hier finden Betriebe passende Verbundpartner. Partner: HWK Berlin, IHK Berlin, UVB.
+                <a
+                  href="https://verbundberatung-berlin.de/marktplatz/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: C.teal, fontWeight: 700, textDecoration: "underline", textDecorationColor: `${C.teal}60` }}
+                >verbundberatung-berlin.de/marktplatz</a> – hier finden Betriebe passende Verbundpartner. Partner: HWK Berlin, IHK Berlin, UVB.
               </p>
             </div>
 
@@ -385,11 +439,21 @@ const Informationen: React.FC = () => {
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "14px" }}>
               <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.teal}` }}>
-                <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.95rem" }}>Handwerkskammer Berlin</p>
+                <a
+                  href="https://www.hwk-berlin.de/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.teal}60`, display: "block" }}
+                >Handwerkskammer Berlin ↗</a>
                 <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Zuständig für Betriebe mit Sitz im Stadtgebiet Berlin. Administriert das Berliner Förderungsprogramm FBB. Blücherstraße 68, 10961 Berlin.</p>
               </div>
               <div style={{ background: "#f0f4ff", borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.blue}` }}>
-                <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.95rem" }}>HWK Frankfurt (Oder) – Region Ostbrandenburg</p>
+                <a
+                  href="https://www.hwk-frankfurt-oder.de/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.blue}60`, display: "block" }}
+                >HWK Frankfurt (Oder) – Region Ostbrandenburg ↗</a>
                 <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Grenzt auf 91 km direkt an Berlin an. Umfasst Barnim, Märkisch-Oderland, Oder-Spree, Uckermark und Frankfurt (Oder). Über 11.500 Mitgliedsunternehmen.</p>
               </div>
             </div>
