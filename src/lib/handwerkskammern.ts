@@ -60,3 +60,16 @@ export const HANDWERKSKAMMERN: string[] = [
   "Handwerkskammer zu Köln",
   "Handwerkskammer zu Leipzig",
 ];
+
+/**
+ * Die zwei für Talentleihe Berlin relevanten Handwerkskammern.
+ * HWK Berlin:           zuständig für das Stadtgebiet Berlin
+ * HWK Frankfurt (Oder): zuständig für Barnim, Märkisch-Oderland,
+ *                       Oder-Spree, Uckermark und Frankfurt (Oder)
+ */
+export const BERLIN_REGION_KAMMERN = [
+  "Handwerkskammer Berlin",
+  "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg",
+] as const;
+
+export type BerlinRegionKammer = (typeof BERLIN_REGION_KAMMERN)[number];

@@ -37,11 +37,13 @@ import AuthGate from "../components/AuthGate";
 import LehrstellenMap from "../components/LehrstellenMap";
 import { geocode, buildItemQuery, haversineKm } from "../lib/geocode";
 import { GEWERKE, gewerkStamm } from "../lib/gewerke";
+import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 
 interface Filters {
   ortOrPlz: string;
   umkreis: number; // km
   gewerk: string;
+  kammer: string;  // "" = beide Kammern
   startVon: string;
   startBis: string;
   mindestalter: string; // "" = egal, "kein" = nur ohne, "16"|"18"|"21" = bis zu …
@@ -51,6 +53,7 @@ const EMPTY_FILTERS: Filters = {
   ortOrPlz: "",
   umkreis: 50,
   gewerk: "",
+  kammer: "",
   startVon: "",
   startBis: "",
   mindestalter: "",
@@ -94,7 +97,12 @@ const LehrstellenInner: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const queries: string[] = [Query.orderDesc("startdatum"), Query.limit(100), Query.equal("bundesland", "Berlin")];
+      // Berlin UND Brandenburg (HWK Frankfurt/Oder) – beide Kammerbereiche
+      const queries: string[] = [
+        Query.orderDesc("startdatum"),
+        Query.limit(100),
+        Query.equal("bundesland", ["Berlin", "Brandenburg"]),
+      ];
 
       // Rollenspezifischer Typ-Filter
       if (angezeigterTyp) {
@@ -113,7 +121,6 @@ const LehrstellenInner: React.FC = () => {
       if (filters.mindestalter === "kein") {
         queries.push(Query.isNull("mindestalter"));
       } else if (filters.mindestalter) {
-        // „bis 16/18/21" → Lehrstellen mit mindestalter <= ausgewähltem Wert
         queries.push(Query.lessThanEqual("mindestalter", Number(filters.mindestalter)));
       }
 
@@ -123,16 +130,19 @@ const LehrstellenInner: React.FC = () => {
         queries
       );
 
-      // Client-seitige Filter (Gewerk: tolerante Stamm-Übereinstimmung,
-      // damit ältere Einträge wie "Tischler/in" beim Filterwert "Tischler/-in"
-      // gefunden werden)
+      // Client-seitige Filter
       const gewerkStammSel = gewerkStamm(filters.gewerk);
       let filtered = result.documents.filter((d) => {
+        // Gewerk (tolerante Stamm-Übereinstimmung)
         if (gewerkStammSel) {
           const itemStamm = gewerkStamm(d.gewerk ?? "");
           if (!itemStamm.includes(gewerkStammSel) && !gewerkStammSel.includes(itemStamm)) {
             return false;
           }
+        }
+        // Kammer-Filter
+        if (filters.kammer && d.handwerkskammer !== filters.kammer) {
+          return false;
         }
         return true;
       });
@@ -144,7 +154,6 @@ const LehrstellenInner: React.FC = () => {
         const searchCoords = await geocode(suche + ", Deutschland");
         if (!searchCoords) {
           setGeoStatus(`Standort „${suche}" konnte nicht gefunden werden.`);
-          // Liste leer lassen
           setItems([]);
           return;
         }
@@ -169,8 +178,6 @@ const LehrstellenInner: React.FC = () => {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
-      // geoStatus nicht hier zurücksetzen, damit eine Fehlermeldung ("Standort nicht gefunden")
-      // sichtbar bleibt; bei Erfolg wird er oben bereits auf null gesetzt.
     }
   }, [filters, user, angezeigterTyp]);
 
@@ -182,7 +189,6 @@ const LehrstellenInner: React.FC = () => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }
 
-  // umkreis zählt nicht als eigener Filter, weil er nur in Verbindung mit ortOrPlz wirkt
   const filterCount = Object.entries(filters).filter(([k, v]) => {
     if (k === "umkreis") return false;
     return Boolean(v);
@@ -249,7 +255,7 @@ const LehrstellenInner: React.FC = () => {
                   <IonInput
                     label="Ort oder PLZ"
                     labelPlacement="stacked"
-                    placeholder="z. B. Bielefeld oder 33602"
+                    placeholder="z. B. Berlin oder 10115"
                     value={filters.ortOrPlz}
                     onIonInput={(e) => setFilter("ortOrPlz", e.detail.value ?? "")}
                   />
@@ -289,6 +295,22 @@ const LehrstellenInner: React.FC = () => {
                     {GEWERKE.map((g) => (
                       <IonSelectOption key={g} value={g}>
                         {g}
+                      </IonSelectOption>
+                    ))}
+                  </IonSelect>
+                </IonItem>
+                <IonItem>
+                  <IonLabel position="stacked">Handwerkskammer</IonLabel>
+                  <IonSelect
+                    interface="alert"
+                    placeholder="Beide Kammern"
+                    value={filters.kammer}
+                    onIonChange={(e) => setFilter("kammer", String(e.detail.value ?? ""))}
+                  >
+                    <IonSelectOption value="">Beide Kammern</IonSelectOption>
+                    {BERLIN_REGION_KAMMERN.map((k) => (
+                      <IonSelectOption key={k} value={k}>
+                        {k}
                       </IonSelectOption>
                     ))}
                   </IonSelect>
@@ -392,6 +414,12 @@ const LehrstellenInner: React.FC = () => {
           <IonList>
             {items.map((item) => {
               const itemIsTalent = item.type === "talent_angebot";
+              const kammer = item.handwerkskammer ?? "";
+              const kammerKurz = kammer.includes("Frankfurt")
+                ? "HWK Ostbrandenburg"
+                : kammer.includes("Berlin")
+                  ? "HWK Berlin"
+                  : kammer;
               return (
                 <IonItem
                   key={item.$id}
@@ -406,6 +434,7 @@ const LehrstellenInner: React.FC = () => {
                     <IonNote>
                       {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
                       {new Date(item.startdatum).toLocaleDateString("de-DE")}
+                      {kammerKurz ? ` · ${kammerKurz}` : ""}
                     </IonNote>
                   </IonLabel>
                   <IonBadge color={itemIsTalent ? "tertiary" : "primary"} slot="end">
@@ -419,7 +448,7 @@ const LehrstellenInner: React.FC = () => {
 
         {!loading && items.length > 0 && view === "karte" && (
           <div className="ion-padding" style={{ paddingTop: 8 }}>
-            <LehrstellenMap items={items} />
+            <LehrstellenMap items={items} showKammerAreas />
             <IonText color="medium">
               <p style={{ fontSize: 12, marginTop: 8 }}>
                 Tipp: Beim ersten Laden werden die Adressen einmalig geocodiert

@@ -2,21 +2,24 @@ import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { IonText } from "@ionic/react";
 import type { Lehrstelle } from "../lib/appwrite";
+import { KAMMER_AREAS } from "../lib/kammer-geojson";
 
 /**
  * Karten-Ansicht für Lehrstellen/Talent-Angebote.
  * Verwendet Leaflet (via index.html als globales `L`) und OpenStreetMap-Kacheln.
  * Geocoding läuft über Nominatim (kostenlos, max 1 req/sec).
  * Ergebnisse werden in sessionStorage gecached.
+ *
+ * showKammerAreas: zeichnet die Zuständigkeitsbereiche beider Kammern als
+ * farbige Flächen (teal = HWK Berlin, blau = HWK Ostbrandenburg).
  */
 
-// Globale Leaflet-Variable, die per CDN in index.html eingebunden wurde.
-// Wir verwenden `any`, damit kein @types/leaflet als npm-Paket nötig ist.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare const L: any;
 
 interface Props {
   items: Lehrstelle[];
+  showKammerAreas?: boolean;
 }
 
 const CACHE_KEY = "geo-cache-v1";
@@ -66,18 +69,20 @@ async function geocode(query: string): Promise<Coords | null> {
   }
 }
 
-const LehrstellenMap: React.FC<Props> = ({ items }) => {
+const LehrstellenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => {
   const history = useHistory();
   const containerRef = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const markersLayerRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const kammerLayerRef = useRef<any>(null);
 
   const [progress, setProgress] = useState({ done: 0, total: items.length });
   const [error, setError] = useState<string | null>(null);
 
-  // Karte initialisieren — nur einmal
+  // ── Karte initialisieren — nur einmal ──────────────────────────────────────
   useEffect(() => {
     if (!containerRef.current) return;
     if (mapRef.current) return;
@@ -90,7 +95,7 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
 
     const map = L.map(containerRef.current, {
       center: [52.52, 13.405], // Berlin
-      zoom: 11,
+      zoom: 10,
     });
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -99,6 +104,60 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
       maxZoom: 19,
     }).addTo(map);
 
+    // Kammer-Flächen als unterste Schicht hinzufügen
+    if (showKammerAreas) {
+      const kammerGroup = L.layerGroup().addTo(map);
+
+      for (const area of KAMMER_AREAS) {
+        L.geoJSON(area.geojson, {
+          style: {
+            color: area.color,
+            weight: 2,
+            opacity: 0.6,
+            fillColor: area.fillColor,
+            fillOpacity: 0.08,
+            dashArray: "5, 4",
+          },
+        })
+          .bindTooltip(area.shortName, {
+            permanent: false,
+            direction: "center",
+            className: "kammer-tooltip",
+          })
+          .addTo(kammerGroup);
+      }
+
+      kammerLayerRef.current = kammerGroup;
+
+      // Legende unten links
+      const legend = L.control({ position: "bottomleft" });
+      legend.onAdd = () => {
+        const div = L.DomUtil.create("div");
+        div.innerHTML = `
+          <div style="
+            background: rgba(255,255,255,0.95);
+            border-radius: 8px;
+            padding: 8px 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            font-size: 12px;
+            font-family: Quicksand, sans-serif;
+            line-height: 1.6;
+          ">
+            <div style="font-weight:700;color:#1E367A;margin-bottom:4px;">Zuständigkeit</div>
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+              <span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#47BCC2;opacity:0.5;border:2px solid #47BCC2;flex-shrink:0;"></span>
+              <span style="color:#1E367A;">HWK Berlin</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#1E367A;opacity:0.4;border:2px solid #1E367A;flex-shrink:0;"></span>
+              <span style="color:#1E367A;">HWK Ostbrandenburg</span>
+            </div>
+          </div>`;
+        return div;
+      };
+      legend.addTo(map);
+    }
+
     markersLayerRef.current = L.layerGroup().addTo(map);
     mapRef.current = map;
 
@@ -106,10 +165,13 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
       map.remove();
       mapRef.current = null;
       markersLayerRef.current = null;
+      kammerLayerRef.current = null;
     };
+  // showKammerAreas ist beim Mount fix — kein Re-Run nötig
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Marker setzen, wenn sich items ändern
+  // ── Marker setzen, wenn sich items ändern ─────────────────────────────────
   useEffect(() => {
     if (!mapRef.current || !markersLayerRef.current) return;
     const map = mapRef.current;
@@ -138,7 +200,6 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
           coords = await geocode(query);
           cache[query] = coords;
           writeCache(cache);
-          // Nominatim: max 1 Request/Sekunde
           await new Promise((r) => setTimeout(r, NOMINATIM_DELAY_MS));
         }
 
@@ -147,29 +208,42 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
         if (coords) {
           allCoords.push(coords);
           const isTalent = item.type === "talent_angebot";
-          const farbe = isTalent ? "#A8C6EE" : "#558DDF";
+
+          // Pinfarbe nach Kammer: teal = HWK Berlin, blau = HWK Ostbrandenburg
+          const isOstbrandenburg =
+            item.handwerkskammer?.includes("Frankfurt") ?? false;
+          const fillColor = isTalent
+            ? isOstbrandenburg ? "#96B740" : "#47BCC2"   // Talent: grün (OB) / teal (Berlin)
+            : isOstbrandenburg ? "#2a4a9a" : "#1E367A";  // Einsatz: hellblau (OB) / dunkelblau (Berlin)
+          const borderColor = isOstbrandenburg ? "#1E367A" : "#47BCC2";
+
           const marker = L.circleMarker(coords, {
             radius: 9,
-            fillColor: farbe,
-            color: "#142F6C",
+            fillColor,
+            color: borderColor,
             weight: 2,
             opacity: 1,
             fillOpacity: 0.85,
           });
-          const safeGewerk = String(item.gewerk).replace(/</g, "&lt;");
-          const safeFirma = String(item.firma).replace(/</g, "&lt;");
-          const safeOrt = String(item.ort).replace(/</g, "&lt;");
-          const typeLabel = isTalent ? "Talent-Angebot" : "Einsatz";
+
+          const safeGewerk = String(item.gewerk ?? "").replace(/</g, "&lt;");
+          const safeFirma  = String(item.firma  ?? "").replace(/</g, "&lt;");
+          const safeOrt    = String(item.ort    ?? "").replace(/</g, "&lt;");
+          const typeLabel  = isTalent ? "Talent-Angebot" : "Einsatz";
+          const kammerKurz = isOstbrandenburg ? "HWK Ostbrandenburg" : "HWK Berlin";
+
           marker.bindPopup(
-            `<div style="min-width:180px">
-              <div style="font-size:11px;color:#666">${typeLabel}</div>
-              <div style="font-weight:700;color:#0b1f4a">${safeGewerk}</div>
-              <div style="margin:4px 0 8px">${safeFirma} · ${safeOrt}</div>
-              <a href="/lehrstellen/${item.$id}" data-lehrstelle-id="${item.$id}" class="ww-popup-link" style="color:#3a88fe;font-weight:600;cursor:pointer">Anzeige öffnen →</a>
+            `<div style="min-width:190px;font-family:Quicksand,sans-serif">
+              <div style="font-size:11px;color:#666">${typeLabel} · ${kammerKurz}</div>
+              <div style="font-weight:700;color:#1E367A;margin:2px 0 1px">${safeGewerk}</div>
+              <div style="margin:0 0 8px;font-size:13px">${safeFirma} · ${safeOrt}</div>
+              <a href="/lehrstellen/${item.$id}" data-lehrstelle-id="${item.$id}" class="ww-popup-link"
+                style="color:#47BCC2;font-weight:700;cursor:pointer;text-decoration:none">
+                Anzeige öffnen →
+              </a>
             </div>`
           );
-          // Beim Öffnen des Popups den Klick auf den Link abfangen,
-          // damit React-Router navigieren kann (kein Full-Page-Reload).
+
           marker.on("popupopen", (e: { popup: { getElement: () => HTMLElement | null } }) => {
             const popupEl = e.popup.getElement();
             if (!popupEl) return;
@@ -181,6 +255,7 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
               if (id) history.push(`/lehrstellen/${id}`);
             };
           });
+
           marker.addTo(layer);
         }
 
@@ -188,7 +263,6 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
         setProgress({ done, total: items.length });
       }
 
-      // Wenn wir Marker haben, Karte darauf zoomen
       if (!cancelled && allCoords.length > 0) {
         if (allCoords.length === 1) {
           map.setView(allCoords[0], 11);
@@ -198,10 +272,8 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
-  }, [items]);
+    return () => { cancelled = true; };
+  }, [items, history]);
 
   if (error) {
     return (
@@ -217,11 +289,7 @@ const LehrstellenMap: React.FC<Props> = ({ items }) => {
     <div style={{ position: "relative" }}>
       <div
         ref={containerRef}
-        style={{
-          height: "60vh",
-          width: "100%",
-          borderRadius: 8,
-        }}
+        style={{ height: "60vh", width: "100%", borderRadius: 8 }}
       />
       {progress.total > 0 && progress.done < progress.total && (
         <div

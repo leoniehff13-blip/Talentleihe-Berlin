@@ -19,7 +19,7 @@ import {
   IonButton,
 } from "@ionic/react";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
-import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
+import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
 
 export interface ProfilFormState {
@@ -156,8 +156,20 @@ function GewerkPicker({ value, onChange }: { value: string; onChange: (v: string
   );
 }
 
-// ── Handwerkskammer-Feld (oben, Berlin vorausgewählt) ─────────────────────────
+// ── Handwerkskammer-Feld ──────────────────────────────────────────────────────
+const KAMMER_INFO: Record<string, { region: string; bezirk: string }> = {
+  "Handwerkskammer Berlin": {
+    region: "Stadtgebiet Berlin",
+    bezirk: "Alle Berliner Bezirke",
+  },
+  "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg": {
+    region: "Region Ostbrandenburg",
+    bezirk: "Barnim, Märkisch-Oderland, Oder-Spree, Uckermark, Frankfurt (Oder)",
+  },
+};
+
 function HandwerkskammerField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const info = value ? KAMMER_INFO[value] : null;
   return (
     <>
       <IonListHeader>
@@ -171,20 +183,25 @@ function HandwerkskammerField({ value, onChange }: { value: string; onChange: (v
           value={value}
           onIonChange={(e) => onChange(String(e.detail.value ?? ""))}
         >
-          {HANDWERKSKAMMERN.map((h) => (
-            <IonSelectOption key={h} value={h} disabled={h !== "Handwerkskammer Berlin"}>
+          {BERLIN_REGION_KAMMERN.map((h) => (
+            <IonSelectOption key={h} value={h}>
               {h}
             </IonSelectOption>
           ))}
         </IonSelect>
       </IonItem>
-      <IonItem lines="full" style={{ "--min-height": "auto", "--padding-top": "4px", "--padding-bottom": "10px" }}>
-        <IonLabel>
-          <p style={{ color: "#f0a030", fontSize: "0.78rem", margin: 0, lineHeight: 1.4 }}>
-            Leider kann aktuell noch keine kammerübergreifende Verbundausbildung stattfinden.
-          </p>
-        </IonLabel>
-      </IonItem>
+      {info && (
+        <IonItem lines="full" style={{ "--min-height": "auto", "--padding-top": "4px", "--padding-bottom": "10px" }}>
+          <IonLabel>
+            <p style={{ color: "#47BCC2", fontSize: "0.78rem", margin: 0, lineHeight: 1.4 }}>
+              📍 Zuständig für: <strong>{info.region}</strong>
+            </p>
+            <p style={{ color: "#4a6080", fontSize: "0.74rem", margin: "2px 0 0", lineHeight: 1.4 }}>
+              {info.bezirk}
+            </p>
+          </IonLabel>
+        </IonItem>
+      )}
     </>
   );
 }
