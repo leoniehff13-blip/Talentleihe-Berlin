@@ -98,10 +98,11 @@ const LehrstellenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => 
       zoom: 10,
     });
 
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende',
-      maxZoom: 19,
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-Mitwirkende &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
     }).addTo(map);
 
     // Kammer-Flächen als unterste Schicht hinzufügen
