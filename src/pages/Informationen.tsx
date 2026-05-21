@@ -273,22 +273,7 @@ const Informationen: React.FC = () => {
         {/* ── Inhalt ── */}
         <div style={{ maxWidth: "720px", margin: "0 auto", padding: "28px clamp(16px, 4vw, 32px) 60px" }}>
 
-          {/* ── 1. ZDH ── */}
-          <InfoCard icon="📊" title="Fachkräftemangel im Handwerk – Die ZDH-Zahlen" defaultOpen accentColor={C.teal}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 12px" }}>
-              Der <strong style={{ color: C.blue }}>Zentralverband des Deutschen Handwerks (ZDH)</strong> meldet für 2023/2024 rund <strong style={{ color: C.teal }}>20.000 unbesetzte Lehrstellen</strong> bei gleichzeitig <strong style={{ color: C.teal }}>250.000 offenen Fachkräftestellen</strong> im Handwerk.
-            </p>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "0 0 12px" }}>
-              Das Handwerk wird vom ZDH als zentraler Faktor der <strong style={{ color: C.blue }}>Transformation bis 2035</strong> benannt – es trägt maßgeblich zur Umsetzung der Energiewende, zur digitalen Modernisierung sowie zur Stärkung regionaler Wertschöpfung bei.
-            </p>
-            <div style={{ background: C.greenLight, borderRadius: "10px", padding: "12px 14px", borderLeft: `3px solid ${C.green}` }}>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>
-                💡 Investitionen in Ausbildungsstrukturen entlasten nicht nur den Arbeitsmarkt, sondern sichern zugleich die Resilienz und Innovationsfähigkeit ganzer Regionen.
-              </p>
-            </div>
-          </InfoCard>
-
-          {/* ── 2. Duales System ── */}
+          {/* ── 1. Duales System ── */}
           <InfoCard icon="🎓" title="Das duale Ausbildungssystem im Handwerk" accentColor={C.blue}>
             <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
               Das deutsche duale System kombiniert <strong style={{ color: C.blue }}>praktische Arbeit im Betrieb</strong> (3–4 Tage/Woche) mit <strong style={{ color: C.blue }}>theoretischem Unterricht</strong> in der Berufsschule (1–2 Tage) oder im Blockunterricht. Die Ausbildung dauert <strong>2–3,5 Jahre</strong> und endet mit der Gesellenprüfung.
@@ -312,7 +297,7 @@ const Informationen: React.FC = () => {
             </div>
           </InfoCard>
 
-          {/* ── 3. Verbundausbildung ── */}
+          {/* ── 2. Verbundausbildung ── */}
           <InfoCard icon="🔗" title="Was ist Verbundausbildung?" accentColor={C.teal}>
             <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 6px" }}>
               Mehrere Betriebe (und ggf. überbetriebliche Bildungsstätten) vermitteln gemeinsam Ausbildungsinhalte, wenn ein einzelner Betrieb diese nicht vollständig abdecken kann.
@@ -343,61 +328,22 @@ const Informationen: React.FC = () => {
             <Bullet>Reduziert Kosten bei Ausbildungsabbrüchen und Wechseln</Bullet>
           </InfoCard>
 
-          {/* ── 4. Plattform-Anforderungen ── */}
-          <InfoCard icon="💻" title="Anforderungen an eine digitale Verbundplattform" accentColor={C.green}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
-              Die Plattform muss intuitiv bedienbar sein und verlässliche Informationen bieten – besonders wichtig angesichts hoher Arbeitslast und geringer digitaler Affinität vieler Handwerksbetriebe.
+          {/* ── 3. ZDH ── */}
+          <InfoCard icon="📊" title="Fachkräftemangel im Handwerk – Die ZDH-Zahlen" accentColor={C.teal}>
+            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 12px" }}>
+              Der <strong style={{ color: C.blue }}>Zentralverband des Deutschen Handwerks (ZDH)</strong> meldet für 2023/2024 rund <strong style={{ color: C.teal }}>20.000 unbesetzte Lehrstellen</strong> bei gleichzeitig <strong style={{ color: C.teal }}>250.000 offenen Fachkräftestellen</strong> im Handwerk.
             </p>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "0 0 8px" }}>Kernfunktionen:</p>
-            <Bullet color={C.green}>Listen- und Kartenansicht zur geografischen Übersicht über Einsatzbetriebe</Bullet>
-            <Bullet color={C.green}>Digitales Matching auf Basis von Betriebs- und Personenprofilen</Bullet>
-            <Bullet color={C.green}>Betriebsprofile mit Spezialisierungen, Bewertungen und Arbeitsklima</Bullet>
-            <Bullet color={C.green}>Auszubildenden-Profile mit Kompetenzen und Ausbildungsfortschritt</Bullet>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "14px 0 8px" }}>Rechtliche &amp; administrative Unterstützung:</p>
-            <Bullet color={C.green}>Musterverträge, automatische Einsatznachweise, Hinweise zu Haftung und Datenschutz</Bullet>
-            <Bullet color={C.green}>Ausweisung der zuständigen Handwerkskammer je Einsatzbetrieb</Bullet>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "14px 0 8px" }}>Vernetzung &amp; Reichweite:</p>
-            <Bullet color={C.green}>Überregionales, kammerübergreifendes Angebot</Bullet>
-            <Bullet color={C.green}>Anbindung an Lehrstellenradar, Kammerwebseiten, Agentur für Arbeit und ZDH-Tools</Bullet>
-          </InfoCard>
-
-          {/* ── 5. Chancen & Herausforderungen ── */}
-          <InfoCard icon="⚖️" title="Chancen & Herausforderungen einer digitalen Plattform" accentColor={C.teal}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginTop: "14px" }}>
-              <div style={{ background: C.greenLight, borderRadius: "12px", padding: "14px", borderTop: `3px solid ${C.green}` }}>
-                <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.green, fontSize: "0.9rem", margin: "0 0 10px" }}>✅ Chancen</p>
-                {[
-                  "Entlastung von Kammern und Ausbildungsberatern",
-                  "Besserer Zugang für kleinere Kammern und Betriebe",
-                  "Stärkung von Eigenverantwortung der Auszubildenden",
-                  "Mehr Transparenz fördert Diversität",
-                ].map((t) => (
-                  <p key={t} style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.82rem", color: C.textMid, margin: "0 0 6px", lineHeight: 1.45 }}>• {t}</p>
-                ))}
-              </div>
-              <div style={{ background: "#fff5f5", borderRadius: "12px", padding: "14px", borderTop: "3px solid #e05060" }}>
-                <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: "#e05060", fontSize: "0.9rem", margin: "0 0 10px" }}>⚠️ Herausforderungen</p>
-                {[
-                  "Digitalisierung schreitet im Handwerk langsam voran",
-                  "Viele Verbundkooperationen laufen informell",
-                  "Betriebe suchen selten selbst nach Verbundpartnern",
-                  "Kammergrenzen erschweren überregionalen Austausch",
-                ].map((t) => (
-                  <p key={t} style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.82rem", color: C.textMid, margin: "0 0 6px", lineHeight: 1.45 }}>• {t}</p>
-                ))}
-              </div>
-            </div>
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "12px 14px", marginTop: "12px" }}>
+            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "0 0 12px" }}>
+              Das Handwerk wird vom ZDH als zentraler Faktor der <strong style={{ color: C.blue }}>Transformation bis 2035</strong> benannt – es trägt maßgeblich zur Umsetzung der Energiewende, zur digitalen Modernisierung sowie zur Stärkung regionaler Wertschöpfung bei.
+            </p>
+            <div style={{ background: C.greenLight, borderRadius: "10px", padding: "12px 14px", borderLeft: `3px solid ${C.green}` }}>
               <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>
-                <strong style={{ color: C.blue }}>Gewerke-Unterschiede:</strong> Nicht alle Berufe eignen sich gleichermaßen. Elektroniker gelten als besonders geeignet, das Bauhauptgewerbe und Friseurhandwerk hingegen kaum.
+                💡 Investitionen in Ausbildungsstrukturen entlasten nicht nur den Arbeitsmarkt, sondern sichern zugleich die Resilienz und Innovationsfähigkeit ganzer Regionen.
               </p>
             </div>
           </InfoCard>
 
-          {/* ── 6. Berlin ── */}
+          {/* ── Berlin ── */}
           <div style={{ marginBottom: "8px" }}>
             <div style={{
               display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px"
@@ -409,6 +355,29 @@ const Informationen: React.FC = () => {
               <div style={{ height: "2px", flex: 1, background: `linear-gradient(to left, ${C.teal}, transparent)` }} />
             </div>
           </div>
+
+          <InfoCard icon="🤝" title="Die Verbundberatung Berlin" accentColor={C.teal}>
+            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
+              Die 2014 gestartete und von der Senatsverwaltung finanzierte <strong style={{ color: C.blue }}>„Verbundberatung Duale Berufsausbildung Berlin"</strong> unterstützt Berliner Unternehmen branchenübergreifend und <strong style={{ color: C.teal }}>kostenlos</strong> bei:
+            </p>
+            <Bullet>Suche nach einem geeigneten Verbundpartner</Bullet>
+            <Bullet>Gestaltung des Kooperationsvertrages</Bullet>
+            <Bullet>Beantragung und Abrechnung der Fördermittel</Bullet>
+
+            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", marginTop: "14px" }}>
+              <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.9rem" }}>📌 Marktplatz Verbundausbildung</p>
+              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
+                <strong>verbundberatung-berlin.de/marktplatz</strong> – hier finden Betriebe passende Verbundpartner. Partner: HWK Berlin, IHK Berlin, UVB.
+              </p>
+            </div>
+
+            <div style={{ background: "#fff8e6", borderRadius: "10px", padding: "12px 14px", marginTop: "10px", borderLeft: `3px solid #f0a030` }}>
+              <p style={{ margin: "0 0 2px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Splitterberufe – Berliner Sonderfall</p>
+              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
+                Ausbildungsberufe, für die in Berlin keine eigene Berufsschulklasse zustande kommt, müssen auswärtige Schulen besuchen. Förderung ab 2025: <strong>24 € pro auswärtigem Schultag</strong> (zuvor 12 €).
+              </p>
+            </div>
+          </InfoCard>
 
           <InfoCard icon="🏛️" title="Berlins besondere Ausgangslage – Zwei Kammern" accentColor={C.blue}>
             <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
@@ -431,7 +400,6 @@ const Informationen: React.FC = () => {
             </div>
           </InfoCard>
 
-          {/* ── 7. Förderung FBB ── */}
           <InfoCard icon="💶" title="Berliner Förderung – Das FBB-Programm" accentColor={C.green}>
             <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
               Das Land Berlin fördert Verbundausbildung aktiv über das <strong style={{ color: C.blue }}>Programm zur Förderung der Berufsausbildung im Land Berlin (FBB)</strong>, administriert durch die Handwerkskammer Berlin.
@@ -462,69 +430,6 @@ const Informationen: React.FC = () => {
               </p>
             </div>
           </InfoCard>
-
-          {/* ── 8. Verbundberatung Berlin ── */}
-          <InfoCard icon="🤝" title="Die Verbundberatung Berlin" accentColor={C.teal}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
-              Die 2014 gestartete und von der Senatsverwaltung finanzierte <strong style={{ color: C.blue }}>„Verbundberatung Duale Berufsausbildung Berlin"</strong> unterstützt Berliner Unternehmen branchenübergreifend und <strong style={{ color: C.teal }}>kostenlos</strong> bei:
-            </p>
-            <Bullet>Suche nach einem geeigneten Verbundpartner</Bullet>
-            <Bullet>Gestaltung des Kooperationsvertrages</Bullet>
-            <Bullet>Beantragung und Abrechnung der Fördermittel</Bullet>
-
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", marginTop: "14px" }}>
-              <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.9rem" }}>📌 Marktplatz Verbundausbildung</p>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
-                <strong>verbundberatung-berlin.de/marktplatz</strong> – hier finden Betriebe passende Verbundpartner. Partner: HWK Berlin, IHK Berlin, UVB.
-              </p>
-            </div>
-
-            <div style={{ background: "#fff8e6", borderRadius: "10px", padding: "12px 14px", marginTop: "10px", borderLeft: `3px solid #f0a030` }}>
-              <p style={{ margin: "0 0 2px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Splitterberufe – Berliner Sonderfall</p>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
-                Ausbildungsberufe, für die in Berlin keine eigene Berufsschulklasse zustande kommt, müssen auswärtige Schulen besuchen. Förderung ab 2025: <strong>24 € pro auswärtigem Schultag</strong> (zuvor 12 €).
-              </p>
-            </div>
-          </InfoCard>
-
-          {/* ── Übersichtstabelle Berlin ── */}
-          <div
-            style={{
-              background: `linear-gradient(135deg, ${C.blue} 0%, ${C.blueMid} 100%)`,
-              borderRadius: "16px",
-              padding: "24px 20px",
-              marginTop: "8px",
-            }}
-          >
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: "#fff", fontSize: "1.05rem", margin: "0 0 16px", textAlign: "center" }}>
-              🏙️ Berlin auf einen Blick
-            </p>
-            {[
-              ["Zuständige Kammern", "2 (HWK Berlin + HWK Frankfurt/Oder)"],
-              ["Max. Förderung", "bis zu 7.500 € (3,5-j. Ausbildung)"],
-              ["Antragsstelle", "HWK Berlin, Abt. FBB"],
-              ["Antragsfrist", "6 Monate nach Verbundbeginn"],
-              ["Externe Partner", "Seit 2021 auch außerhalb Berlins möglich"],
-              ["Digitale Formate", "Seit 2025/26 förderfähig"],
-              ["Beratung", "Verbundberatung Berlin (kostenlos)"],
-              ["Splitterberufe", "24 €/auswärtiger Schultag (ab 2025)"],
-            ].map(([label, value], i) => (
-              <div
-                key={label}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  gap: "12px",
-                  padding: "10px 0",
-                  borderBottom: i < 7 ? "1px solid rgba(255,255,255,0.12)" : "none",
-                  flexWrap: "wrap",
-                }}
-              >
-                <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: "rgba(255,255,255,0.7)" }}>{label}</span>
-                <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.teal, fontWeight: 700, textAlign: "right" }}>{value}</span>
-              </div>
-            ))}
-          </div>
 
         </div>
       </IonContent>
