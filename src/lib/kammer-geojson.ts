@@ -13,17 +13,33 @@
  * Format: GeoJSON FeatureCollection, EPSG:4326 (WGS 84)
  */
 
+// Minimale GeoJSON-Typen – kein @types/geojson nötig
+type Position = [number, number];
+interface GeoPolygon {
+  type: "Polygon";
+  coordinates: Position[][];
+}
+interface GeoMultiPolygon {
+  type: "MultiPolygon";
+  coordinates: Position[][][];
+}
+interface GeoFeature<G extends GeoPolygon | GeoMultiPolygon> {
+  type: "Feature";
+  properties: Record<string, string>;
+  geometry: G;
+}
+
 export interface KammerArea {
   name: string;
   shortName: string;
   color: string;
   fillColor: string;
-  geojson: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon>;
+  geojson: GeoFeature<GeoPolygon | GeoMultiPolygon>;
 }
 
 // ── Stadtgebiet Berlin ────────────────────────────────────────────────────────
 // Vereinfachtes 16-Punkt-Polygon, das die Berliner Stadtgrenze gut annähert.
-const BERLIN_POLYGON: GeoJSON.Feature<GeoJSON.Polygon> = {
+const BERLIN_POLYGON: GeoFeature<GeoPolygon> = {
   type: "Feature",
   properties: { name: "Handwerkskammer Berlin" },
   geometry: {
@@ -54,7 +70,7 @@ const BERLIN_POLYGON: GeoJSON.Feature<GeoJSON.Polygon> = {
 // Dargestellt als vereinfachtes MultiPolygon.
 //
 // Uckermark (nördlichster Landkreis, nördlich von Barnim)
-const UCKERMARK: GeoJSON.Position[] = [
+const UCKERMARK: Position[] = [
   [13.205, 53.046], // SW
   [13.205, 53.280], // NW
   [13.560, 53.505], // N
@@ -66,7 +82,7 @@ const UCKERMARK: GeoJSON.Position[] = [
 ];
 
 // Barnim (nördlich von Berlin)
-const BARNIM: GeoJSON.Position[] = [
+const BARNIM: Position[] = [
   [13.465, 52.677], // SW (an Berlin-Grenze)
   [13.465, 52.938], // NW
   [13.872, 52.976], // NO
@@ -77,7 +93,7 @@ const BARNIM: GeoJSON.Position[] = [
 ];
 
 // Märkisch-Oderland (östlich von Berlin, nördlich der Spree)
-const MAERKISCH_ODERLAND: GeoJSON.Position[] = [
+const MAERKISCH_ODERLAND: Position[] = [
   [13.700, 52.467], // SW (an Berlin)
   [13.700, 52.677], // NW (Barnim-Grenze)
   [13.965, 52.677], // N
@@ -90,7 +106,7 @@ const MAERKISCH_ODERLAND: GeoJSON.Position[] = [
 ];
 
 // Oder-Spree (südöstlich von Berlin)
-const ODER_SPREE: GeoJSON.Position[] = [
+const ODER_SPREE: Position[] = [
   [13.560, 52.338], // SW (an Berlin)
   [13.760, 52.338], // W
   [14.050, 52.350], // NW
@@ -104,7 +120,7 @@ const ODER_SPREE: GeoJSON.Position[] = [
 ];
 
 // Frankfurt (Oder) – kreisfreie Stadt (kleines Polygon an der Oder)
-const FRANKFURT_ODER: GeoJSON.Position[] = [
+const FRANKFURT_ODER: Position[] = [
   [14.430, 52.290], // SW
   [14.430, 52.390], // NW
   [14.580, 52.390], // NO
@@ -112,7 +128,7 @@ const FRANKFURT_ODER: GeoJSON.Position[] = [
   [14.430, 52.290], // zurück
 ];
 
-const OSTBRANDENBURG_MULTIPOLYGON: GeoJSON.Feature<GeoJSON.MultiPolygon> = {
+const OSTBRANDENBURG_MULTIPOLYGON: GeoFeature<GeoMultiPolygon> = {
   type: "Feature",
   properties: { name: "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg" },
   geometry: {
