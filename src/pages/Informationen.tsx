@@ -483,9 +483,29 @@ const Informationen: React.FC = () => {
 
             <div style={{ background: C.greenLight, borderRadius: "10px", padding: "12px 14px", marginTop: "12px", borderLeft: `3px solid ${C.green}` }}>
               <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Antragstellung</p>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
+              <p style={{ margin: "0 0 10px", fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
                 Frist: <strong>6 Monate</strong> nach Beginn der Verbundausbildung. Antragsteller ist der ausbildende Betrieb. Anträge an: <strong>fbb@hwk-berlin.de</strong>
               </p>
+              <a
+                href="https://service.berlin.de/dienstleistung/354529/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  background: C.green,
+                  color: "#fff",
+                  borderRadius: "8px",
+                  padding: "9px 14px",
+                  fontFamily: '"Quicksand", sans-serif',
+                  fontWeight: 700,
+                  fontSize: "0.85rem",
+                  textDecoration: "none",
+                }}
+              >
+                Direkt zum Antrag →
+              </a>
             </div>
 
             <div style={{ background: C.tealLight, borderRadius: "10px", padding: "12px 14px", marginTop: "10px" }}>

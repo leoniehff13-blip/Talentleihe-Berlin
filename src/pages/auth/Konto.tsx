@@ -11,6 +11,7 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonCardContent,
+  IonNote,
   IonChip,
   IonLabel,
   IonSpinner,
@@ -21,12 +22,20 @@ import {
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import { Query } from "appwrite";
 import {
   briefcaseOutline,
   documentTextOutline,
   chevronForward,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
+import {
+  databases,
+  DB_LEHRSTELLEN,
+  COL_BEWERTUNGEN,
+  BEWERTUNG_KATEGORIEN,
+  type Bewertung,
+} from "../../lib/appwrite";
 import Login from "./Login";
 import {
   ProfilFormFields,
@@ -37,6 +46,90 @@ import {
   ortAufteilen,
   type ProfilFormState,
 } from "../../components/ProfilFormFields";
+
+function StarDisplay({ value }: { value: number }) {
+  return (
+    <span>
+      {[1, 2, 3, 4, 5].map((s) => (
+        <span key={s} style={{ color: s <= Math.round(value) ? "#f5a623" : "#ddd", fontSize: "1.1rem" }}>★</span>
+      ))}
+      <span style={{ fontSize: "0.82rem", color: "#4a6080", marginLeft: 4 }}>
+        {value.toFixed(1)}
+      </span>
+    </span>
+  );
+}
+
+function BewertungSection({ userId, profileType }: { userId: string; profileType: "talent" | "betrieb" }) {
+  const [bewertungen, setBewertungen] = useState<Bewertung[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    databases.listDocuments<Bewertung>(DB_LEHRSTELLEN, COL_BEWERTUNGEN, [
+      Query.equal("rated_user_id", userId),
+      Query.orderDesc("$createdAt"),
+      Query.limit(50),
+    ])
+      .then((r) => setBewertungen(r.documents))
+      .catch(() => {})
+      .finally(() => setLoaded(true));
+  }, [userId]);
+
+  if (!loaded || bewertungen.length === 0) return null;
+
+  const avg = (vals: number[]) => vals.reduce((a, b) => a + b, 0) / vals.length;
+  const kat1Avg = avg(bewertungen.map((b) => b.kat1));
+  const kat2Avg = avg(bewertungen.map((b) => b.kat2));
+  const kat3Avg = avg(bewertungen.map((b) => b.kat3));
+  const gesamtAvg = avg([kat1Avg, kat2Avg, kat3Avg]);
+  const kategorien = BEWERTUNG_KATEGORIEN[profileType];
+  const mitKommentar = bewertungen.filter((b) => b.kommentar);
+
+  return (
+    <IonCard>
+      <IonCardHeader>
+        <IonCardTitle>Bewertungen</IonCardTitle>
+        <IonCardSubtitle>
+          {bewertungen.length} Bewertung{bewertungen.length !== 1 ? "en" : ""} · Gesamt:{" "}
+          <StarDisplay value={gesamtAvg} />
+        </IonCardSubtitle>
+      </IonCardHeader>
+      <IonCardContent>
+        <IonList lines="none">
+          {([
+            [kategorien[0], kat1Avg],
+            [kategorien[1], kat2Avg],
+            [kategorien[2], kat3Avg],
+          ] as [string, number][]).map(([kat, val]) => (
+            <IonItem key={kat}>
+              <IonLabel><h3>{kat}</h3></IonLabel>
+              <div slot="end"><StarDisplay value={val} /></div>
+            </IonItem>
+          ))}
+        </IonList>
+        {mitKommentar.length > 0 && (
+          <div style={{ marginTop: 12 }}>
+            <p style={{ fontWeight: 700, fontSize: "0.88rem", marginBottom: 8, color: "#1E367A" }}>
+              Kommentare:
+            </p>
+            {mitKommentar.slice(0, 5).map((b) => (
+              <div key={b.$id} style={{
+                background: "#f5f7fb", borderRadius: 8,
+                padding: "10px 12px", marginBottom: 8,
+                borderLeft: "3px solid #47BCC2",
+              }}>
+                <p style={{ margin: 0, fontSize: "0.88rem", color: "#4a6080", lineHeight: 1.5 }}>{b.kommentar}</p>
+                <p style={{ margin: "4px 0 0", fontSize: "0.74rem", color: "#aab" }}>
+                  {new Date(b.$createdAt).toLocaleDateString("de-DE")}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </IonCardContent>
+    </IonCard>
+  );
+}
 
 const Konto: React.FC = () => {
   const { user, profile, loading, logout, saveProfile } = useAuth();
@@ -310,6 +403,9 @@ const Konto: React.FC = () => {
             </IonCardContent>
           </IonCard>
         )}
+
+        {/* Bewertungen */}
+        <BewertungSection userId={user.$id} profileType={profile.type} />
 
         {/* Hub-Karten */}
         <IonCard button onClick={() => history.push("/meine-lehrstellen")}>

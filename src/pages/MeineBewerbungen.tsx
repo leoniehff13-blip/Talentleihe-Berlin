@@ -32,20 +32,24 @@ import {
   databases,
   DB_LEHRSTELLEN,
   COL_BEWERBUNGEN,
+  COL_BEWERTUNGEN,
   BEWERBUNG_STATUS_LABEL,
   BEWERBUNG_STATUS_COLOR,
   type Bewerbung,
+  type Bewertung,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
+import BewertungsKasten from "../components/BewertungsKasten";
 
 const MeineBewerbungenInner: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const history = useHistory();
   const [items, setItems] = useState<Bewerbung[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [confirmZurueckziehen, setConfirmZurueckziehen] = useState<Bewerbung | null>(null);
+  const [bereitsBewertet, setBereitsBewertet] = useState<Set<string>>(new Set());
 
   const load = useCallback(async () => {
     if (!user) return;
@@ -61,7 +65,27 @@ const MeineBewerbungenInner: React.FC = () => {
           Query.limit(100),
         ]
       );
-      setItems(result.documents);
+      const docs = result.documents;
+      setItems(docs);
+
+      // Bereits abgegebene Bewertungen laden
+      const angenommene = docs.filter((b) => b.status === "angenommen");
+      if (angenommene.length > 0 && user) {
+        try {
+          const bewResult = await databases.listDocuments<Bewertung>(
+            DB_LEHRSTELLEN,
+            COL_BEWERTUNGEN,
+            [
+              Query.equal("rater_user_id", user.$id),
+              Query.equal("bewerbung_id", angenommene.map((b) => b.$id)),
+              Query.limit(100),
+            ]
+          );
+          setBereitsBewertet(new Set(bewResult.documents.map((b) => b.bewerbung_id)));
+        } catch {
+          // Collection noch leer – kein Fehler
+        }
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -140,6 +164,9 @@ const MeineBewerbungenInner: React.FC = () => {
           <IonList>
             {items.map((b) => {
               const aktiv = b.status === "ausstehend" || b.status === "angenommen";
+              const kannBewerten = b.status === "angenommen" && !bereitsBewertet.has(b.$id);
+              // Rated type: applicant rates the other side
+              const ratedType = profile?.type === "talent" ? "betrieb" : "talent";
               return (
                 <IonItemSliding key={b.$id}>
                   <IonItem
@@ -156,11 +183,26 @@ const MeineBewerbungenInner: React.FC = () => {
                         Beworben am{" "}
                         {new Date(b.$createdAt).toLocaleDateString("de-DE")}
                       </IonNote>
+                      {kannBewerten && (
+                        <IonNote color="warning" style={{ display: "block", marginTop: 4 }}>
+                          ★ Einsatz abgeschlossen? Bewertung abgeben →
+                        </IonNote>
+                      )}
                     </IonLabel>
                     <IonBadge color={BEWERBUNG_STATUS_COLOR[b.status]} slot="end">
                       {BEWERBUNG_STATUS_LABEL[b.status]}
                     </IonBadge>
                   </IonItem>
+                  {kannBewerten && (
+                    <IonItemOptions side="start">
+                      <IonItemOption
+                        color="warning"
+                        onClick={() => history.push(`/bewertung/${b.$id}/${b.posting_owner_id}/${ratedType}`)}
+                      >
+                        Bewerten
+                      </IonItemOption>
+                    </IonItemOptions>
+                  )}
                   {aktiv && (
                     <IonItemOptions side="end">
                       <IonItemOption
@@ -175,6 +217,31 @@ const MeineBewerbungenInner: React.FC = () => {
               );
             })}
           </IonList>
+        )}
+
+        {/* Bewertungen für angenommene Einsätze */}
+        {items.filter((b) => b.status === "angenommen" && b.posting_owner_id).length > 0 && (
+          <div className="ion-padding-horizontal" style={{ paddingTop: 8 }}>
+            <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1E367A", marginBottom: 4 }}>
+              Bewertungen der Einsatzbetriebe
+            </p>
+            {items
+              .filter((b) => b.status === "angenommen" && b.posting_owner_id)
+              .map((b) => {
+                const ratedType = profile?.type === "talent" ? "betrieb" : "talent";
+                return (
+                  <div key={`bew-${b.$id}`}>
+                    <p style={{ fontSize: "0.82rem", color: "#4a6080", margin: "8px 0 0", fontWeight: 600 }}>
+                      {b.apprenticeship_titel ?? "Einsatz"}
+                    </p>
+                    <BewertungsKasten
+                      userId={b.posting_owner_id}
+                      profileType={ratedType as "talent" | "betrieb"}
+                    />
+                  </div>
+                );
+              })}
+          </div>
         )}
 
         <IonAlert

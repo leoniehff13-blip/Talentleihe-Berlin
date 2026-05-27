@@ -14,7 +14,7 @@ import {
   IonLabel,
 } from "@ionic/react";
 import { useState } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 import {
   ProfilFormFields,
@@ -120,13 +120,17 @@ const Register: React.FC = () => {
               {busy ? "Bitte warten…" : "Konto erstellen"}
             </IonButton>
             <IonNote>
-              <p style={{ marginTop: 8 }}>
-                * = Pflichtfeld
-              </p>
-              <p style={{ marginTop: 16 }}>
-                Schon registriert? <Link to="/login">Hier einloggen</Link>
-              </p>
+              <p style={{ marginTop: 8 }}>* = Pflichtfeld</p>
             </IonNote>
+            <IonButton
+              expand="block"
+              fill="outline"
+              color="secondary"
+              style={{ marginTop: 12 }}
+              onClick={() => history.push("/login")}
+            >
+              Schon registriert? Hier einloggen
+            </IonButton>
           </div>
         </form>
       </IonContent>

@@ -16,7 +16,7 @@ import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 
 const Login: React.FC = () => {
-  const { login } = useAuth();
+  const { login, devLogin } = useAuth();
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -80,6 +80,28 @@ const Login: React.FC = () => {
             Noch kein Konto? <Link to="/registrieren">Jetzt registrieren</Link>
           </p>
         </IonNote>
+
+        <div style={{ marginTop: 32, borderTop: "1px solid #e0e0e0", paddingTop: 20 }}>
+          <p style={{ fontSize: "0.78rem", color: "#888", textAlign: "center", marginBottom: 10 }}>
+            DEV-VORSCHAU
+          </p>
+          <IonButton
+            expand="block"
+            color="warning"
+            onClick={() => { devLogin(); history.replace("/konto"); }}
+          >
+            Dev-Zugang (ohne Passwort)
+          </IonButton>
+          <IonButton
+            expand="block"
+            fill="outline"
+            color="warning"
+            style={{ marginTop: 8 }}
+            onClick={() => { devLogin(); history.replace("/lehrstellen"); }}
+          >
+            Dev-Zugang → Talentleihe
+          </IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );

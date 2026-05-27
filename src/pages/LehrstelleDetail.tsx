@@ -40,6 +40,7 @@ import {
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
+import BewertungsKasten from "../components/BewertungsKasten";
 
 const LehrstelleDetailInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -303,6 +304,7 @@ const LehrstelleDetailInner: React.FC = () => {
                     <IonText color="medium">{item.handwerkskammer}</IonText>
                   </p>
                 )}
+
               </IonCardContent>
             </IonCard>
 
@@ -361,6 +363,14 @@ const LehrstelleDetailInner: React.FC = () => {
                   </IonButton>
                 </IonCardContent>
               </IonCard>
+            )}
+
+            {/* Bewertungen des Inserenten */}
+            {ownerId && (
+              <BewertungsKasten
+                userId={ownerId}
+                profileType={isTalentAnzeige ? "talent" : "betrieb"}
+              />
             )}
 
             {/* Klassischer E-Mail-Kontakt */}

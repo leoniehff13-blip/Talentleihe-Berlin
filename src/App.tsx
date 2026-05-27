@@ -19,6 +19,10 @@ import Informationen from "./pages/Informationen";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Konto from "./pages/auth/Konto";
+import Datenschutz from "./pages/Datenschutz";
+import AGB from "./pages/AGB";
+import Impressum from "./pages/Impressum";
+import Bewertung from "./pages/Bewertung";
 import { AuthProvider } from "./lib/AuthContext";
 
 /* Core CSS required for Ionic components to work properly */
@@ -88,6 +92,20 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/registrieren">
               <Register />
+            </Route>
+
+            <Route exact path="/bewertung/:bewerbungId/:ratedUserId/:ratedType">
+              <Bewertung />
+            </Route>
+
+            <Route exact path="/datenschutz">
+              <Datenschutz />
+            </Route>
+            <Route exact path="/agb">
+              <AGB />
+            </Route>
+            <Route exact path="/impressum">
+              <Impressum />
             </Route>
 
             <Route exact path="/">

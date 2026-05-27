@@ -22,6 +22,7 @@ import {
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
 import { Query } from "appwrite";
 import {
   checkmarkOutline,
@@ -33,17 +34,24 @@ import {
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   COL_BEWERBUNGEN,
+  COL_BEWERTUNGEN,
   BEWERBUNG_STATUS_LABEL,
   BEWERBUNG_STATUS_COLOR,
   type Bewerbung,
+  type Bewertung,
   type Lehrstelle,
 } from "../lib/appwrite";
+import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
+import BewertungsKasten from "../components/BewertungsKasten";
 
 const BewerbungenZurAnzeigeInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user, profile } = useAuth();
+  const history = useHistory();
   const [anzeige, setAnzeige] = useState<Lehrstelle | null>(null);
   const [bewerbungen, setBewerbungen] = useState<Bewerbung[]>([]);
+  const [bereitsBewertet, setBereitsBewertet] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,12 +69,31 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
       ]);
       setAnzeige(anz);
       setBewerbungen(bws.documents);
+
+      // Bereits abgegebene Bewertungen laden
+      const angenommene = bws.documents.filter((b) => b.status === "angenommen");
+      if (angenommene.length > 0 && user) {
+        try {
+          const bewResult = await databases.listDocuments<Bewertung>(
+            DB_LEHRSTELLEN,
+            COL_BEWERTUNGEN,
+            [
+              Query.equal("rater_user_id", user.$id),
+              Query.equal("bewerbung_id", angenommene.map((b) => b.$id)),
+              Query.limit(100),
+            ]
+          );
+          setBereitsBewertet(new Set(bewResult.documents.map((b) => b.bewerbung_id)));
+        } catch {
+          // Collection noch leer
+        }
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     load();
@@ -148,6 +175,9 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
           <IonList>
             {bewerbungen.map((b) => {
               const offen = b.status === "ausstehend";
+              const kannBewerten = b.status === "angenommen" && !bereitsBewertet.has(b.$id);
+              // Posting owner rates the applicant (opposite type)
+              const ratedType = profile?.type === "betrieb" ? "talent" : "betrieb";
               return (
                 <IonCard key={b.$id}>
                   <IonCardHeader>
@@ -216,7 +246,26 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
                         Per E-Mail antworten
                       </IonButton>
                     )}
+                    {kannBewerten && (
+                      <IonButton
+                        expand="block"
+                        color="warning"
+                        fill="outline"
+                        style={{ marginTop: 8 }}
+                        onClick={() => history.push(`/bewertung/${b.$id}/${b.applicant_user_id}/${ratedType}`)}
+                      >
+                        ★ Einsatz bewerten
+                      </IonButton>
+                    )}
                   </IonCardContent>
+                  {b.status === "angenommen" && b.applicant_user_id && (
+                    <div style={{ padding: "0 16px 8px" }}>
+                      <BewertungsKasten
+                        userId={b.applicant_user_id}
+                        profileType={ratedType as "talent" | "betrieb"}
+                      />
+                    </div>
+                  )}
                   <IonItem lines="none">
                     <IonLabel color="medium" style={{ fontSize: 12 }}>
                       Bewerber-ID: {b.applicant_user_id}

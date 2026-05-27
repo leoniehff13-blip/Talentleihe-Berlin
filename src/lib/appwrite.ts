@@ -1,4 +1,4 @@
-import { Client, Account, Databases, Storage, type Models } from "appwrite";
+import { Client, Account, Databases, Functions, Storage, type Models } from "appwrite";
 
 /**
  * Appwrite Client – wird einmal initialisiert und überall in der App importiert.
@@ -29,6 +29,7 @@ export const client = new Client()
 
 export const account = new Account(client);
 export const databases = new Databases(client);
+export const functions = new Functions(client);
 export const storage = new Storage(client);
 
 /* -------- Datenbank- und Collection-Konstanten -------- */
@@ -36,6 +37,7 @@ export const DB_LEHRSTELLEN = "lehrstellen";
 export const COL_APPRENTICESHIPS = "apprenticeships";
 export const COL_PROFILES = "profiles";
 export const COL_BEWERBUNGEN = "bewerbungen";
+export const COL_BEWERTUNGEN = "bewertungen";
 
 /* -------- Bundesländer -------- */
 export type Bundesland =
@@ -153,6 +155,22 @@ export function extractOwnerId(permissions: string[]): string | null {
   }
   return null;
 }
+
+export interface Bewertung extends Models.Document {
+  bewerbung_id: string;
+  rated_user_id: string;
+  rater_user_id: string;
+  rated_type: "talent" | "betrieb";
+  kat1: number;
+  kat2: number;
+  kat3: number;
+  kommentar: string | null;
+}
+
+export const BEWERTUNG_KATEGORIEN: Record<"talent" | "betrieb", [string, string, string]> = {
+  talent: ["Zuverlässigkeit", "Lernbereitschaft", "Pünktlichkeit"],
+  betrieb: ["Zuverlässigkeit", "Arbeitsumfeld", "Wissensvermittlung"],
+};
 
 export interface Profile extends Models.Document {
   type: ProfileType;

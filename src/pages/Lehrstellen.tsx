@@ -22,6 +22,9 @@ import {
   IonSegment,
   IonSegmentButton,
   IonRange,
+  IonModal,
+  IonSearchbar,
+  IonButtons,
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import { Query } from "appwrite";
@@ -41,25 +44,123 @@ import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 
 interface Filters {
   ortOrPlz: string;
-  umkreis: number; // km
-  gewerk: string;
-  kammer: string;  // "" = beide Kammern
+  umkreis: number;
+  gewerke: string[];
+  kammer: string;
   startVon: string;
   startBis: string;
-  mindestalter: string; // "" = egal, "kein" = nur ohne, "16"|"18"|"21" = bis zu …
+  mindestalter: string;
 }
 
 const EMPTY_FILTERS: Filters = {
   ortOrPlz: "",
   umkreis: 50,
-  gewerk: "",
+  gewerke: [],
   kammer: "",
   startVon: "",
   startBis: "",
   mindestalter: "",
 };
 
+function GewerkMultiPicker({
+  value,
+  onChange,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [draft, setDraft] = useState<string[]>([]);
+
+  const filtered = GEWERKE.filter((g) =>
+    g.toLowerCase().includes(search.toLowerCase())
+  );
+
+  function toggle(g: string) {
+    setDraft((prev) =>
+      prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]
+    );
+  }
+
+  function handleOpen() {
+    setDraft(value);
+    setSearch("");
+    setOpen(true);
+  }
+
+  function apply() {
+    onChange(draft);
+    setOpen(false);
+  }
+
+  const label =
+    value.length === 0
+      ? "Alle Gewerke"
+      : value.length === 1
+        ? value[0]
+        : `${value.length} Gewerke ausgewählt`;
+
+  return (
+    <>
+      <IonItem button detail={false} onClick={handleOpen}>
+        <IonLabel position="stacked">Gewerk</IonLabel>
+        <div style={{ padding: "10px 0 6px", color: value.length ? "var(--ion-text-color)" : "#999", fontSize: "1rem" }}>
+          {label}
+        </div>
+      </IonItem>
+
+      <IonModal isOpen={open} onDidDismiss={() => setOpen(false)}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Gewerke wählen</IonTitle>
+            <IonButtons slot="end">
+              <IonButton strong onClick={apply}>
+                Fertig {draft.length > 0 ? `(${draft.length})` : ""}
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonToolbar>
+            <IonSearchbar
+              value={search}
+              onIonInput={(e) => setSearch(e.detail.value ?? "")}
+              placeholder="Gewerk suchen …"
+              debounce={80}
+            />
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          {draft.length > 0 && (
+            <IonItem button detail={false} onClick={() => setDraft([])}>
+              <IonLabel color="medium" style={{ fontStyle: "italic" }}>
+                Auswahl aufheben
+              </IonLabel>
+            </IonItem>
+          )}
+          <IonList>
+            {filtered.length === 0 && (
+              <IonItem>
+                <IonLabel color="medium" style={{ fontStyle: "italic" }}>Keine Treffer</IonLabel>
+              </IonItem>
+            )}
+            {filtered.map((g) => (
+              <IonItem key={g} button detail={false} onClick={() => toggle(g)}
+                style={draft.includes(g) ? { "--background": "rgba(71,188,194,0.1)" } : {}}>
+                <IonLabel>{g}</IonLabel>
+                {draft.includes(g) && (
+                  <span slot="end" style={{ color: "#47BCC2", fontWeight: 700, fontSize: "1.1rem" }}>✓</span>
+                )}
+              </IonItem>
+            ))}
+          </IonList>
+        </IonContent>
+      </IonModal>
+    </>
+  );
+}
+
 type ViewMode = "liste" | "karte";
+
 
 const LehrstellenInner: React.FC = () => {
   const { user, profile } = useAuth();
@@ -131,14 +232,15 @@ const LehrstellenInner: React.FC = () => {
       );
 
       // Client-seitige Filter
-      const gewerkStammSel = gewerkStamm(filters.gewerk);
       let filtered = result.documents.filter((d) => {
-        // Gewerk (tolerante Stamm-Übereinstimmung)
-        if (gewerkStammSel) {
+        // Gewerk-Multi-Filter
+        if (filters.gewerke.length > 0) {
           const itemStamm = gewerkStamm(d.gewerk ?? "");
-          if (!itemStamm.includes(gewerkStammSel) && !gewerkStammSel.includes(itemStamm)) {
-            return false;
-          }
+          const matches = filters.gewerke.some((g) => {
+            const sel = gewerkStamm(g);
+            return itemStamm.includes(sel) || sel.includes(itemStamm);
+          });
+          if (!matches) return false;
         }
         // Kammer-Filter
         if (filters.kammer && d.handwerkskammer !== filters.kammer) {
@@ -189,10 +291,14 @@ const LehrstellenInner: React.FC = () => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   }
 
-  const filterCount = Object.entries(filters).filter(([k, v]) => {
-    if (k === "umkreis") return false;
-    return Boolean(v);
-  }).length;
+  const filterCount = [
+    filters.ortOrPlz,
+    filters.gewerke.length > 0 ? "1" : "",
+    filters.kammer,
+    filters.startVon,
+    filters.startBis,
+    filters.mindestalter,
+  ].filter(Boolean).length;
 
   return (
     <IonPage>
@@ -283,22 +389,10 @@ const LehrstellenInner: React.FC = () => {
                     <IonLabel slot="end" style={{ fontSize: 12 }}>200</IonLabel>
                   </IonRange>
                 </IonItem>
-                <IonItem>
-                  <IonLabel position="stacked">Gewerk</IonLabel>
-                  <IonSelect
-                    interface="alert"
-                    placeholder="Alle Gewerke"
-                    value={filters.gewerk}
-                    onIonChange={(e) => setFilter("gewerk", String(e.detail.value ?? ""))}
-                  >
-                    <IonSelectOption value="">Alle Gewerke</IonSelectOption>
-                    {GEWERKE.map((g) => (
-                      <IonSelectOption key={g} value={g}>
-                        {g}
-                      </IonSelectOption>
-                    ))}
-                  </IonSelect>
-                </IonItem>
+                <GewerkMultiPicker
+                  value={filters.gewerke}
+                  onChange={(v) => setFilter("gewerke", v)}
+                />
                 <IonItem>
                   <IonLabel position="stacked">Handwerkskammer</IonLabel>
                   <IonSelect

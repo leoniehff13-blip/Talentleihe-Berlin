@@ -12,11 +12,31 @@ type AuthUser = Models.User<Models.Preferences> | null;
 
 export type ProfileInput = Omit<Profile, keyof Models.Document>;
 
+const DEV_USER = {
+  $id: "dev", $createdAt: "", $updatedAt: "",
+  name: "Dev User", registration: "", status: true, labels: [],
+  passwordUpdate: "", email: "dev@winwin-berlin.de", phone: "",
+  emailVerification: false, phoneVerification: false, mfa: false,
+  prefs: {}, targets: [], accessedAt: "",
+} as unknown as Models.User<Models.Preferences>;
+
+const DEV_PROFILE = {
+  $id: "dev-profile", $collectionId: COL_PROFILES,
+  $databaseId: DB_LEHRSTELLEN, $createdAt: "", $updatedAt: "", $permissions: [],
+  type: "betrieb" as const, user_id: "dev", name: "Win/Win Berlin (Dev)",
+  vorname: null, anrede: null, ort: null, adresse: "Musterstraße 1\n10115 Berlin",
+  gewerk: "Mehrere Gewerke", handwerkskammer: "HWK Berlin", lehrjahr: null,
+  unternehmen: null, berufsschule: null, faehigkeiten: [],
+  ansprechpartner: "Entwickler:in", ansprechpartner_email: "dev@winwin-berlin.de",
+  spezialisierung: [],
+} as Profile;
+
 interface AuthContextValue {
   user: AuthUser;
   profile: Profile | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  devLogin: () => void;
   signup: (name: string, email: string, password: string) => Promise<Models.User<Models.Preferences>>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -40,6 +60,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   async function refresh() {
+    if (sessionStorage.getItem("devMode")) {
+      setUser(DEV_USER);
+      setProfile(DEV_PROFILE);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
       const u = await account.get();
@@ -56,6 +82,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
+  }
+
+  function devLogin() {
+    sessionStorage.setItem("devMode", "1");
+    setUser(DEV_USER);
+    setProfile(DEV_PROFILE);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -75,6 +108,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
+    const wasDevMode = sessionStorage.getItem("devMode");
+    sessionStorage.removeItem("devMode");
+    if (wasDevMode) {
+      setUser(null);
+      setProfile(null);
+      return;
+    }
     try {
       await account.deleteSession("current");
     } finally {
@@ -84,7 +124,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function saveProfile(data: ProfileInput): Promise<Profile> {
-    if (!user) throw new Error("Nicht eingeloggt.");
+    // React-State kann nach signup() noch veraltet sein → Appwrite direkt befragen
+    let userId = user?.$id;
+    if (!userId) {
+      const currentUser = await account.get();
+      userId = currentUser.$id;
+    }
     if (profile) {
       const updated = await databases.updateDocument<Profile>(
         DB_LEHRSTELLEN,
@@ -99,8 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       DB_LEHRSTELLEN,
       COL_PROFILES,
       ID.unique(),
-      { ...data, user_id: user.$id },
-
+      { ...data, user_id: userId },
     );
     setProfile(created);
     return created;
@@ -108,7 +152,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, loading, login, signup, logout, refresh, saveProfile }}
+      value={{ user, profile, loading, login, devLogin, signup, logout, refresh, saveProfile }}
     >
       {children}
     </AuthContext.Provider>

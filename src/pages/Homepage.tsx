@@ -325,6 +325,10 @@ const Homepage: React.FC = () => {
             padding: clamp(60px, 8vw, 100px) clamp(20px, 6vw, 80px);
             text-align: center;
           }
+          .ww-outro-inner {
+            max-width: 600px;
+            margin: 0 auto;
+          }
           .ww-outro-title {
             font-family: var(--font-display);
             font-weight: 800;
@@ -342,16 +346,47 @@ const Homepage: React.FC = () => {
             color: rgba(255, 255, 255, 0.7);
             margin-top: 16px;
             line-height: 1.65;
-            max-width: 52ch;
-            margin-left: auto;
-            margin-right: auto;
           }
           .ww-outro-actions {
             margin-top: 28px;
             display: flex;
             gap: 12px;
             justify-content: center;
+            align-items: center;
             flex-wrap: wrap;
+          }
+
+          /* LEGAL FOOTER */
+          .ww-legal {
+            background: #f0f2f7;
+            padding: 24px clamp(20px, 6vw, 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+          }
+          .ww-legal-link {
+            font-family: var(--font-body);
+            font-size: 0.78rem;
+            color: var(--text-mid);
+            text-decoration: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: color 0.2s;
+          }
+          .ww-legal-link:hover { color: var(--gold); }
+          .ww-legal-sep {
+            color: #c0c8d8;
+            font-size: 0.7rem;
+          }
+          .ww-legal-copy {
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            color: #a0aabb;
+            margin-top: 8px;
           }
         `}</style>
 
@@ -523,40 +558,53 @@ const Homepage: React.FC = () => {
 
           {/* OUTRO */}
           <section className="ww-outro">
-            <h2 className="ww-outro-title">
-              Zeit, dein <em>Handwerk</em>
-              <br />
-              neu zu denken.
-            </h2>
-            <p className="ww-outro-sub">
-              Egal ob du als Azubi neue Erfahrungen sammeln oder als Betrieb
-              passende Talente entdecken willst — Talentleihe Berlin bringt euch zusammen.
-            </p>
-            <div className="ww-outro-actions">
-              <a
-                className="ww-btn-primary"
-                href={ctaPrimary.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  history.push(ctaPrimary.href);
-                }}
-              >
-                {ctaPrimary.label}
-              </a>
-              {!istEingeloggt && (
+            <div className="ww-outro-inner">
+              <h2 className="ww-outro-title">
+                Zeit, dein <em>Handwerk</em>
+                <br />
+                neu zu denken.
+              </h2>
+              <p className="ww-outro-sub">
+                Egal ob du als Azubi neue Erfahrungen sammeln oder als Betrieb
+                passende Talente entdecken willst — Talentleihe Berlin bringt euch zusammen.
+              </p>
+              <div className="ww-outro-actions">
                 <a
-                  className="ww-btn-ghost"
-                  href="/login"
+                  className="ww-btn-primary"
+                  href={ctaPrimary.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    history.push("/login");
+                    history.push(ctaPrimary.href);
                   }}
                 >
-                  Schon Konto? Einloggen
+                  {ctaPrimary.label}
                 </a>
-              )}
+                {!istEingeloggt && (
+                  <a
+                    className="ww-btn-ghost"
+                    href="/login"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      history.push("/login");
+                    }}
+                    style={{ color: "white", borderColor: "rgba(255,255,255,0.4)" }}
+                  >
+                    Schon Konto? Einloggen
+                  </a>
+                )}
+              </div>
             </div>
           </section>
+
+          {/* LEGAL FOOTER */}
+          <footer className="ww-legal">
+            <a className="ww-legal-link" href="/datenschutz" onClick={(e) => { e.preventDefault(); history.push("/datenschutz"); }}>Datenschutz</a>
+            <span className="ww-legal-sep">·</span>
+            <a className="ww-legal-link" href="/agb" onClick={(e) => { e.preventDefault(); history.push("/agb"); }}>AGB</a>
+            <span className="ww-legal-sep">·</span>
+            <a className="ww-legal-link" href="/impressum" onClick={(e) => { e.preventDefault(); history.push("/impressum"); }}>Impressum</a>
+            <p className="ww-legal-copy">© {new Date().getFullYear()} Talentleihe Berlin — Ein Angebot der Handwerkskammer Berlin</p>
+          </footer>
         </div>
       </IonContent>
     </IonPage>
