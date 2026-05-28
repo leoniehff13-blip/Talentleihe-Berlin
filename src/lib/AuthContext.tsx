@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { ID, Permission, Query, Role, type Models } from "appwrite";
+import { AppwriteException, ID, Permission, Query, Role, type Models } from "appwrite";
 import {
   account,
   databases,
@@ -96,7 +96,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function login(email: string, password: string) {
-    await account.createEmailPasswordSession(email, password);
+    try {
+      await account.createEmailPasswordSession(email, password);
+    } catch (err) {
+      // Falls bereits eine aktive Session existiert (z. B. beim Wechsel zwischen
+      // Dev-Zugängen), alle Sessions löschen und einen neuen Login starten.
+      if (
+        err instanceof AppwriteException &&
+        (err.type === "user_session_already_exists" || err.code === 401)
+      ) {
+        try { await account.deleteSessions(); } catch { /* ignorieren */ }
+        await account.createEmailPasswordSession(email, password);
+      } else {
+        throw err;
+      }
+    }
     await refresh();
   }
 
