@@ -27,6 +27,7 @@ import {
   briefcaseOutline,
   documentTextOutline,
   chevronForward,
+  createOutline,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
@@ -272,9 +273,6 @@ const Konto: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonTitle>Konto</IonTitle>
-          <IonButtons slot="end">
-            <IonButton onClick={() => setEditing(true)}>Profil bearbeiten</IonButton>
-          </IonButtons>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -405,6 +403,18 @@ const Konto: React.FC = () => {
             </IonCardContent>
           </IonCard>
         )}
+
+        {/* Profil bearbeiten */}
+        <IonButton
+          expand="block"
+          fill="outline"
+          color="secondary"
+          onClick={() => setEditing(true)}
+          style={{ marginBottom: 8 }}
+        >
+          <IonIcon slot="start" icon={createOutline} />
+          Profil bearbeiten
+        </IonButton>
 
         {/* Bewerbungsunterlagen (nur für Talents) */}
         {isTalent && <DokumenteUpload mode="manage" />}
