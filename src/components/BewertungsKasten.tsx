@@ -70,7 +70,40 @@ const BewertungsKasten: React.FC<Props> = ({ userId, profileType, inline = false
     );
   }
 
-  if (bewertungen.length === 0) return null;
+  if (bewertungen.length === 0) {
+    const emptyContent = (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          padding: "14px 0",
+          color: "#9aa5b8",
+        }}
+      >
+        <span style={{ fontSize: "1.4rem", lineHeight: 1 }}>★</span>
+        <span style={{ fontSize: "0.88rem" }}>Noch keine Bewertungen vorhanden</span>
+      </div>
+    );
+    if (inline) {
+      return (
+        <div style={{ marginTop: 20, paddingTop: 16, borderTop: "1px solid #e8ecf4" }}>
+          <p style={{ fontWeight: 700, fontSize: "0.88rem", color: "#1E367A", marginBottom: 4 }}>
+            Bewertungen
+          </p>
+          {emptyContent}
+        </div>
+      );
+    }
+    return (
+      <IonCard>
+        <IonCardHeader>
+          <IonCardTitle>Bewertungen</IonCardTitle>
+        </IonCardHeader>
+        <IonCardContent>{emptyContent}</IonCardContent>
+      </IonCard>
+    );
+  }
 
   const kat1Avg = avg(bewertungen.map((b) => b.kat1));
   const kat2Avg = avg(bewertungen.map((b) => b.kat2));
