@@ -36,7 +36,7 @@ function Stars({ value, size = "1.05rem" }: { value: number; size?: string }) {
 }
 
 interface Props {
-  userId: string;
+  userId: string | null | undefined;
   profileType: "talent" | "betrieb";
   inline?: boolean;
 }
@@ -47,6 +47,10 @@ const BewertungsKasten: React.FC<Props> = ({ userId, profileType, inline = false
 
   useEffect(() => {
     setBewertungen([]);
+    if (!userId) {
+      setLoaded(true);
+      return;
+    }
     setLoaded(false);
     databases
       .listDocuments<Bewertung>(DB_LEHRSTELLEN, COL_BEWERTUNGEN, [

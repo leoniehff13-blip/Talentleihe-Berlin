@@ -323,12 +323,10 @@ const LehrstelleDetailInner: React.FC = () => {
             )}
 
             {/* Bewertungen des Inserenten */}
-            {ownerId && (
-              <BewertungsKasten
-                userId={ownerId}
-                profileType={isTalentAnzeige ? "talent" : "betrieb"}
-              />
-            )}
+            <BewertungsKasten
+              userId={ownerId}
+              profileType={isTalentAnzeige ? "talent" : "betrieb"}
+            />
 
             {!istEigeneAnzeige && eigeneBewerbung && (
               <IonCard>
