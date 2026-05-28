@@ -41,6 +41,7 @@ import {
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
+import DokumenteUpload from "../components/DokumenteUpload";
 
 const LehrstelleDetailInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,6 +58,7 @@ const LehrstelleDetailInner: React.FC = () => {
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
   const [erfolg, setErfolg] = useState(false);
+  const [selectedDokIds, setSelectedDokIds] = useState<string[]>([]);
 
   const ownerId = item ? extractOwnerId(item.$permissions ?? []) : null;
   const istEigeneAnzeige = Boolean(user && ownerId === user.$id);
@@ -138,6 +140,7 @@ const LehrstelleDetailInner: React.FC = () => {
           posting_owner_id: ownerId,
           nachricht: nachricht.trim(),
           status: "ausstehend",
+          dokument_ids: selectedDokIds,
         }
         // Keine Per-Row-Permissions: die Bewerbungen-Tabelle nutzt
         // Collection-Permissions (read/create/update/delete für alle eingeloggten
@@ -148,6 +151,7 @@ const LehrstelleDetailInner: React.FC = () => {
       );
       setShowModal(false);
       setNachricht("");
+      setSelectedDokIds([]);
       setErfolg(true);
       await loadEigeneBewerbung();
     } catch (err: unknown) {
@@ -424,6 +428,13 @@ const LehrstelleDetailInner: React.FC = () => {
                 onIonInput={(e) => setNachricht(e.detail.value ?? "")}
               />
             </IonItem>
+            {istTalent && (
+              <DokumenteUpload
+                mode="select"
+                selectedIds={selectedDokIds}
+                onSelectionChange={setSelectedDokIds}
+              />
+            )}
             {sendError && (
               <IonText color="danger">
                 <p>{sendError}</p>

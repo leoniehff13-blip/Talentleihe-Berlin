@@ -28,17 +28,23 @@ import {
   checkmarkOutline,
   closeOutline,
   mailOutline,
+  documentOutline,
+  downloadOutline,
 } from "ionicons/icons";
 import {
   databases,
+  storage,
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   COL_BEWERBUNGEN,
   COL_BEWERTUNGEN,
+  COL_DOKUMENTE,
+  BUCKET_DOKUMENTE,
   BEWERBUNG_STATUS_LABEL,
   BEWERBUNG_STATUS_COLOR,
   type Bewerbung,
   type Bewertung,
+  type Dokument,
   type Lehrstelle,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
@@ -52,6 +58,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
   const [anzeige, setAnzeige] = useState<Lehrstelle | null>(null);
   const [bewerbungen, setBewerbungen] = useState<Bewerbung[]>([]);
   const [bereitsBewertet, setBereitsBewertet] = useState<Set<string>>(new Set());
+  const [dokumenteMap, setDokumenteMap] = useState<Map<string, Dokument>>(new Map());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,6 +76,23 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
       ]);
       setAnzeige(anz);
       setBewerbungen(bws.documents);
+
+      // Dokumente laden für alle Bewerbungen mit Anhängen
+      const alleFileIds = bws.documents.flatMap((b) => b.dokument_ids ?? []);
+      if (alleFileIds.length > 0) {
+        try {
+          const dokRes = await databases.listDocuments<Dokument>(
+            DB_LEHRSTELLEN,
+            COL_DOKUMENTE,
+            [Query.equal("file_id", alleFileIds), Query.limit(200)]
+          );
+          const map = new Map<string, Dokument>();
+          dokRes.documents.forEach((d) => map.set(d.file_id, d));
+          setDokumenteMap(map);
+        } catch {
+          // optional
+        }
+      }
 
       // Bereits abgegebene Bewertungen laden
       const angenommene = bws.documents.filter((b) => b.status === "angenommen");
@@ -203,6 +227,33 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
                     <p style={{ marginTop: 12, whiteSpace: "pre-wrap" }}>
                       {b.nachricht}
                     </p>
+
+                    {/* Angehängte Dokumente */}
+                    {(b.dokument_ids ?? []).length > 0 && (
+                      <div style={{ marginTop: 14 }}>
+                        <p style={{ fontWeight: 700, fontSize: "0.82rem", color: "#1E367A", marginBottom: 6 }}>
+                          Angehängte Unterlagen
+                        </p>
+                        {(b.dokument_ids ?? []).map((fileId) => {
+                          const dok = dokumenteMap.get(fileId);
+                          return (
+                            <IonButton
+                              key={fileId}
+                              expand="block"
+                              fill="outline"
+                              size="small"
+                              href={storage.getFileDownload(BUCKET_DOKUMENTE, fileId).toString()}
+                              target="_blank"
+                              style={{ marginBottom: 4 }}
+                            >
+                              <IonIcon slot="start" icon={documentOutline} />
+                              {dok?.filename ?? fileId}
+                              <IonIcon slot="end" icon={downloadOutline} />
+                            </IonButton>
+                          );
+                        })}
+                      </div>
+                    )}
 
                     {offen && (
                       <div

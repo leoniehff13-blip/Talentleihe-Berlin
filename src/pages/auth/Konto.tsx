@@ -37,6 +37,7 @@ import {
   type Bewertung,
 } from "../../lib/appwrite";
 import Login from "./Login";
+import DokumenteUpload from "../../components/DokumenteUpload";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -403,6 +404,9 @@ const Konto: React.FC = () => {
             </IonCardContent>
           </IonCard>
         )}
+
+        {/* Bewerbungsunterlagen (nur für Talents) */}
+        {isTalent && <DokumenteUpload mode="manage" />}
 
         {/* Bewertungen */}
         <BewertungSection userId={user.$id} profileType={profile.type} />

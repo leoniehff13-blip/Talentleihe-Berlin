@@ -38,6 +38,8 @@ export const COL_APPRENTICESHIPS = "apprenticeships";
 export const COL_PROFILES = "profiles";
 export const COL_BEWERBUNGEN = "bewerbungen";
 export const COL_BEWERTUNGEN = "bewertungen";
+export const COL_DOKUMENTE = "dokumente";
+export const BUCKET_DOKUMENTE = "dokumente";
 
 /* -------- Bundesländer -------- */
 export type Bundesland =
@@ -141,6 +143,15 @@ export interface Bewerbung extends Models.Document {
   posting_owner_id: string;
   nachricht: string;
   status: BewerbungStatus;
+  dokument_ids: string[];
+}
+
+export interface Dokument extends Models.Document {
+  user_id: string;
+  file_id: string;
+  filename: string;
+  size: number;
+  mime_type: string;
 }
 
 /**
