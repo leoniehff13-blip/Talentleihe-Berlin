@@ -322,6 +322,14 @@ const LehrstelleDetailInner: React.FC = () => {
               </IonCard>
             )}
 
+            {/* Bewertungen des Inserenten */}
+            {ownerId && (
+              <BewertungsKasten
+                userId={ownerId}
+                profileType={isTalentAnzeige ? "talent" : "betrieb"}
+              />
+            )}
+
             {!istEigeneAnzeige && eigeneBewerbung && (
               <IonCard>
                 <IonCardHeader>
@@ -363,14 +371,6 @@ const LehrstelleDetailInner: React.FC = () => {
                   </IonButton>
                 </IonCardContent>
               </IonCard>
-            )}
-
-            {/* Bewertungen des Inserenten */}
-            {ownerId && (
-              <BewertungsKasten
-                userId={ownerId}
-                profileType={isTalentAnzeige ? "talent" : "betrieb"}
-              />
             )}
 
             {/* Klassischer E-Mail-Kontakt */}
