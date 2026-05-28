@@ -16,6 +16,7 @@ import {
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
+import { translateError } from "../../lib/errors";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -25,7 +26,7 @@ import {
 } from "../../components/ProfilFormFields";
 
 const Register: React.FC = () => {
-  const { signup, login, saveProfile } = useAuth();
+  const { signup, saveProfile } = useAuth();
   const history = useHistory();
 
   const [email, setEmail] = useState("");
@@ -58,13 +59,12 @@ const Register: React.FC = () => {
     setBusy(true);
     try {
       await signup(accountName, email.trim(), password);
-      // Session ist nach signup gesetzt → Profil anlegen
+      // signup() hat bereits eine Session angelegt und refresh() aufgerufen.
+      // Profil anlegen – danach direkt weiterleiten, keine zweite Session nötig.
       await saveProfile(profilStateToInput(profil));
-      // refresh damit Auth-Context user+profile lädt
-      await login(email.trim(), password);
       history.replace("/konto");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setBusy(false);
     }

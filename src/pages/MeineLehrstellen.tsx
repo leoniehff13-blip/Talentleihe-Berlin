@@ -31,6 +31,7 @@ import {
   type Lehrstelle,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 
 const MeineLehrstellenInner: React.FC = () => {
@@ -67,7 +68,7 @@ const MeineLehrstellenInner: React.FC = () => {
       );
       setItems(own);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setLoading(false);
     }
@@ -82,7 +83,7 @@ const MeineLehrstellenInner: React.FC = () => {
       await databases.deleteDocument(DB_LEHRSTELLEN, COL_APPRENTICESHIPS, item.$id);
       setItems((prev) => prev.filter((i) => i.$id !== item.$id));
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     }
   }
 

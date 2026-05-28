@@ -28,6 +28,7 @@ import {
   type Bewertung,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 
 function StarPicker({ value, onChange }: { value: number; onChange: (v: number) => void }) {
@@ -133,7 +134,7 @@ const BewertungInner: React.FC = () => {
       );
       setSaved(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setSaving(false);
     }

@@ -35,6 +35,7 @@ import {
 import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 
 interface FormState {
@@ -182,7 +183,7 @@ const LehrstelleFormInner: React.FC = () => {
           handwerkskammer: doc.handwerkskammer ?? "",
         });
       } catch (err: unknown) {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
+        if (!cancelled) setError(translateError(err));
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -284,7 +285,7 @@ const LehrstelleFormInner: React.FC = () => {
       }
       history.replace("/meine-lehrstellen");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setSaving(false);
     }

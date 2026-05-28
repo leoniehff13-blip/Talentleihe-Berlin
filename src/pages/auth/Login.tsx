@@ -6,7 +6,6 @@ import {
   IonToolbar,
   IonInput,
   IonItem,
-  IonLabel,
   IonButton,
   IonText,
   IonNote,
@@ -14,9 +13,25 @@ import {
 import { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
+import { translateError } from "../../lib/errors";
+
+const DEV_ACCOUNTS = [
+  {
+    label: "Dev-Login: Betrieb",
+    email: "dev-betrieb@winwin-berlin.de",
+    password: "DevBetrieb2025!",
+    color: "primary" as const,
+  },
+  {
+    label: "Dev-Login: Talent",
+    email: "dev-talent@winwin-berlin.de",
+    password: "DevTalent2025!",
+    color: "tertiary" as const,
+  },
+];
 
 const Login: React.FC = () => {
-  const { login, devLogin } = useAuth();
+  const { login } = useAuth();
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +46,20 @@ const Login: React.FC = () => {
       await login(email, password);
       history.replace("/konto");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function quickLogin(acc: (typeof DEV_ACCOUNTS)[number]) {
+    setError(null);
+    setBusy(true);
+    try {
+      await login(acc.email, acc.password);
+      history.replace("/konto");
+    } catch (err: unknown) {
+      setError(translateError(err));
     } finally {
       setBusy(false);
     }
@@ -81,26 +109,29 @@ const Login: React.FC = () => {
           </p>
         </IonNote>
 
+        {/* Dev-Schnellzugänge */}
         <div style={{ marginTop: 32, borderTop: "1px solid #e0e0e0", paddingTop: 20 }}>
           <p style={{ fontSize: "0.78rem", color: "#888", textAlign: "center", marginBottom: 10 }}>
-            DEV-VORSCHAU
+            DEV-SCHNELLZUGANG
           </p>
-          <IonButton
-            expand="block"
-            color="warning"
-            onClick={() => { devLogin(); history.replace("/konto"); }}
-          >
-            Dev-Zugang (ohne Passwort)
-          </IonButton>
-          <IonButton
-            expand="block"
-            fill="outline"
-            color="warning"
-            style={{ marginTop: 8 }}
-            onClick={() => { devLogin(); history.replace("/lehrstellen"); }}
-          >
-            Dev-Zugang → Talentleihe
-          </IonButton>
+          {DEV_ACCOUNTS.map((acc) => (
+            <IonButton
+              key={acc.email}
+              expand="block"
+              fill="outline"
+              color={acc.color}
+              disabled={busy}
+              style={{ marginBottom: 8 }}
+              onClick={() => quickLogin(acc)}
+            >
+              {acc.label}
+            </IonButton>
+          ))}
+          <p style={{ fontSize: "0.72rem", color: "#aaa", textAlign: "center", margin: "4px 0 0" }}>
+            Betrieb: dev-betrieb@winwin-berlin.de · DevBetrieb2025!
+            <br />
+            Talent: dev-talent@winwin-berlin.de · DevTalent2025!
+          </p>
         </div>
       </IonContent>
     </IonPage>

@@ -115,8 +115,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setProfile(null);
       return;
     }
+    // Alle aktiven Sessions löschen (nicht nur die aktuelle), damit
+    // keine "Mehrere Sessions aktiv"-Fehler beim erneuten Login entstehen.
     try {
-      await account.deleteSession("current");
+      await account.deleteSessions();
+    } catch {
+      // Session evtl. bereits abgelaufen – kein Fehler nötig
     } finally {
       setUser(null);
       setProfile(null);

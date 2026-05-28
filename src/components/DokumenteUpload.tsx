@@ -30,6 +30,7 @@ import {
   type Dokument,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 
 interface Props {
   /** "manage" = Profil-Verwaltung (Upload + Löschen)
@@ -115,7 +116,7 @@ const DokumenteUpload: React.FC<Props> = ({
       );
       await load();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -136,7 +137,7 @@ const DokumenteUpload: React.FC<Props> = ({
         onSelectionChange(selectedIds.filter((id) => id !== dok.file_id));
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     }
   }
 

@@ -29,6 +29,7 @@ import {
   chevronForward,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
+import { translateError } from "../../lib/errors";
 import {
   databases,
   DB_LEHRSTELLEN,
@@ -189,7 +190,7 @@ const Konto: React.FC = () => {
       await saveProfile(profilStateToInput(form));
       setEditing(false);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setSaving(false);
     }

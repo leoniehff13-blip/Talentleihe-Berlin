@@ -39,6 +39,7 @@ import {
   type Bewerbung,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
 import DokumenteUpload from "../components/DokumenteUpload";
@@ -76,7 +77,7 @@ const LehrstelleDetailInner: React.FC = () => {
       );
       setItem(doc);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setLoading(false);
     }
@@ -155,7 +156,7 @@ const LehrstelleDetailInner: React.FC = () => {
       setErfolg(true);
       await loadEigeneBewerbung();
     } catch (err: unknown) {
-      setSendError(err instanceof Error ? err.message : String(err));
+      setSendError(translateError(err));
     } finally {
       setSending(false);
     }

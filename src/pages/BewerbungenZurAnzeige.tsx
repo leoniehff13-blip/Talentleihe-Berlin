@@ -48,6 +48,7 @@ import {
   type Lehrstelle,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
 
@@ -113,7 +114,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
         }
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setLoading(false);
     }
@@ -130,7 +131,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
         prev.map((x) => (x.$id === b.$id ? { ...x, status } : x))
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     }
   }
 

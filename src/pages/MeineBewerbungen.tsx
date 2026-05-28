@@ -39,6 +39,7 @@ import {
   type Bewertung,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
+import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
 
@@ -87,7 +88,7 @@ const MeineBewerbungenInner: React.FC = () => {
         }
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     } finally {
       setLoading(false);
     }
@@ -106,7 +107,7 @@ const MeineBewerbungenInner: React.FC = () => {
         prev.map((x) => (x.$id === b.$id ? { ...x, status: "zurueckgezogen" } : x))
       );
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(translateError(err));
     }
   }
 
