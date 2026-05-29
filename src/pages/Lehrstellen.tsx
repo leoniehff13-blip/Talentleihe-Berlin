@@ -199,11 +199,14 @@ const LehrstellenInner: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      // Berlin UND Brandenburg (HWK Frankfurt/Oder) – beide Kammerbereiche
+      // Regionale Eingrenzung über die Handwerkskammer statt über bundesland:
+      // Das Anzeigen-Formular setzt bundesland immer auf null, füllt aber
+      // handwerkskammer aus einem Dropdown. Wir zeigen daher genau die zwei
+      // für Talentleihe relevanten Kammern (Berlin + Frankfurt/Oder).
       const queries: string[] = [
         Query.orderDesc("startdatum"),
         Query.limit(100),
-        Query.equal("bundesland", ["Berlin", "Brandenburg"]),
+        Query.equal("handwerkskammer", [...BERLIN_REGION_KAMMERN]),
       ];
 
       // Rollenspezifischer Typ-Filter

@@ -32,7 +32,7 @@ import {
   type Bundesland,
   type ApprenticeshipType,
 } from "../lib/appwrite";
-import { HANDWERKSKAMMERN } from "../lib/handwerkskammern";
+import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
 import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
@@ -208,6 +208,7 @@ const LehrstelleFormInner: React.FC = () => {
     if (!form.firma.trim()) missing.push(isTalent ? "Name/Ausbildungsbetrieb" : "Firma");
     if (!form.startdatum) missing.push("Startdatum");
     if (!form.kontakt_email.trim()) missing.push("Kontakt-E-Mail");
+    if (!form.handwerkskammer.trim()) missing.push("Handwerkskammer");
 
     if (isTalent) {
       if (!form.plz.trim()) missing.push("PLZ");
@@ -505,14 +506,14 @@ const LehrstelleFormInner: React.FC = () => {
               <IonLabel>Handwerk</IonLabel>
             </IonListHeader>
             <IonItem>
-              <IonLabel position="stacked">Handwerkskammer</IonLabel>
+              <IonLabel position="stacked">Handwerkskammer *</IonLabel>
               <IonSelect
                 interface="alert"
                 placeholder="— bitte wählen —"
                 value={form.handwerkskammer}
                 onIonChange={(e) => update("handwerkskammer", String(e.detail.value ?? ""))}
               >
-                {HANDWERKSKAMMERN.map((h) => (
+                {BERLIN_REGION_KAMMERN.map((h) => (
                   <IonSelectOption key={h} value={h}>
                     {h}
                   </IonSelectOption>
