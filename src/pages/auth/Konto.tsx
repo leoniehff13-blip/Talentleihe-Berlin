@@ -193,8 +193,10 @@ const Konto: React.FC = () => {
   }, [profile]);
 
   async function handleLogout() {
+    // Kein Redirect: Ist der Nutzer ausgeloggt (user === null), zeigt diese
+    // Seite automatisch das Login-Formular. So bleibt man auf /konto und kann
+    // sich direkt wieder einloggen, statt auf die Lehrstellen-Seite zu springen.
     await logout();
-    history.replace("/lehrstellen");
   }
 
   async function handleSave() {
