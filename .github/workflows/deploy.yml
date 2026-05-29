@@ -24,8 +24,11 @@ jobs:
 
       - name: Build
         env:
-          VITE_APPWRITE_ENDPOINT: ${{ secrets.VITE_APPWRITE_ENDPOINT }}
-          VITE_APPWRITE_PROJECT_ID: ${{ secrets.VITE_APPWRITE_PROJECT_ID }}
+          # Endpoint und Project-ID sind öffentliche Client-Config (landen ohnehin
+          # im Browser-Bundle) – daher direkt hier statt als GitHub-Secret, damit
+          # das Live-Deployment garantiert auf das richtige Appwrite-Projekt zeigt.
+          VITE_APPWRITE_ENDPOINT: https://fra.cloud.appwrite.io/v1
+          VITE_APPWRITE_PROJECT_ID: 69eef72300040e5a1aff
         run: npm run build
 
       - name: Deploy to GitHub Pages
