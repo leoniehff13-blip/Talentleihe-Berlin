@@ -20,6 +20,7 @@ import {
   IonItem,
   IonIcon,
 } from "@ionic/react";
+import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Query } from "appwrite";
@@ -514,6 +515,7 @@ const Konto: React.FC = () => {
         <IonButton expand="block" color="medium" onClick={handleLogout} style={{ marginTop: 16 }}>
           Logout
         </IonButton>
+        <Footer />
       </IonContent>
     </IonPage>
   );

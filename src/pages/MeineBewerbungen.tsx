@@ -24,6 +24,7 @@ import {
   IonItemOption,
   IonIcon,
 } from "@ionic/react";
+import Footer from "../components/Footer";
 import { useEffect, useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { trash } from "ionicons/icons";
@@ -265,6 +266,7 @@ const MeineBewerbungenInner: React.FC = () => {
             },
           ]}
         />
+        <Footer />
       </IonContent>
     </IonPage>
   );

@@ -3,6 +3,7 @@ import {
   IonContent,
   IonPage,
 } from "@ionic/react";
+import Footer from "../components/Footer";
 import TopNav from "../components/TopNav";
 
 /* ─── Farbpalette ─────────────────────────────────────────── */
@@ -516,6 +517,7 @@ const Informationen: React.FC = () => {
           </InfoCard>
 
         </div>
+        <Footer />
       </IonContent>
     </IonPage>
   );

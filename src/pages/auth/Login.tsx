@@ -10,6 +10,7 @@ import {
   IonText,
   IonNote,
 } from "@ionic/react";
+import Footer from "../../components/Footer";
 import { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
@@ -136,6 +137,7 @@ const Login: React.FC = () => {
             Talent: dev-talent@winwin-berlin.de · DevTalent2025!
           </p>
         </div>
+        <Footer />
       </IonContent>
     </IonPage>
   );

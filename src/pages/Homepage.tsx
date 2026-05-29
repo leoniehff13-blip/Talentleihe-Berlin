@@ -1,5 +1,6 @@
 import { IonContent, IonPage } from "@ionic/react";
 import { useHistory } from "react-router-dom";
+import Footer from "../components/Footer";
 import { useAuth } from "../lib/AuthContext";
 
 const Homepage: React.FC = () => {
@@ -597,14 +598,7 @@ const Homepage: React.FC = () => {
           </section>
 
           {/* LEGAL FOOTER */}
-          <footer className="ww-legal">
-            <a className="ww-legal-link" href="/datenschutz" onClick={(e) => { e.preventDefault(); history.push("/datenschutz"); }}>Datenschutz</a>
-            <span className="ww-legal-sep">·</span>
-            <a className="ww-legal-link" href="/agb" onClick={(e) => { e.preventDefault(); history.push("/agb"); }}>AGB</a>
-            <span className="ww-legal-sep">·</span>
-            <a className="ww-legal-link" href="/impressum" onClick={(e) => { e.preventDefault(); history.push("/impressum"); }}>Impressum</a>
-            <p className="ww-legal-copy">© {new Date().getFullYear()} Talentleihe Berlin — Ein Angebot der Handwerkskammer Berlin</p>
-          </footer>
+          <Footer />
         </div>
       </IonContent>
     </IonPage>

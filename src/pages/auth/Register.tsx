@@ -13,6 +13,7 @@ import {
   IonListHeader,
   IonLabel,
 } from "@ionic/react";
+import Footer from "../../components/Footer";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
@@ -133,6 +134,7 @@ const Register: React.FC = () => {
             </IonButton>
           </div>
         </form>
+        <Footer />
       </IonContent>
     </IonPage>
   );

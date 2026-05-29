@@ -26,6 +26,7 @@ import {
   IonSearchbar,
   IonButtons,
 } from "@ionic/react";
+import Footer from "../components/Footer";
 import { useEffect, useState, useCallback } from "react";
 import { Query } from "appwrite";
 import {
@@ -552,6 +553,7 @@ const LehrstellenInner: React.FC = () => {
             </IonText>
           </div>
         )}
+        <Footer />
       </IonContent>
     </IonPage>
   );

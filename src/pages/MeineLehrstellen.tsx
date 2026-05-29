@@ -20,6 +20,7 @@ import {
   IonAlert,
   IonBadge,
 } from "@ionic/react";
+import Footer from "../components/Footer";
 import { useEffect, useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { add, create, trash, peopleOutline } from "ionicons/icons";
@@ -210,6 +211,7 @@ const MeineLehrstellenInner: React.FC = () => {
             },
           ]}
         />
+        <Footer />
       </IonContent>
     </IonPage>
   );

@@ -1,5 +1,6 @@
 import { IonContent, IonPage } from "@ionic/react";
 import { useHistory } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const tocItems = [
   { label: "Präambel", anchor: "praambel" },
@@ -242,6 +243,7 @@ const Datenschutz: React.FC = () => {
             <p>Erstellt mit kostenlosem Datenschutz-Generator.de von Dr. Thomas Schwenke · Stand: 26. Mai 2026</p>
           </div>
         </div>
+        <Footer />
       </IonContent>
     </IonPage>
   );

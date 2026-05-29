@@ -1,5 +1,6 @@
 import { IonContent, IonPage } from "@ionic/react";
 import { useHistory } from "react-router-dom";
+import Footer from "../components/Footer";
 
 const AGB: React.FC = () => {
   const history = useHistory();
@@ -138,6 +139,7 @@ const AGB: React.FC = () => {
             <p>Stand: Mai 2026</p>
           </div>
         </div>
+        <Footer />
       </IonContent>
     </IonPage>
   );
