@@ -41,6 +41,18 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   saveProfile: (data: ProfileInput) => Promise<Profile>;
+  sendVerification: () => Promise<void>;
+  confirmVerification: (userId: string, secret: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  confirmPasswordReset: (userId: string, secret: string, password: string) => Promise<void>;
+}
+
+// Baut eine absolute URL auf eine App-Route – berücksichtigt das Vite-Base
+// (wichtig für GitHub Pages), damit die Mail-Klick-Links korrekt zurückführen.
+function appUrl(path: string): string {
+  const raw = import.meta.env.BASE_URL || "/";
+  const base = raw.endsWith("/") ? raw : `${raw}/`;
+  return `${window.location.origin}${base}${path}`;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -117,8 +129,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function signup(name: string, email: string, password: string) {
     const created = await account.create(ID.unique(), email, password, name);
     await account.createEmailPasswordSession(email, password);
+    // Bestätigungsmail anstoßen – Fehler hier dürfen die Registrierung nicht
+    // abbrechen (z. B. wenn der Mailversand temporär klemmt).
+    try {
+      await account.createVerification(appUrl("verifizieren"));
+    } catch { /* Verifizierung kann später über das Konto erneut gesendet werden */ }
     await refresh();
     return created;
+  }
+
+  async function sendVerification() {
+    await account.createVerification(appUrl("verifizieren"));
+  }
+
+  async function confirmVerification(userId: string, secret: string) {
+    await account.updateVerification(userId, secret);
+    await refresh();
+  }
+
+  async function requestPasswordReset(email: string) {
+    await account.createRecovery(email, appUrl("passwort-neu"));
+  }
+
+  async function confirmPasswordReset(userId: string, secret: string, password: string) {
+    await account.updateRecovery(userId, secret, password);
   }
 
   async function logout() {
@@ -170,7 +204,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, profile, loading, login, devLogin, signup, logout, refresh, saveProfile }}
+      value={{
+        user, profile, loading, login, devLogin, signup, logout, refresh, saveProfile,
+        sendVerification, confirmVerification, requestPasswordReset, confirmPasswordReset,
+      }}
     >
       {children}
     </AuthContext.Provider>

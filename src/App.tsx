@@ -19,6 +19,9 @@ import Informationen from "./pages/Informationen";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import Konto from "./pages/auth/Konto";
+import Verifizieren from "./pages/auth/Verifizieren";
+import PasswortVergessen from "./pages/auth/PasswortVergessen";
+import PasswortNeu from "./pages/auth/PasswortNeu";
 import Datenschutz from "./pages/Datenschutz";
 import AGB from "./pages/AGB";
 import Impressum from "./pages/Impressum";
@@ -92,6 +95,15 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/registrieren">
               <Register />
+            </Route>
+            <Route exact path="/verifizieren">
+              <Verifizieren />
+            </Route>
+            <Route exact path="/passwort-vergessen">
+              <PasswortVergessen />
+            </Route>
+            <Route exact path="/passwort-neu">
+              <PasswortNeu />
             </Route>
 
             <Route exact path="/bewertung/:bewerbungId/:ratedUserId/:ratedType">

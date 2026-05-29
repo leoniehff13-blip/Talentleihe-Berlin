@@ -28,6 +28,8 @@ import {
   documentTextOutline,
   chevronForward,
   createOutline,
+  mailUnreadOutline,
+  checkmarkCircleOutline,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
@@ -135,12 +137,27 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
 }
 
 const Konto: React.FC = () => {
-  const { user, profile, loading, logout, saveProfile } = useAuth();
+  const { user, profile, loading, logout, saveProfile, sendVerification } = useAuth();
   const history = useHistory();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfilFormState>(EMPTY_PROFIL);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [verifyMsg, setVerifyMsg] = useState<string | null>(null);
+  const [verifyBusy, setVerifyBusy] = useState(false);
+
+  async function handleResendVerification() {
+    setVerifyMsg(null);
+    setVerifyBusy(true);
+    try {
+      await sendVerification();
+      setVerifyMsg("Bestätigungsmail wurde gesendet. Bitte prüfe dein Postfach (auch den Spam-Ordner).");
+    } catch (err: unknown) {
+      setVerifyMsg(translateError(err));
+    } finally {
+      setVerifyBusy(false);
+    }
+  }
 
   // Wenn das Profil aus dem Context da ist, ins Formular spiegeln.
   useEffect(() => {
@@ -288,6 +305,39 @@ const Konto: React.FC = () => {
             <p>{user.email}</p>
           </IonCardContent>
         </IonCard>
+
+        {/* E-Mail-Verifizierungs-Status */}
+        {user.emailVerification ? (
+          <IonChip color="success" style={{ marginBottom: 8 }}>
+            <IonIcon icon={checkmarkCircleOutline} />
+            <IonLabel>E-Mail bestätigt</IonLabel>
+          </IonChip>
+        ) : (
+          <IonCard color="warning">
+            <IonCardContent>
+              <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
+                <IonIcon icon={mailUnreadOutline} style={{ fontSize: 22, marginRight: 10 }} />
+                <strong>E-Mail noch nicht bestätigt</strong>
+              </div>
+              <p style={{ margin: "0 0 12px", fontSize: "0.9rem" }}>
+                Bitte bestätige deine E-Mail-Adresse über den Link, den wir dir
+                geschickt haben.
+              </p>
+              <IonButton
+                size="small"
+                fill="solid"
+                color="light"
+                disabled={verifyBusy}
+                onClick={handleResendVerification}
+              >
+                {verifyBusy ? "Senden…" : "Bestätigungsmail erneut senden"}
+              </IonButton>
+              {verifyMsg && (
+                <p style={{ margin: "10px 0 0", fontSize: "0.85rem" }}>{verifyMsg}</p>
+              )}
+            </IonCardContent>
+          </IonCard>
+        )}
 
         {isTalent ? (
           <IonCard>

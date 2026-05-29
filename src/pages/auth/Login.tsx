@@ -104,7 +104,10 @@ const Login: React.FC = () => {
           </IonButton>
         </form>
         <IonNote>
-          <p style={{ marginTop: 24 }}>
+          <p style={{ marginTop: 16 }}>
+            <Link to="/passwort-vergessen">Passwort vergessen?</Link>
+          </p>
+          <p style={{ marginTop: 8 }}>
             Noch kein Konto? <Link to="/registrieren">Jetzt registrieren</Link>
           </p>
         </IonNote>
