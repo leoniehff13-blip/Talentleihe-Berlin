@@ -61,7 +61,7 @@ const LehrstelleDetailInner: React.FC = () => {
   const [erfolg, setErfolg] = useState(false);
   const [selectedDokIds, setSelectedDokIds] = useState<string[]>([]);
 
-  const ownerId = item ? extractOwnerId(item.$permissions ?? []) : null;
+  const ownerId = item ? (item.owner_id ?? extractOwnerId(item.$permissions ?? [])) : null;
   const istEigeneAnzeige = Boolean(user && ownerId === user.$id);
   const istTalent = profile?.type === "talent";
   const istBewerbungVergeben = istEigeneAnzeige === false && istTalent;
