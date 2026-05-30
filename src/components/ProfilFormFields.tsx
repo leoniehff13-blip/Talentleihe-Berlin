@@ -358,20 +358,20 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               />
             </IonItem>
             <IonItem>
-              <div style={{ width: "100%", display: "grid", gridTemplateColumns: "1fr 90px", gap: "12px" }}>
-                <IonInput
-                  label="Straße *"
-                  labelPlacement="stacked"
-                  value={state.strasse}
-                  onIonInput={(e) => set("strasse", e.detail.value ?? "")}
-                />
-                <IonInput
-                  label="Nr. *"
-                  labelPlacement="stacked"
-                  value={state.hausnummer}
-                  onIonInput={(e) => set("hausnummer", e.detail.value ?? "")}
-                />
-              </div>
+              <IonInput
+                label="Straße *"
+                labelPlacement="stacked"
+                value={state.strasse}
+                onIonInput={(e) => set("strasse", e.detail.value ?? "")}
+              />
+            </IonItem>
+            <IonItem>
+              <IonInput
+                label="Hausnummer *"
+                labelPlacement="stacked"
+                value={state.hausnummer}
+                onIonInput={(e) => set("hausnummer", e.detail.value ?? "")}
+              />
             </IonItem>
             <IonItem>
               <div style={{ width: "100%", display: "grid", gridTemplateColumns: "90px 1fr", gap: "12px" }}>

@@ -11,7 +11,6 @@ const Homepage: React.FC = () => {
   const istTalent = profile?.type === "talent";
   const istBetrieb = profile?.type === "betrieb";
 
-  // Primärer CTA, abhängig vom Login-Zustand
   const ctaPrimary = !istEingeloggt
     ? { label: "Profil anlegen", href: "/registrieren" }
     : istTalent
@@ -230,6 +229,12 @@ const Homepage: React.FC = () => {
           .ww-chamber-tag:hover {
             color: var(--gold);
           }
+          .ww-chamber-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+          }
 
           /* HOW IT WORKS */
           .ww-how {
@@ -406,7 +411,7 @@ const Homepage: React.FC = () => {
               </h1>
               <p className="ww-hero-sub">
                 Talentleihe Berlin verbindet Auszubildende und Betriebe in der Hauptstadtregion
-                — vermittelt durch die Handwerkskammer Berlin. Flexibel. Fair. Zukunftssicher.
+                — getragen von der HWK Berlin und der HWK Frankfurt (Oder). Flexibel. Fair. Zukunftssicher.
               </p>
 
               <div className="ww-hero-actions">
@@ -443,10 +448,8 @@ const Homepage: React.FC = () => {
 
               <div className="ww-hero-stats">
                 <div>
-                  <div className="ww-hero-stat-number">
-                    1
-                  </div>
-                  <div className="ww-hero-stat-label">Handwerkskammer Berlin</div>
+                  <div className="ww-hero-stat-number">2</div>
+                  <div className="ww-hero-stat-label">Handwerkskammern</div>
                 </div>
                 <div>
                   <div className="ww-hero-stat-number">
@@ -468,14 +471,23 @@ const Homepage: React.FC = () => {
           <div className="ww-intro-band">
             <div className="ww-intro-band-label">Partner</div>
             <div className="ww-intro-band-divider" />
-                        <div className="ww-intro-band-chambers">
+            <div className="ww-intro-band-chambers">
               <a
                 className="ww-chamber-tag"
                 href="https://www.hwk-berlin.de"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                hwk-berlin.de
+                HWK Berlin
+              </a>
+              <div className="ww-chamber-dot" />
+              <a
+                className="ww-chamber-tag"
+                href="https://www.hwk-ff.de"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                HWK Frankfurt (Oder) – Region Ostbrandenburg
               </a>
             </div>
           </div>

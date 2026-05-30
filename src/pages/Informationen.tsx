@@ -450,7 +450,7 @@ const Informationen: React.FC = () => {
               </div>
               <div style={{ background: "#f0f4ff", borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.blue}` }}>
                 <a
-                  href="https://www.hwk-frankfurt-oder.de/"
+                  href="https://www.hwk-ff.de"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.blue}60`, display: "block" }}

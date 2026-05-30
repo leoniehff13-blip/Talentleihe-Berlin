@@ -504,7 +504,7 @@ const Konto: React.FC = () => {
             />
             <div style={{ flex: 1 }}>
               <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
-                Meine Bewerbungen
+                Eingegangene Bewerbungen
               </h3>
               <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
                 Anfragen und Bewerbungen verfolgen
