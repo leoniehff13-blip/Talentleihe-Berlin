@@ -59,15 +59,16 @@ const MeineLehrstellenInner: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await databases.listDocuments<Lehrstelle>(
+const result = await databases.listDocuments<Lehrstelle>(
         DB_LEHRSTELLEN,
         COL_APPRENTICESHIPS,
-        [Query.orderDesc("$createdAt"), Query.limit(100)]
+        [
+          Query.equal("owner_id", user.$id),
+          Query.orderDesc("$createdAt"),
+          Query.limit(100),
+        ]
       );
-      const own = result.documents.filter((d) =>
-        (d.$permissions ?? []).some((p) => p.includes(`user:${user.$id}`))
-      );
-      setItems(own);
+      setItems(result.documents);
     } catch (err: unknown) {
       setError(translateError(err));
     } finally {
