@@ -225,6 +225,7 @@ const LehrstelleFormInner: React.FC = () => {
       s.split(",").map((x) => x.trim()).filter(Boolean);
 
     const data: Record<string, unknown> = {
+      owner_id: user.$id,
       type: docType,
       gewerk: form.gewerk.trim(),
       firma: form.firma.trim(),
