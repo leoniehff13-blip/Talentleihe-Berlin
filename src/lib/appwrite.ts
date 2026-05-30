@@ -95,6 +95,7 @@ export interface Lehrstelle extends Models.Document {
   mindestalter: number | null;
   vorerfahrung: string | null;
   aufgabenbeschreibung: string;
+  owner_id?: string | null;
   adresse: string | null;
   plz: string | null;
   plz_umkreis: number | null;
