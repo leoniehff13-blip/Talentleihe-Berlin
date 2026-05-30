@@ -174,7 +174,7 @@ const MeineBewerbungenInner: React.FC = () => {
                 <IonItemSliding key={b.$id}>
                   <IonItem
                     button
-                    onClick={() => history.push(`/lehrstellen/${b.apprenticeship_id}`)}
+                    onClick={() => history.push(profile?.type === 'betrieb' ? `/meine-lehrstellen/${b.apprenticeship_id}/bewerbungen` : `/lehrstellen/${b.apprenticeship_id}`)}
                     detail
                   >
                     <IonLabel>
