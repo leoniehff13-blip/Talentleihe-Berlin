@@ -18,14 +18,16 @@ import {
   IonNote,
   IonList,
   IonListHeader,
+  IonAlert,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { ID, Permission, Role } from "appwrite";
+import { ID, Permission, Role, Query } from "appwrite";
 import {
   databases,
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
+  COL_BEWERBUNGEN,
   BUNDESLAENDER,
   MINDESTALTER_OPTIONS,
   type Lehrstelle,
@@ -94,8 +96,6 @@ const LehrstelleFormInner: React.FC = () => {
   const history = useHistory();
   const isEdit = Boolean(id);
 
-  // Talent → talent_angebot, Betrieb → einsatz. Beim Bearbeiten überschreibt
-  // der gespeicherte Typ diese Vorauswahl.
   const initialType: ApprenticeshipType =
     profile?.type === "talent" ? "talent_angebot" : "einsatz";
   const [docType, setDocType] = useState<ApprenticeshipType>(initialType);
@@ -106,6 +106,8 @@ const LehrstelleFormInner: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [prefilled, setPrefilled] = useState(false);
+  const [hatBewerbungen, setHatBewerbungen] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
   const labels = {
     title: isEdit
@@ -156,13 +158,20 @@ const LehrstelleFormInner: React.FC = () => {
     let cancelled = false;
     async function load() {
       try {
-        const doc = await databases.getDocument<Lehrstelle>(
-          DB_LEHRSTELLEN,
-          COL_APPRENTICESHIPS,
-          id!
-        );
+        const [doc, bwRes] = await Promise.all([
+          databases.getDocument<Lehrstelle>(
+            DB_LEHRSTELLEN,
+            COL_APPRENTICESHIPS,
+            id!
+          ),
+          databases.listDocuments(DB_LEHRSTELLEN, COL_BEWERBUNGEN, [
+            Query.equal("apprenticeship_id", id!),
+            Query.limit(1),
+          ]),
+        ]);
         if (cancelled) return;
         setDocType(doc.type ?? "einsatz");
+        setHatBewerbungen(bwRes.total > 0);
         setForm({
           gewerk: doc.gewerk,
           firma: doc.firma ?? "",
@@ -198,29 +207,23 @@ const LehrstelleFormInner: React.FC = () => {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!user) return;
-
-    // Pflichtfelder pro Modus
+  function validate(): string[] {
     const missing: string[] = [];
     if (!form.gewerk.trim()) missing.push("Gewerk");
     if (!form.firma.trim()) missing.push(isTalent ? "Name/Ausbildungsbetrieb" : "Firma");
     if (!form.startdatum) missing.push("Startdatum");
     if (!form.kontakt_email.trim()) missing.push("Kontakt-E-Mail");
     if (!form.handwerkskammer.trim()) missing.push("Handwerkskammer");
-
     if (isTalent) {
       if (!form.plz.trim()) missing.push("PLZ");
     } else {
       if (!form.aufgabenbeschreibung.trim()) missing.push("Aufgabenbeschreibung");
     }
+    return missing;
+  }
 
-    if (missing.length) {
-      setError("Bitte ausfüllen: " + missing.join(", "));
-      return;
-    }
-
+  async function doSave() {
+    if (!user) return;
     const split = (s: string) =>
       s.split(",").map((x) => x.trim()).filter(Boolean);
 
@@ -238,12 +241,10 @@ const LehrstelleFormInner: React.FC = () => {
 
     if (isTalent) {
       Object.assign(data, {
-        ort: form.ort.trim() || form.plz.trim(), // damit Listen-Anzeige nicht leer ist
+        ort: form.ort.trim() || form.plz.trim(),
         lernziele: split(form.lernziele),
         plz: form.plz.trim() || null,
         plz_umkreis: form.plz_umkreis ? Number(form.plz_umkreis) : null,
-        // bewusst NICHT gesetzt: aufgabenbeschreibung, mindestalter, vorerfahrung,
-        // adresse, stadt, bundesland
         aufgabenbeschreibung: "",
         mindestalter: null,
         vorerfahrung: null,
@@ -262,7 +263,6 @@ const LehrstelleFormInner: React.FC = () => {
         plz: form.plz.trim() || null,
         plz_umkreis: null,
         stadt: form.stadt.trim() || null,
-        // bundesland bewusst NICHT gesetzt (aus Formular entfernt)
         bundesland: null,
       });
     }
@@ -291,6 +291,21 @@ const LehrstelleFormInner: React.FC = () => {
     } finally {
       setSaving(false);
     }
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const missing = validate();
+    if (missing.length) {
+      setError("Bitte ausfüllen: " + missing.join(", "));
+      return;
+    }
+    if (hatBewerbungen) {
+      setShowWarning(true);
+      return;
+    }
+    doSave();
   }
 
   if (loading) {
@@ -344,8 +359,6 @@ const LehrstelleFormInner: React.FC = () => {
                 onIonInput={(e) => update("firma", e.detail.value ?? "")}
               />
             </IonItem>
-            {/* Ort: nur für Talent als „Wohnort"-Anzeige; Betrieb hat es laut
-                Vorgabe nicht in Basis – stattdessen weiter unten Stadt. */}
             {isTalent && (
               <IonItem>
                 <IonInput
@@ -499,7 +512,6 @@ const LehrstelleFormInner: React.FC = () => {
                     onIonInput={(e) => update("stadt", e.detail.value ?? "")}
                   />
                 </IonItem>
-                {/* Bundesland bewusst entfernt (laut Vorgabe). */}
               </>
             )}
 
@@ -540,6 +552,26 @@ const LehrstelleFormInner: React.FC = () => {
             </IonNote>
           </div>
         </form>
+
+        <IonAlert
+          isOpen={showWarning}
+          header="Achtung: Bewerbungen vorhanden"
+          message="Für diese Anzeige liegen bereits Bewerbungen vor. Änderungen könnten Bewerber:innen verwirren. Trotzdem speichern?"
+          buttons={[
+            {
+              text: "Abbrechen",
+              role: "cancel",
+              handler: () => setShowWarning(false),
+            },
+            {
+              text: "Trotzdem speichern",
+              handler: () => {
+                setShowWarning(false);
+                doSave();
+              },
+            },
+          ]}
+        />
       </IonContent>
     </IonPage>
   );
