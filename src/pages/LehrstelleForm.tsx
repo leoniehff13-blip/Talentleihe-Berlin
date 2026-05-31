@@ -324,7 +324,12 @@ const LehrstelleFormInner: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
+          <IonButtons slot="end">
+              <IonButton strong onClick={() => { const f = document.querySelector("form"); f?.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); }}>
+                Speichern
+              </IonButton>
+            </IonButtons>
+            <IonButtons slot="start">
             <IonBackButton defaultHref={labels.backDefault} />
           </IonButtons>
           <IonTitle>{labels.title}</IonTitle>
