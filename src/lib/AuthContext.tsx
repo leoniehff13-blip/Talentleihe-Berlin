@@ -90,7 +90,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const p = await fetchProfileFor(u.$id);
         setProfile(p);
       } catch {
-        setProfile(null);
+        // Bei Fetch-Fehler bestehendes Profil NICHT löschen –
+        // sonst erscheint nach dem Login kurz der „kein Profil"-Screen.
+        // Nur logout() setzt das Profil bewusst auf null.
       }
     } catch {
       setUser(null);

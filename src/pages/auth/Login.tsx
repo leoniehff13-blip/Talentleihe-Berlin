@@ -31,7 +31,13 @@ const DEV_ACCOUNTS = [
   },
 ];
 
-const Login: React.FC = () => {
+interface LoginProps {
+  /** Wenn gesetzt, wird nach erfolgreichem Login diese Funktion aufgerufen
+   *  statt zu /konto zu navigieren (z.B. wenn Login innerhalb von Konto eingebettet ist). */
+  onSuccess?: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onSuccess }) => {
   const { login } = useAuth();
   const history = useHistory();
   const [email, setEmail] = useState("");
@@ -45,7 +51,7 @@ const Login: React.FC = () => {
     setBusy(true);
     try {
       await login(email, password);
-      history.replace("/konto");
+      if (onSuccess) onSuccess(); else history.replace("/konto");
     } catch (err: unknown) {
       setError(translateError(err));
     } finally {
@@ -58,7 +64,7 @@ const Login: React.FC = () => {
     setBusy(true);
     try {
       await login(acc.email, acc.password);
-      history.replace("/konto");
+      if (onSuccess) onSuccess(); else history.replace("/konto");
     } catch (err: unknown) {
       setError(translateError(err));
     } finally {

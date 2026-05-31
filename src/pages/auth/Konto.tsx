@@ -19,7 +19,6 @@ import {
   IonList,
   IonItem,
   IonIcon,
-  useIonViewWillEnter,
 } from "@ionic/react";
 import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
@@ -139,11 +138,8 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
 }
 
 const Konto: React.FC = () => {
-  const { user, profile, loading, profileLoading, logout, saveProfile, sendVerification, refresh } = useAuth();
+  const { user, profile, loading, profileLoading, logout, saveProfile, sendVerification } = useAuth();
 
-  useIonViewWillEnter(() => {
-    refresh();
-  });
   const history = useHistory();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfilFormState>(EMPTY_PROFIL);
@@ -235,7 +231,9 @@ const Konto: React.FC = () => {
   }
 
   if (!user) {
-    return <Login />;
+    // onSuccess={() => {}} verhindert history.replace("/konto") nach dem Login –
+    // der Auth-State-Wechsel rendert Konto automatisch neu mit dem Profil.
+    return <Login onSuccess={() => {}} />;
   }
 
   // Nutzer ist eingeloggt, hat aber noch kein Profil → Anlegen-Modus
