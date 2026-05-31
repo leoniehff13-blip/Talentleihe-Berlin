@@ -140,6 +140,18 @@ const result = await databases.listDocuments<Lehrstelle>(
         )}
 
         {!loading && items.length > 0 && (
+          <div className="ion-padding">
+            <IonButton
+              expand="block"
+              onClick={() => history.push("/meine-lehrstellen/neu")}
+            >
+              <IonIcon icon={add} slot="start" />
+              {isTalent ? "Weiteres Talent-Angebot anlegen" : "Weiteren Einsatz anlegen"}
+            </IonButton>
+          </div>
+        )}
+
+        {!loading && items.length > 0 && (
           <IonList>
             {items.map((item) => {
               const itemIsTalent = item.type === "talent_angebot";
@@ -166,6 +178,17 @@ const result = await databases.listDocuments<Lehrstelle>(
                     >
                       {itemIsTalent ? "Talent" : "Einsatz"}
                     </IonBadge>
+                    <div slot="end" style={{ display: "flex", gap: 4, marginLeft: 8 }} onClick={(e) => e.stopPropagation()}>
+                      <IonButton fill="clear" size="small" color="tertiary" onClick={() => history.push(`/meine-lehrstellen/${item.$id}/bewerbungen`)}>
+                        <IonIcon slot="icon-only" icon={peopleOutline} />
+                      </IonButton>
+                      <IonButton fill="clear" size="small" color="primary" onClick={() => history.push(`/meine-lehrstellen/${item.$id}/bearbeiten`)}>
+                        <IonIcon slot="icon-only" icon={create} />
+                      </IonButton>
+                      <IonButton fill="clear" size="small" color="danger" onClick={() => setConfirmDelete(item)}>
+                        <IonIcon slot="icon-only" icon={trash} />
+                      </IonButton>
+                    </div>
                   </IonItem>
                   <IonItemOptions side="end">
                     <IonItemOption
