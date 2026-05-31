@@ -14,6 +14,7 @@ import LehrstelleDetail from "./pages/LehrstelleDetail";
 import LehrstelleForm from "./pages/LehrstelleForm";
 import MeineLehrstellen from "./pages/MeineLehrstellen";
 import MeineBewerbungen from "./pages/MeineBewerbungen";
+import ProfilDetail from './pages/ProfilDetail';
 import BewerbungenZurAnzeige from "./pages/BewerbungenZurAnzeige";
 import Informationen from "./pages/Informationen";
 import Login from "./pages/auth/Login";
@@ -123,7 +124,8 @@ const App: React.FC = () => (
             <Route exact path="/">
               <Redirect to="/home" />
             </Route>
-          </IonRouterOutlet>
+                      <Route exact path="/profil/:userId"><ProfilDetail /></Route>
+            </IonRouterOutlet>
 
         </IonTabs>
       </IonReactRouter>

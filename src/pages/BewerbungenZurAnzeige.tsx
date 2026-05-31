@@ -214,7 +214,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
                         fontSize: 16,
                       }}
                     >
-                      <span>{b.applicant_name ?? "Unbekannt"}</span>
+                      <span style={{ cursor: "pointer", textDecoration: "underline" }} onClick={(e) => { e.stopPropagation(); history.push(`/profil/${b.applicant_user_id}`); }}>{b.applicant_name ?? "Unbekannt"}</span>
                       <IonBadge color={BEWERBUNG_STATUS_COLOR[b.status]}>
                         {BEWERBUNG_STATUS_LABEL[b.status]}
                       </IonBadge>
