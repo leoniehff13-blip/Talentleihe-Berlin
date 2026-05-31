@@ -1,16 +1,21 @@
 import { useState, useEffect, useRef } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useIonRouter } from "@ionic/react";
 
 const NAV_ITEMS = [
-  { label: "Home", href: "/home" },
-  { label: "Talentleihe", href: "/lehrstellen" },
-  { label: "Infos", href: "/informationen" },
-  { label: "Konto", href: "/konto" },
+  { label: "Home",        href: "/home",         owned: ["/home"] },
+  { label: "Talentleihe", href: "/lehrstellen",   owned: ["/lehrstellen"] },
+  { label: "Infos",       href: "/informationen", owned: ["/informationen"] },
+  { label: "Konto",       href: "/konto",         owned: ["/konto", "/meine-lehrstellen", "/meine-bewerbungen", "/bewertung", "/login", "/registrieren"] },
 ];
+
+function isActive(pathname: string, owned: string[]) {
+  return owned.some(p => pathname === p || pathname.startsWith(p + "/"));
+}
 
 const TopNav: React.FC = () => {
   const location = useLocation();
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -59,7 +64,7 @@ const TopNav: React.FC = () => {
 
   const navigate = (href: string) => {
     setMenuOpen(false);
-    history.push(href);
+    ionRouter.push(href, "root", "replace");
   };
 
   return (
@@ -117,8 +122,8 @@ const TopNav: React.FC = () => {
 
           {/* Desktop-Navigation */}
           <div className="topnav-desktop" style={{ gap: "24px" }}>
-            {NAV_ITEMS.map(({ label, href }) => {
-              const active = location.pathname === href || location.pathname.startsWith(href + "/");
+            {NAV_ITEMS.map(({ label, href, owned }) => {
+              const active = isActive(location.pathname, owned);
               return (
                 <button
                   key={href}
@@ -192,8 +197,8 @@ const TopNav: React.FC = () => {
             display: "flex",
             flexDirection: "column",
           }}>
-            {NAV_ITEMS.map(({ label, href }) => {
-              const active = location.pathname === href || location.pathname.startsWith(href + "/");
+            {NAV_ITEMS.map(({ label, href, owned }) => {
+              const active = isActive(location.pathname, owned);
               return (
                 <button
                   key={href}

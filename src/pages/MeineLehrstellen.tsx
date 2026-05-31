@@ -159,7 +159,7 @@ const result = await databases.listDocuments<Lehrstelle>(
                 <IonItemSliding key={item.$id}>
                   <IonItem
                     button
-                    onClick={() => history.push(`/lehrstellen/${item.$id}`)}
+                    onClick={() => history.push(`/meine-lehrstellen/${item.$id}`)}
                     detail
                   >
                     <IonLabel>

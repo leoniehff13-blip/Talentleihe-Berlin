@@ -2,7 +2,6 @@ import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
   IonRouterOutlet,
-  IonTabs,
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -55,8 +54,7 @@ const App: React.FC = () => (
     <AuthProvider>
       <IonReactRouter>
         <TopNav />
-        <IonTabs>
-          <IonRouterOutlet>
+        <IonRouterOutlet>
             <Route exact path="/home">
               <Homepage />
             </Route>
@@ -80,6 +78,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/meine-lehrstellen/:id/bearbeiten">
               <LehrstelleForm />
+            </Route>
+            <Route exact path="/meine-lehrstellen/:id">
+              <LehrstelleDetail />
             </Route>
             <Route exact path="/meine-bewerbungen">
               <MeineBewerbungen />
@@ -126,8 +127,6 @@ const App: React.FC = () => (
             </Route>
                       <Route exact path="/profil/:userId"><ProfilDetail /></Route>
             </IonRouterOutlet>
-
-        </IonTabs>
       </IonReactRouter>
     </AuthProvider>
   </IonApp>
