@@ -35,6 +35,7 @@ interface AuthContextValue {
   user: AuthUser;
   profile: Profile | null;
   loading: boolean;
+  profileLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   devLogin: () => void;
   signup: (name: string, email: string, password: string) => Promise<Models.User<Models.Preferences>>;
@@ -70,15 +71,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   async function refresh() {
     if (sessionStorage.getItem("devMode")) {
       setUser(DEV_USER);
       setProfile(DEV_PROFILE);
       setLoading(false);
+      setProfileLoading(false);
       return;
     }
     setLoading(true);
+    setProfileLoading(true);
     try {
       const u = await account.get();
       setUser(u);
@@ -93,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setProfile(null);
     } finally {
       setLoading(false);
+      setProfileLoading(false);
     }
   }
 
@@ -197,6 +202,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       COL_PROFILES,
       ID.unique(),
       { ...data, user_id: userId },
+      [
+        Permission.read(Role.user(userId)),
+        Permission.update(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+      ]
     );
     setProfile(created);
     return created;
@@ -205,7 +215,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user, profile, loading, login, devLogin, signup, logout, refresh, saveProfile,
+        user, profile, loading, profileLoading, login, devLogin, signup, logout, refresh, saveProfile,
         sendVerification, confirmVerification, requestPasswordReset, confirmPasswordReset,
       }}
     >

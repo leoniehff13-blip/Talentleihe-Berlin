@@ -138,7 +138,7 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
 }
 
 const Konto: React.FC = () => {
-  const { user, profile, loading, logout, saveProfile, sendVerification } = useAuth();
+  const { user, profile, loading, profileLoading, logout, saveProfile, sendVerification } = useAuth();
   const history = useHistory();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfilFormState>(EMPTY_PROFIL);
@@ -217,7 +217,7 @@ const Konto: React.FC = () => {
     }
   }
 
-  if (loading) {
+  if (loading || profileLoading) {
     return (
       <IonPage>
         <IonContent className="ion-padding">

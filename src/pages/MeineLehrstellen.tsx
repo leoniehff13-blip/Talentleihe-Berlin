@@ -19,6 +19,7 @@ import {
   IonItemOption,
   IonAlert,
   IonBadge,
+  useIonViewWillEnter,
 } from "@ionic/react";
 import Footer from "../components/Footer";
 import { useEffect, useState, useCallback } from "react";
@@ -79,6 +80,10 @@ const result = await databases.listDocuments<Lehrstelle>(
   useEffect(() => {
     load();
   }, [load]);
+
+  useIonViewWillEnter(() => {
+    load();
+  });
 
   async function handleDelete(item: Lehrstelle) {
     try {
