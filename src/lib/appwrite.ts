@@ -25,7 +25,12 @@ if (!endpoint || !projectId) {
 
 export const client = new Client()
   .setEndpoint(endpoint ?? "https://cloud.appwrite.io/v1")
-  .setProject(projectId ?? "");
+  .setProject(projectId ?? "")
+  // Sprache der System-Mails (Verifizierung, Passwort-Reset): Appwrite wählt
+  // das Template anhand dieser Locale. "de" -> deutsches Template wird genutzt
+  // (muss in der Appwrite-Konsole unter Auth -> Templates für Locale "de"
+  // hinterlegt sein, sonst fällt Appwrite auf das Default-Template zurück).
+  .setLocale("de");
 
 export const account = new Account(client);
 export const databases = new Databases(client);

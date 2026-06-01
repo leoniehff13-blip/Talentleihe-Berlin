@@ -16,7 +16,8 @@ const DEV_USER = {
   $id: "dev", $createdAt: "", $updatedAt: "",
   name: "Dev User", registration: "", status: true, labels: [],
   passwordUpdate: "", email: "dev@winwin-berlin.de", phone: "",
-  emailVerification: false, phoneVerification: false, mfa: false,
+  // Dev-Login soll die E-Mail-Verifizierungs-Wand nicht auslösen.
+  emailVerification: true, phoneVerification: false, mfa: false,
   prefs: {}, targets: [], accessedAt: "",
 } as unknown as Models.User<Models.Preferences>;
 
