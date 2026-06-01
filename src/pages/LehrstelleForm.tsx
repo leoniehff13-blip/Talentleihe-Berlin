@@ -228,6 +228,8 @@ const LehrstelleFormInner: React.FC = () => {
     if (!form.gewerk.trim()) missing.push("Gewerk");
     if (!form.firma.trim()) missing.push(isTalent ? "Name/Ausbildungsbetrieb" : "Firma");
     if (!form.startdatum) missing.push("Startdatum");
+    if (form.enddatum && form.startdatum && form.enddatum < form.startdatum)
+      missing.push("Enddatum muss gleich oder nach dem Startdatum liegen");
     if (!form.kontakt_email.trim()) missing.push("Kontakt-E-Mail");
     if (!form.handwerkskammer.trim()) missing.push("Handwerkskammer");
     if (isTalent) {
@@ -243,13 +245,23 @@ const LehrstelleFormInner: React.FC = () => {
     const split = (s: string) =>
       s.split(",").map((x) => x.trim()).filter(Boolean);
 
+    // Kein Enddatum → automatisch auf Startdatum + 3,5 Jahre begrenzen
+    const enddatumIso = form.enddatum
+      ? toIsoOrNull(form.enddatum)
+      : (() => {
+          if (!form.startdatum) return null;
+          const d = new Date(form.startdatum + "T00:00:00.000Z");
+          d.setMonth(d.getMonth() + 42); // 3,5 Jahre = 42 Monate
+          return d.toISOString();
+        })();
+
     const data: Record<string, unknown> = {
       owner_id: user.$id,
       type: docType,
       gewerk: form.gewerk.trim(),
       firma: form.firma.trim(),
       startdatum: toIsoOrNull(form.startdatum),
-      enddatum: toIsoOrNull(form.enddatum),
+      enddatum: enddatumIso,
       kontakt_email: form.kontakt_email.trim(),
       spezialisierungen: split(form.spezialisierungen),
       handwerkskammer: form.handwerkskammer.trim() || null,
