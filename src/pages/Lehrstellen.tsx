@@ -171,6 +171,17 @@ const LehrstellenInner: React.FC = () => {
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [view, setView] = useState<ViewMode>("liste");
   const [geoStatus, setGeoStatus] = useState<string | null>(null);
+  const [ortVorbefuellt, setOrtVorbefuellt] = useState(false);
+
+  // Ort aus Talent-Profil vorausfüllen (einmalig, überschreibbar)
+  useEffect(() => {
+    if (ortVorbefuellt || profile?.type !== "talent") return;
+    const ort = profile.ort?.trim();
+    if (ort) {
+      setFilters((prev) => ({ ...prev, ortOrPlz: ort }));
+    }
+    setOrtVorbefuellt(true);
+  }, [profile, ortVorbefuellt]);
 
   // Welcher Anzeigentyp soll je nach Rolle gezeigt werden?
   // Talent (Azubi) sieht Angebote der Betriebe → "einsatz"
