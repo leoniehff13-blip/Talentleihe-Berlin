@@ -25,6 +25,7 @@ import {
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
 import { mailOutline, sendOutline, checkmarkCircleOutline } from "ionicons/icons";
 import { ID, Query } from "appwrite";
 import {
@@ -46,6 +47,7 @@ import DokumenteUpload from "../components/DokumenteUpload";
 
 const LehrstelleDetailInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const history = useHistory();
   const { user, profile } = useAuth();
 
   const [item, setItem] = useState<Lehrstelle | null>(null);
@@ -172,6 +174,13 @@ const LehrstelleDetailInner: React.FC = () => {
             <IonBackButton defaultHref="/lehrstellen" />
           </IonButtons>
           <IonTitle>{item?.gewerk ?? "Detail"}</IonTitle>
+          {istEigeneAnzeige && (
+            <IonButtons slot="end">
+              <IonButton onClick={() => history.push(`/meine-lehrstellen/${id}/bearbeiten`)}>
+                Bearbeiten
+              </IonButton>
+            </IonButtons>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
