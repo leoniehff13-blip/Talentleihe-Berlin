@@ -62,7 +62,7 @@ const App: React.FC = () => (
             <Route exact path="/lehrstellen">
               <Lehrstellen />
             </Route>
-            <Route exact path="/lehrstellen/:id">
+            <Route exact path="/lehrstellen/:id([a-zA-Z0-9]{15,})">
               <LehrstelleDetail />
             </Route>
 
@@ -76,16 +76,16 @@ const App: React.FC = () => (
             <Route exact path="/meine-lehrstellen/neu">
               <LehrstelleForm />
             </Route>
-            <Route exact path="/meine-lehrstellen/:id/bearbeiten">
+            <Route exact path="/meine-lehrstellen/:id([a-zA-Z0-9]{15,})/bearbeiten">
               <LehrstelleForm />
             </Route>
-            <Route exact path="/meine-lehrstellen/:id">
+            <Route exact path="/meine-lehrstellen/:id([a-zA-Z0-9]{15,})">
               <LehrstelleDetail />
             </Route>
             <Route exact path="/meine-bewerbungen">
               <MeineBewerbungen />
             </Route>
-            <Route exact path="/meine-lehrstellen/:id/bewerbungen">
+            <Route exact path="/meine-lehrstellen/:id([a-zA-Z0-9]{15,})/bewerbungen">
               <BewerbungenZurAnzeige />
             </Route>
 

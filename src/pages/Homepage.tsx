@@ -1,11 +1,10 @@
-import { IonContent, IonPage } from "@ionic/react";
-import { useHistory } from "react-router-dom";
+import { IonContent, IonPage, useIonRouter } from "@ionic/react";
 import Footer from "../components/Footer";
 import { useAuth } from "../lib/AuthContext";
 
 const Homepage: React.FC = () => {
   const { user, profile } = useAuth();
-  const history = useHistory();
+  const ionRouter = useIonRouter();
 
   const istEingeloggt = Boolean(user);
   const istTalent = profile?.type === "talent";
@@ -420,7 +419,7 @@ const Homepage: React.FC = () => {
                   href={ctaPrimary.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    history.push(ctaPrimary.href);
+                    ionRouter.push(ctaPrimary.href, "root", "replace");
                   }}
                 >
                   {ctaPrimary.label}
@@ -439,7 +438,7 @@ const Homepage: React.FC = () => {
                   href="/lehrstellen"
                   onClick={(e) => {
                     e.preventDefault();
-                    history.push("/lehrstellen");
+                    ionRouter.push("/lehrstellen", "root", "replace");
                   }}
                 >
                   Talentleihe entdecken
@@ -515,7 +514,7 @@ const Homepage: React.FC = () => {
                   href="/informationen"
                   onClick={(e) => {
                     e.preventDefault();
-                    history.push("/informationen");
+                    ionRouter.push("/informationen", "root", "replace");
                   }}
                   style={{ background: "#96B740", color: "white" }}
                 >
@@ -587,7 +586,7 @@ const Homepage: React.FC = () => {
                   href={ctaPrimary.href}
                   onClick={(e) => {
                     e.preventDefault();
-                    history.push(ctaPrimary.href);
+                    ionRouter.push(ctaPrimary.href, "root", "replace");
                   }}
                 >
                   {ctaPrimary.label}
@@ -598,7 +597,7 @@ const Homepage: React.FC = () => {
                     href="/login"
                     onClick={(e) => {
                       e.preventDefault();
-                      history.push("/login");
+                      ionRouter.push("/login", "root", "replace");
                     }}
                     style={{ color: "white", borderColor: "rgba(255,255,255,0.4)" }}
                   >
