@@ -214,12 +214,10 @@ const LehrstellenInner: React.FC = () => {
         queries.push(Query.equal("type", angezeigterTyp));
       }
 
-      // Server-seitige Filter, die Appwrite direkt unterstützt
-      if (filters.startVon) {
-        queries.push(Query.greaterThanEqual("startdatum", new Date(filters.startVon).toISOString()));
-      }
+      // Datum-Filter: Einsatz ist verfügbar wenn startdatum ≤ Ende des filterBis-Tages
+      // (enddatum ≥ filterVon → clientseitig, da Appwrite kein OR unterstützt)
       if (filters.startBis) {
-        queries.push(Query.lessThanEqual("startdatum", new Date(filters.startBis).toISOString()));
+        queries.push(Query.lessThanEqual("startdatum", filters.startBis + "T23:59:59.999Z"));
       }
 
       // Mindestalter: serverseitig nur, wenn nach „kein" oder konkretem Wert gefiltert wird
@@ -249,6 +247,25 @@ const LehrstellenInner: React.FC = () => {
         // Kammer-Filter
         if (filters.kammer && d.handwerkskammer !== filters.kammer) {
           return false;
+        }
+        // Datum: Einsatz-Zeitraum muss mit dem Filterbereich überlappen
+        // Vergleich nur auf Datumsteil (YYYY-MM-DD) → Zeitzone spielt keine Rolle
+        if (filters.startVon || filters.startBis) {
+          const toD = (iso: string) => iso.substring(0, 10);
+          const vonDate = filters.startVon || null;
+          const bisDate = filters.startBis || null;
+          const startDate = toD(d.startdatum);
+          const endDate = d.enddatum ? toD(d.enddatum) : null;
+
+          if (endDate !== null) {
+            // Mit Enddatum → echte Überschneidung prüfen
+            if (bisDate !== null && startDate > bisDate) return false; // beginnt nach Filterende
+            if (vonDate !== null && endDate < vonDate) return false;   // endet vor Filterbeginn
+          } else {
+            // Ohne Enddatum → nur Startdatum verwenden (kein "läuft ewig" annehmen)
+            if (vonDate !== null && startDate < vonDate) return false; // begann vor Filterstart
+            if (bisDate !== null && startDate > bisDate) return false; // beginnt nach Filterende
+          }
         }
         return true;
       });
@@ -415,7 +432,7 @@ const LehrstellenInner: React.FC = () => {
                 </IonItem>
                 <IonItem>
                   <IonInput
-                    label="Start ab"
+                    label="Verfügbar ab"
                     labelPlacement="stacked"
                     type="date"
                     value={filters.startVon}
@@ -424,7 +441,7 @@ const LehrstellenInner: React.FC = () => {
                 </IonItem>
                 <IonItem>
                   <IonInput
-                    label="Start bis"
+                    label="Verfügbar bis"
                     labelPlacement="stacked"
                     type="date"
                     value={filters.startBis}

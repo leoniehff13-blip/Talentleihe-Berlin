@@ -104,6 +104,8 @@ const LehrstelleFormInner: React.FC = () => {
   const [docType, setDocType] = useState<ApprenticeshipType>(initialType);
   const isTalent = docType === "talent_angebot";
 
+  const today = new Date().toISOString().substring(0, 10);
+
   const [form, setForm] = useState<FormState>(EMPTY);
   const [loading, setLoading] = useState(isEdit);
   const [saving, setSaving] = useState(false);
@@ -393,6 +395,7 @@ const LehrstelleFormInner: React.FC = () => {
                 label={isTalent ? "Verfügbar ab *" : "Startdatum *"}
                 labelPlacement="stacked"
                 type="date"
+                min={today}
                 value={form.startdatum}
                 onIonInput={(e) => update("startdatum", e.detail.value ?? "")}
               />
@@ -402,6 +405,7 @@ const LehrstelleFormInner: React.FC = () => {
                 label={isTalent ? "Verfügbar bis (optional)" : "Enddatum (optional)"}
                 labelPlacement="stacked"
                 type="date"
+                min={today}
                 value={form.enddatum}
                 onIonInput={(e) => update("enddatum", e.detail.value ?? "")}
               />
