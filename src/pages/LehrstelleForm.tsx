@@ -39,6 +39,7 @@ import { GEWERKE } from "../lib/gewerke";
 import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
+import { adresseAufteilen, adresseZusammenfuegen } from "../components/ProfilFormFields";
 
 interface FormState {
   gewerk: string;
@@ -52,7 +53,8 @@ interface FormState {
   mindestalter: string;
   vorerfahrung: string;
   aufgabenbeschreibung: string;
-  adresse: string;
+  strasse: string;
+  hausnummer: string;
   plz: string;
   plz_umkreis: string;
   stadt: string;
@@ -72,7 +74,8 @@ const EMPTY: FormState = {
   mindestalter: "",
   vorerfahrung: "",
   aufgabenbeschreibung: "",
-  adresse: "",
+  strasse: "",
+  hausnummer: "",
   plz: "",
   plz_umkreis: "",
   stadt: "",
@@ -142,7 +145,15 @@ const LehrstelleFormInner: React.FC = () => {
         profile.ansprechpartner_email ||
         user?.email ||
         "",
-      adresse: prev.adresse || profile.adresse || "",
+      ...(() => {
+          const { strasse, hausnummer, plz, ort } = adresseAufteilen(prev.strasse ? `${prev.strasse} ${prev.hausnummer}, ${prev.plz} ${prev.stadt}` : profile.adresse ?? "");
+          return {
+            strasse: prev.strasse || strasse,
+            hausnummer: prev.hausnummer || hausnummer,
+            plz: prev.plz || plz,
+            stadt: prev.stadt || ort,
+          };
+        })(),
       handwerkskammer:
         prev.handwerkskammer || profile.handwerkskammer || "",
       spezialisierungen:
@@ -184,7 +195,10 @@ const LehrstelleFormInner: React.FC = () => {
           mindestalter: doc.mindestalter != null ? String(doc.mindestalter) : "",
           vorerfahrung: doc.vorerfahrung ?? "",
           aufgabenbeschreibung: doc.aufgabenbeschreibung ?? "",
-          adresse: doc.adresse ?? "",
+          ...(() => {
+            const { strasse, hausnummer } = adresseAufteilen(doc.adresse ?? "");
+            return { strasse, hausnummer };
+          })(),
           plz: doc.plz ?? "",
           plz_umkreis: doc.plz_umkreis != null ? String(doc.plz_umkreis) : "",
           stadt: doc.stadt ?? "",
@@ -259,7 +273,7 @@ const LehrstelleFormInner: React.FC = () => {
         mindestalter: form.mindestalter ? Number(form.mindestalter) : null,
         vorerfahrung: form.vorerfahrung.trim() || null,
         aufgabenbeschreibung: form.aufgabenbeschreibung.trim(),
-        adresse: form.adresse.trim() || null,
+        adresse: adresseZusammenfuegen(form.strasse.trim(), form.hausnummer.trim(), form.plz.trim(), form.stadt.trim()) || null,
         plz: form.plz.trim() || null,
         plz_umkreis: null,
         stadt: form.stadt.trim() || null,
@@ -495,23 +509,32 @@ const LehrstelleFormInner: React.FC = () => {
               <>
                 <IonItem>
                   <IonInput
-                    label="Adresse"
+                    label="Straße"
                     labelPlacement="stacked"
-                    value={form.adresse}
-                    onIonInput={(e) => update("adresse", e.detail.value ?? "")}
+                    value={form.strasse}
+                    onIonInput={(e) => update("strasse", e.detail.value ?? "")}
+                  />
+                </IonItem>
+                <IonItem>
+                  <IonInput
+                    label="Hausnummer"
+                    labelPlacement="stacked"
+                    value={form.hausnummer}
+                    onIonInput={(e) => update("hausnummer", e.detail.value ?? "")}
                   />
                 </IonItem>
                 <IonItem>
                   <IonInput
                     label="PLZ"
                     labelPlacement="stacked"
+                    inputMode="numeric"
                     value={form.plz}
                     onIonInput={(e) => update("plz", e.detail.value ?? "")}
                   />
                 </IonItem>
                 <IonItem>
                   <IonInput
-                    label="Stadt"
+                    label="Ort"
                     labelPlacement="stacked"
                     value={form.stadt}
                     onIonInput={(e) => update("stadt", e.detail.value ?? "")}

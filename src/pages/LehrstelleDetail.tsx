@@ -296,11 +296,6 @@ const LehrstelleDetailInner: React.FC = () => {
                 ) : (
                   <>
                     {item.adresse && <p>{item.adresse}</p>}
-                    {(item.plz || item.stadt) && (
-                      <p>
-                        {item.plz} {item.stadt}
-                      </p>
-                    )}
                     {item.bundesland && <p>{item.bundesland}</p>}
                   </>
                 )}
