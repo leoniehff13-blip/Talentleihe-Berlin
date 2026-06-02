@@ -173,13 +173,27 @@ const LehrstellenInner: React.FC = () => {
   const [geoStatus, setGeoStatus] = useState<string | null>(null);
   const [ortVorbefuellt, setOrtVorbefuellt] = useState(false);
 
-  // Ort aus Talent-Profil vorausfüllen (einmalig, überschreibbar)
+  // Ort und Gewerke aus Profil vorausfüllen (einmalig, überschreibbar)
   useEffect(() => {
-    if (ortVorbefuellt || profile?.type !== "talent") return;
-    const ort = profile.ort?.trim();
-    if (ort) {
-      setFilters((prev) => ({ ...prev, ortOrPlz: ort }));
+    if (ortVorbefuellt || !profile) return;
+
+    if (profile.type === "talent") {
+      const ort = profile.ort?.trim();
+      const gewerk = profile.gewerk?.trim();
+      setFilters((prev) => ({
+        ...prev,
+        ...(ort ? { ortOrPlz: ort } : {}),
+        ...(gewerk ? { gewerke: [gewerk] } : {}),
+      }));
+    } else if (profile.type === "betrieb") {
+      // gewerk-Feld enthält kommagetrennte Gewerke-Liste
+      const gewerke = (profile.gewerk ?? "")
+        .split(",").map((s) => s.trim()).filter(Boolean);
+      if (gewerke.length > 0) {
+        setFilters((prev) => ({ ...prev, gewerke }));
+      }
     }
+
     setOrtVorbefuellt(true);
   }, [profile, ortVorbefuellt]);
 

@@ -197,7 +197,7 @@ export interface Profile extends Models.Document {
   anrede: Anrede | null;
   ort: string | null;
   adresse: string | null;
-  gewerk: string | null;
+  gewerk: string | null;    // Talent: einzelnes Gewerk; Betrieb: kommagetrennte Liste
   handwerkskammer: string | null;
   lehrjahr: Lehrjahr | null;
   unternehmen: string | null;

@@ -17,7 +17,10 @@ import {
   IonSearchbar,
   IonButtons,
   IonButton,
+  IonChip,
+  IonIcon,
 } from "@ionic/react";
+import { closeCircle } from "ionicons/icons";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
 import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
@@ -32,7 +35,8 @@ export interface ProfilFormState {
   strasse: string;
   hausnummer: string;
   adresse: string;
-  gewerk: string;
+  gewerk: string;       // Talent: einzelnes Gewerk
+  gewerke: string[];    // Betrieb: mehrere Gewerke
   handwerkskammer: string;
   lehrjahr: string;
   unternehmen: string;
@@ -54,6 +58,7 @@ export const EMPTY_PROFIL: ProfilFormState = {
   hausnummer: "",
   adresse: "",
   gewerk: "",
+  gewerke: [],
   handwerkskammer: "Handwerkskammer Berlin",
   lehrjahr: "",
   unternehmen: "",
@@ -147,6 +152,112 @@ function GewerkPicker({ value, onChange }: { value: string; onChange: (v: string
                 style={g === value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
               >
                 <IonLabel>{g}</IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        </IonContent>
+      </IonModal>
+    </>
+  );
+}
+
+// ── Suchbares Gewerk-Mehrfachauswahlfeld (Betrieb) ───────────────────────────
+function GewerkMultiPicker({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [draft, setDraft] = useState<string[]>([]);
+
+  const filtered = GEWERKE.filter((g) =>
+    g.toLowerCase().includes(search.toLowerCase())
+  );
+
+  function toggle(g: string) {
+    setDraft((prev) =>
+      prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]
+    );
+  }
+
+  function handleOpen() {
+    setDraft(value);
+    setSearch("");
+    setOpen(true);
+  }
+
+  function apply() {
+    onChange(draft);
+    setOpen(false);
+  }
+
+  return (
+    <>
+      <IonItem button detail={false} onClick={handleOpen}>
+        <IonLabel position="stacked">Gewerke *</IonLabel>
+        <div style={{
+          padding: "10px 0 6px",
+          color: value.length ? "var(--ion-text-color, #1E367A)" : "#999",
+          fontSize: "1rem",
+        }}>
+          {value.length === 0 ? "— bitte wählen —" : "Gewerke bearbeiten …"}
+        </div>
+      </IonItem>
+      {value.length > 0 && (
+        <IonItem lines="none">
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 4, padding: "6px 0 10px" }}>
+            {value.map((g) => (
+              <IonChip key={g} color="primary" onClick={(e) => { e.stopPropagation(); onChange(value.filter((x) => x !== g)); }}>
+                <IonLabel>{g}</IonLabel>
+                <IonIcon icon={closeCircle} />
+              </IonChip>
+            ))}
+          </div>
+        </IonItem>
+      )}
+
+      <IonModal isOpen={open} onDidDismiss={() => setOpen(false)}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Gewerke wählen</IonTitle>
+            <IonButtons slot="end">
+              <IonButton strong onClick={apply}>
+                Fertig {draft.length > 0 ? `(${draft.length})` : ""}
+              </IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonToolbar>
+            <IonSearchbar
+              value={search}
+              onIonInput={(e) => setSearch(e.detail.value ?? "")}
+              placeholder="Gewerk suchen …"
+              debounce={80}
+            />
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          {draft.length > 0 && (
+            <IonItem button detail={false} onClick={() => setDraft([])}>
+              <IonLabel color="medium" style={{ fontStyle: "italic" }}>
+                Auswahl aufheben
+              </IonLabel>
+            </IonItem>
+          )}
+          <IonList>
+            {filtered.length === 0 && (
+              <IonItem>
+                <IonLabel color="medium" style={{ fontStyle: "italic" }}>Keine Treffer</IonLabel>
+              </IonItem>
+            )}
+            {filtered.map((g) => (
+              <IonItem
+                key={g}
+                button
+                detail={false}
+                onClick={() => toggle(g)}
+                style={draft.includes(g) ? { "--background": "rgba(71,188,194,0.1)" } : {}}
+              >
+                <IonLabel>{g}</IonLabel>
+                {draft.includes(g) && (
+                  <span slot="end" style={{ color: "#47BCC2", fontWeight: 700, fontSize: "1.1rem" }}>✓</span>
+                )}
               </IonItem>
             ))}
           </IonList>
@@ -391,9 +502,9 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 />
               </div>
             </IonItem>
-            <GewerkPicker
-              value={state.gewerk}
-              onChange={(v) => set("gewerk", v)}
+            <GewerkMultiPicker
+              value={state.gewerke}
+              onChange={(v) => set("gewerke", v)}
             />
 
             <IonListHeader>
@@ -465,7 +576,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.hausnummer.trim()) missing.push("Hausnummer");
     if (!state.plz.trim()) missing.push("PLZ");
     if (!state.ort.trim()) missing.push("Ort");
-    if (!state.gewerk.trim()) missing.push("Gewerk");
+    if (state.gewerke.length === 0) missing.push("Gewerk (mind. 1)");
     if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
     if (!state.anrede) missing.push("Anrede Ansprechpartner:in");
     if (!state.ansprechpartner.trim()) missing.push("Ansprechpartner:in");
@@ -486,7 +597,10 @@ export function profilStateToInput(state: ProfilFormState) {
     vorname: isTalent ? state.vorname.trim() || null : null,
     ort: isTalent ? `${state.plz.trim()} ${state.ort.trim()}`.trim() || null : null,
     adresse: !isTalent ? adresseZusammenfuegen(state.strasse.trim(), state.hausnummer.trim(), state.plz.trim(), state.ort.trim()) || null : null,
-    gewerk: state.gewerk.trim() || null,
+    // Talent: einzelnes Gewerk; Betrieb: kommagetrennte Liste im gewerk-Feld
+    gewerk: isTalent
+      ? state.gewerk.trim() || null
+      : state.gewerke.join(", ") || null,
     handwerkskammer: state.handwerkskammer.trim() || null,
     lehrjahr: isTalent && state.lehrjahr ? (Number(state.lehrjahr) as 1 | 2 | 3 | 4) : null,
     unternehmen: isTalent ? state.unternehmen.trim() || null : null,

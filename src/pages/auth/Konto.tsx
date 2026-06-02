@@ -179,6 +179,10 @@ const Konto: React.FC = () => {
           }
         })(),
         gewerk: profile.gewerk ?? "",
+        // Betrieb: gewerk-Feld enthält kommagetrennte Gewerke-Liste
+        gewerke: profile.type === "betrieb"
+          ? (profile.gewerk ?? "").split(",").map((s) => s.trim()).filter(Boolean)
+          : [],
         handwerkskammer: profile.handwerkskammer ?? "",
         lehrjahr: profile.lehrjahr != null ? String(profile.lehrjahr) : "",
         unternehmen: profile.unternehmen ?? "",
@@ -420,8 +424,19 @@ const Konto: React.FC = () => {
                 </IonItem>
                 <IonItem>
                   <IonLabel>
-                    <h3>Gewerk</h3>
-                    <p>{profile.gewerk ?? "—"}</p>
+                    <h3>Gewerke</h3>
+                    {(() => {
+                      const gs = (profile.gewerk ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+                      return gs.length > 0 ? (
+                        <div style={{ marginTop: 6 }}>
+                          {gs.map((g) => (
+                            <IonChip key={g} color="primary">
+                              <IonLabel>{g}</IonLabel>
+                            </IonChip>
+                          ))}
+                        </div>
+                      ) : <p>—</p>;
+                    })()}
                   </IonLabel>
                 </IonItem>
                 <IonItem>
