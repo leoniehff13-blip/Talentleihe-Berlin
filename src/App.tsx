@@ -8,10 +8,10 @@ import { IonReactRouter } from "@ionic/react-router";
 import TopNav from "./components/TopNav";
 
 import Homepage from "./pages/Homepage";
-import Anzeigen from '../pages/Anzeigen';
-import AnzeigeDetail from '../pages/AnzeigeDetail';
-import AnzeigeForm from '../pages/AnzeigeForm';
-import MeineAnzeigen from '../pages/MeineAnzeigen';
+import Anzeigen from './pages/Anzeigen';
+import AnzeigeDetail from './pages/AnzeigeDetail';
+import AnzeigeForm from './pages/AnzeigeForm';
+import MeineAnzeigen from './pages/MeineAnzeigen';
 import MeineBewerbungen from "./pages/MeineBewerbungen";
 import ProfilDetail from './pages/ProfilDetail';
 import BewerbungenZurAnzeige from "./pages/BewerbungenZurAnzeige";
