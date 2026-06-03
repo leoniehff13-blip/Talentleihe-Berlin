@@ -30,7 +30,7 @@ import {
   COL_BEWERBUNGEN,
   BUNDESLAENDER,
   MINDESTALTER_OPTIONS,
-  type Lehrstelle,
+  type Anzeige,
   type Bundesland,
   type ApprenticeshipType,
 } from "../lib/appwrite";

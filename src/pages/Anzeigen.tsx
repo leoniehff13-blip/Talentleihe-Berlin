@@ -34,7 +34,7 @@ import {
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   MINDESTALTER_OPTIONS,
-  type Lehrstelle,
+  type Anzeige,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";

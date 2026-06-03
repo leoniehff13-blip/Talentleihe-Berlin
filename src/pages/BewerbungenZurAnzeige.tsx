@@ -45,7 +45,7 @@ import {
   type Bewerbung,
   type Bewertung,
   type Dokument,
-  type Lehrstelle,
+  type Anzeige,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";

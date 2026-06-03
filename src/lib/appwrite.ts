@@ -87,7 +87,7 @@ export const BUNDESLAENDER: Bundesland[] = [
 /* -------- Lehrstelle (Einsatz oder Talent-Angebot) -------- */
 export type ApprenticeshipType = "einsatz" | "talent_angebot";
 
-export interface Lehrstelle extends Models.Document {
+export interface Anzeige extends Models.Document {
   type: ApprenticeshipType;
   gewerk: string;
   firma: string;

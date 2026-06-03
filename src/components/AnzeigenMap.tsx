@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { IonText } from "@ionic/react";
-import type { Lehrstelle } from "../lib/appwrite";
+import type { Anzeige } from "../lib/appwrite";
 import { KAMMER_AREAS } from "../lib/kammer-geojson";
 
 /**
@@ -43,7 +43,7 @@ function writeCache(cache: CacheMap) {
   }
 }
 
-function buildQuery(item: Lehrstelle): string {
+function buildQuery(item: Anzeige): string {
   const parts: string[] = [];
   if (item.adresse) parts.push(item.adresse);
   if (item.plz) parts.push(item.plz);

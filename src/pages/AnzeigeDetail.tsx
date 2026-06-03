@@ -36,7 +36,7 @@ import {
   extractOwnerId,
   BEWERBUNG_STATUS_LABEL,
   BEWERBUNG_STATUS_COLOR,
-  type Lehrstelle,
+  type Anzeige,
   type Bewerbung,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";

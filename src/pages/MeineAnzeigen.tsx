@@ -30,7 +30,7 @@ import {
   databases,
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
-  type Lehrstelle,
+  type Anzeige,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
@@ -85,7 +85,7 @@ const result = await databases.listDocuments<Anzeige>(
     load();
   });
 
-  async function handleDelete(item: Lehrstelle) {
+  async function handleDelete(item: Anzeige) {
     try {
       await databases.deleteDocument(DB_LEHRSTELLEN, COL_APPRENTICESHIPS, item.$id);
       setItems((prev) => prev.filter((i) => i.$id !== item.$id));
