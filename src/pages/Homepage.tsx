@@ -13,9 +13,9 @@ const Homepage: React.FC = () => {
   const ctaPrimary = !istEingeloggt
     ? { label: "Profil anlegen", href: "/registrieren" }
     : istTalent
-      ? { label: "Talent-Angebot anlegen", href: "/meine-lehrstellen" }
+      ? { label: "Talent-Angebot anlegen", href: "/meine-anzeigen" }
       : istBetrieb
-        ? { label: "Einsatz ausschreiben", href: "/meine-lehrstellen" }
+        ? { label: "Einsatz ausschreiben", href: "/meine-anzeigen" }
         : { label: "Profil ergänzen", href: "/konto" };
 
   return (
@@ -435,10 +435,10 @@ const Homepage: React.FC = () => {
                 </a>
                 <a
                   className="ww-btn-ghost"
-                  href="/lehrstellen"
+                  href="/anzeigen"
                   onClick={(e) => {
                     e.preventDefault();
-                    ionRouter.push("/lehrstellen", "root", "replace");
+                    ionRouter.push("/anzeigen", "root", "replace");
                   }}
                 >
                   Talentleihe entdecken

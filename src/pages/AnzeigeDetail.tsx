@@ -45,12 +45,12 @@ import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
 import DokumenteUpload from "../components/DokumenteUpload";
 
-const LehrstelleDetailInner: React.FC = () => {
+const AnzeigeDetailInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const { user, profile } = useAuth();
 
-  const [item, setItem] = useState<Lehrstelle | null>(null);
+  const [item, setItem] = useState<Anzeige | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -72,7 +72,7 @@ const LehrstelleDetailInner: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const doc = await databases.getDocument<Lehrstelle>(
+      const doc = await databases.getDocument<Anzeige>(
         DB_LEHRSTELLEN,
         COL_APPRENTICESHIPS,
         id
@@ -171,12 +171,12 @@ const LehrstelleDetailInner: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/lehrstellen" />
+            <IonBackButton defaultHref="/anzeigen" />
           </IonButtons>
           <IonTitle>{item?.gewerk ?? "Detail"}</IonTitle>
           {istEigeneAnzeige && (
             <IonButtons slot="end">
-              <IonButton onClick={() => history.push(`/meine-lehrstellen/${id}/bearbeiten`)}>
+              <IonButton onClick={() => history.push(`/meine-anzeigen/${id}/bearbeiten`)}>
                 Bearbeiten
               </IonButton>
             </IonButtons>
@@ -476,10 +476,10 @@ const LehrstelleDetailInner: React.FC = () => {
   );
 };
 
-const LehrstelleDetail: React.FC = () => (
-  <AuthGate title="Detail" backHref="/lehrstellen">
-    <LehrstelleDetailInner />
+const AnzeigeDetail: React.FC = () => (
+  <AuthGate title="Detail" backHref="/anzeigen">
+    <AnzeigeDetailInner />
   </AuthGate>
 );
 
-export default LehrstelleDetail;
+export default AnzeigeDetail;

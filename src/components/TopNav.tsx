@@ -4,9 +4,9 @@ import { useIonRouter } from "@ionic/react";
 
 const NAV_ITEMS = [
   { label: "Home",        href: "/home",         owned: ["/home"] },
-  { label: "Talentleihe", href: "/lehrstellen",   owned: ["/lehrstellen"] },
+  { label: "Talentleihe", href: "/anzeigen",   owned: ["/anzeigen"] },
   { label: "Infos",       href: "/informationen", owned: ["/informationen"] },
-  { label: "Konto",       href: "/konto",         owned: ["/konto", "/meine-lehrstellen", "/meine-bewerbungen", "/bewertung", "/login", "/registrieren"] },
+  { label: "Konto",       href: "/konto",         owned: ["/konto", "/meine-anzeigen", "/meine-bewerbungen", "/bewertung", "/login", "/registrieren"] },
 ];
 
 function isActive(pathname: string, owned: string[]) {

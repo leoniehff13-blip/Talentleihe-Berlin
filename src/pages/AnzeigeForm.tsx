@@ -93,7 +93,7 @@ function fromIso(iso: string | null | undefined): string {
   return iso.substring(0, 10);
 }
 
-const LehrstelleFormInner: React.FC = () => {
+const AnzeigeFormInner: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const { user, profile } = useAuth();
   const history = useHistory();
@@ -127,7 +127,7 @@ const LehrstelleFormInner: React.FC = () => {
       : isTalent
         ? "Talent-Angebot anlegen"
         : "Einsatz anlegen",
-    backDefault: "/meine-lehrstellen",
+    backDefault: "/meine-anzeigen",
   };
 
   /* ---------- Vorbefüllung aus Profil (nur Anlegen) ---------- */
@@ -172,7 +172,7 @@ const LehrstelleFormInner: React.FC = () => {
     async function load() {
       try {
         const [doc, bwRes] = await Promise.all([
-          databases.getDocument<Lehrstelle>(
+          databases.getDocument<Anzeige>(
             DB_LEHRSTELLEN,
             COL_APPRENTICESHIPS,
             id!
@@ -313,7 +313,7 @@ const LehrstelleFormInner: React.FC = () => {
           ]
         );
       }
-      history.replace("/meine-lehrstellen");
+      history.replace("/meine-anzeigen");
     } catch (err: unknown) {
       setError(translateError(err));
     } finally {
@@ -621,10 +621,10 @@ const LehrstelleFormInner: React.FC = () => {
   );
 };
 
-const LehrstelleForm: React.FC = () => (
-  <AuthGate title="Anzeige" backHref="/meine-lehrstellen">
-    <LehrstelleFormInner />
+const AnzeigeForm: React.FC = () => (
+  <AuthGate title="Anzeige" backHref="/meine-anzeigen">
+    <AnzeigeFormInner />
   </AuthGate>
 );
 
-export default LehrstelleForm;
+export default AnzeigeForm;

@@ -18,7 +18,7 @@ import { KAMMER_AREAS } from "../lib/kammer-geojson";
 declare const L: any;
 
 interface Props {
-  items: Lehrstelle[];
+  items: Anzeige[];
   showKammerAreas?: boolean;
 }
 
@@ -69,7 +69,7 @@ async function geocode(query: string): Promise<Coords | null> {
   }
 }
 
-const LehrstellenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => {
+const AnzeigenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => {
   const history = useHistory();
   const containerRef = useRef<HTMLDivElement | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -238,7 +238,7 @@ const LehrstellenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => 
               <div style="font-size:11px;color:#666">${typeLabel} · ${kammerKurz}</div>
               <div style="font-weight:700;color:#1E367A;margin:2px 0 1px">${safeGewerk}</div>
               <div style="margin:0 0 8px;font-size:13px">${safeFirma} · ${safeOrt}</div>
-              <a href="/lehrstellen/${item.$id}" data-lehrstelle-id="${item.$id}" class="ww-popup-link"
+              <a href="/anzeigen/${item.$id}" data-lehrstelle-id="${item.$id}" class="ww-popup-link"
                 style="color:#47BCC2;font-weight:700;cursor:pointer;text-decoration:none">
                 Anzeige öffnen →
               </a>
@@ -253,7 +253,7 @@ const LehrstellenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => 
             link.onclick = (ev: MouseEvent) => {
               ev.preventDefault();
               const id = link.getAttribute("data-lehrstelle-id");
-              if (id) history.push(`/lehrstellen/${id}`);
+              if (id) history.push(`/anzeigen/${id}`);
             };
           });
 
@@ -314,4 +314,4 @@ const LehrstellenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => 
   );
 };
 
-export default LehrstellenMap;
+export default AnzeigenMap;

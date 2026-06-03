@@ -153,7 +153,7 @@ const MeineBewerbungenInner: React.FC = () => {
                 </IonText>
                 <IonButton
                   expand="block"
-                  onClick={() => history.push("/lehrstellen")}
+                  onClick={() => history.push("/anzeigen")}
                   style={{ marginTop: 16 }}
                 >
                   Zur Talentleihe
@@ -174,7 +174,7 @@ const MeineBewerbungenInner: React.FC = () => {
                 <IonItemSliding key={b.$id}>
                   <IonItem
                     button
-                    onClick={() => history.push(profile?.type === 'betrieb' ? `/meine-lehrstellen/${b.apprenticeship_id}/bewerbungen` : `/lehrstellen/${b.apprenticeship_id}`)}
+                    onClick={() => history.push(profile?.type === 'betrieb' ? `/meine-anzeigen/${b.apprenticeship_id}/bewerbungen` : `/anzeigen/${b.apprenticeship_id}`)}
                     detail
                   >
                     <IonLabel>

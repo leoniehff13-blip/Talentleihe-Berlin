@@ -494,7 +494,7 @@ const Konto: React.FC = () => {
         <BewertungSection userId={user.$id} profileType={profile.type} />
 
         {/* Hub-Karten */}
-        <IonCard button onClick={() => history.push("/meine-lehrstellen")}>
+        <IonCard button onClick={() => history.push("/meine-anzeigen")}>
           <IonCardContent style={{ display: "flex", alignItems: "center" }}>
             <IonIcon
               icon={briefcaseOutline}

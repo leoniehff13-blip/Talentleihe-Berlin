@@ -38,7 +38,7 @@ import {
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
-import LehrstellenMap from "../components/LehrstellenMap";
+import AnzeigenMap from '../components/AnzeigenMap';
 import { geocode, buildItemQuery, haversineKm } from "../lib/geocode";
 import { GEWERKE, gewerkStamm } from "../lib/gewerke";
 import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
@@ -163,9 +163,9 @@ function GewerkMultiPicker({
 type ViewMode = "liste" | "karte";
 
 
-const LehrstellenInner: React.FC = () => {
+const AnzeigenInner: React.FC = () => {
   const { user, profile } = useAuth();
-  const [items, setItems] = useState<Lehrstelle[]>([]);
+  const [items, setItems] = useState<Anzeige[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
@@ -252,7 +252,7 @@ const LehrstellenInner: React.FC = () => {
         queries.push(Query.lessThanEqual("mindestalter", Number(filters.mindestalter)));
       }
 
-      const result = await databases.listDocuments<Lehrstelle>(
+      const result = await databases.listDocuments<Anzeige>(
         DB_LEHRSTELLEN,
         COL_APPRENTICESHIPS,
         queries
@@ -306,7 +306,7 @@ const LehrstellenInner: React.FC = () => {
           return;
         }
 
-        const inRange: Lehrstelle[] = [];
+        const inRange: Anzeige[] = [];
         for (let i = 0; i < filtered.length; i++) {
           setGeoStatus(`Prüfe Anzeige ${i + 1} von ${filtered.length}…`);
           const item = filtered[i];
@@ -563,7 +563,7 @@ const LehrstellenInner: React.FC = () => {
               return (
                 <IonItem
                   key={item.$id}
-                  routerLink={`/lehrstellen/${item.$id}`}
+                  routerLink={`/anzeigen/${item.$id}`}
                   detail
                 >
                   <IonLabel>
@@ -588,7 +588,7 @@ const LehrstellenInner: React.FC = () => {
 
         {!loading && items.length > 0 && view === "karte" && (
           <div className="ion-padding" style={{ paddingTop: 8 }}>
-            <LehrstellenMap items={items} showKammerAreas />
+            <AnzeigenMap items={items} showKammerAreas />
             <IonText color="medium">
               <p style={{ fontSize: 12, marginTop: 8 }}>
                 Tipp: Beim ersten Laden werden die Adressen einmalig geocodiert
@@ -604,10 +604,10 @@ const LehrstellenInner: React.FC = () => {
   );
 };
 
-const Lehrstellen: React.FC = () => (
+const Anzeigen: React.FC = () => (
   <AuthGate title="Talentleihe">
-    <LehrstellenInner />
+    <AnzeigenInner />
   </AuthGate>
 );
 
-export default Lehrstellen;
+export default Anzeigen;

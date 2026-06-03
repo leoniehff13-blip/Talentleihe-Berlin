@@ -36,13 +36,13 @@ import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 
-const MeineLehrstellenInner: React.FC = () => {
+const MeineAnzeigenInner: React.FC = () => {
   const { user, profile } = useAuth();
   const history = useHistory();
-  const [items, setItems] = useState<Lehrstelle[]>([]);
+  const [items, setItems] = useState<Anzeige[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<Lehrstelle | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<Anzeige | null>(null);
 
   const isTalent = profile?.type === "talent";
   const titleText = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
@@ -60,7 +60,7 @@ const MeineLehrstellenInner: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-const result = await databases.listDocuments<Lehrstelle>(
+const result = await databases.listDocuments<Anzeige>(
         DB_LEHRSTELLEN,
         COL_APPRENTICESHIPS,
         [
@@ -103,7 +103,7 @@ const result = await databases.listDocuments<Lehrstelle>(
           </IonButtons>
           <IonTitle>{titleText}</IonTitle>
           <IonButtons slot="end">
-            <IonButton onClick={() => history.push("/meine-lehrstellen/neu")}>
+            <IonButton onClick={() => history.push("/meine-anzeigen/neu")}>
               <IonIcon icon={add} slot="icon-only" />
             </IonButton>
           </IonButtons>
@@ -131,7 +131,7 @@ const result = await databases.listDocuments<Lehrstelle>(
             </IonText>
             <IonButton
               expand="block"
-              onClick={() => history.push("/meine-lehrstellen/neu")}
+              onClick={() => history.push("/meine-anzeigen/neu")}
             >
               <IonIcon icon={add} slot="start" />
               {newButtonText}
@@ -143,7 +143,7 @@ const result = await databases.listDocuments<Lehrstelle>(
           <div className="ion-padding">
             <IonButton
               expand="block"
-              onClick={() => history.push("/meine-lehrstellen/neu")}
+              onClick={() => history.push("/meine-anzeigen/neu")}
             >
               <IonIcon icon={add} slot="start" />
               {isTalent ? "Weiteres Talent-Angebot anlegen" : "Weiteren Einsatz anlegen"}
@@ -159,7 +159,7 @@ const result = await databases.listDocuments<Lehrstelle>(
                 <IonItemSliding key={item.$id}>
                   <IonItem
                     button
-                    onClick={() => history.push(`/meine-lehrstellen/${item.$id}`)}
+                    onClick={() => history.push(`/meine-anzeigen/${item.$id}`)}
                     detail
                   >
                     <IonLabel>
@@ -179,10 +179,10 @@ const result = await databases.listDocuments<Lehrstelle>(
                       {itemIsTalent ? "Talent" : "Einsatz"}
                     </IonBadge>
                     <div slot="end" style={{ display: "flex", gap: 4, marginLeft: 8 }} onClick={(e) => e.stopPropagation()}>
-                      <IonButton fill="clear" size="small" color="tertiary" onClick={() => history.push(`/meine-lehrstellen/${item.$id}/bewerbungen`)}>
+                      <IonButton fill="clear" size="small" color="tertiary" onClick={() => history.push(`/meine-anzeigen/${item.$id}/bewerbungen`)}>
                         <IonIcon slot="icon-only" icon={peopleOutline} />
                       </IonButton>
-                      <IonButton fill="clear" size="small" color="primary" onClick={() => history.push(`/meine-lehrstellen/${item.$id}/bearbeiten`)}>
+                      <IonButton fill="clear" size="small" color="primary" onClick={() => history.push(`/meine-anzeigen/${item.$id}/bearbeiten`)}>
                         <IonIcon slot="icon-only" icon={create} />
                       </IonButton>
                       <IonButton fill="clear" size="small" color="danger" onClick={() => setConfirmDelete(item)}>
@@ -194,7 +194,7 @@ const result = await databases.listDocuments<Lehrstelle>(
                     <IonItemOption
                       color="tertiary"
                       onClick={() =>
-                        history.push(`/meine-lehrstellen/${item.$id}/bewerbungen`)
+                        history.push(`/meine-anzeigen/${item.$id}/bewerbungen`)
                       }
                     >
                       <IonIcon slot="icon-only" icon={peopleOutline} />
@@ -202,7 +202,7 @@ const result = await databases.listDocuments<Lehrstelle>(
                     <IonItemOption
                       color="primary"
                       onClick={() =>
-                        history.push(`/meine-lehrstellen/${item.$id}/bearbeiten`)
+                        history.push(`/meine-anzeigen/${item.$id}/bearbeiten`)
                       }
                     >
                       <IonIcon slot="icon-only" icon={create} />
@@ -246,10 +246,10 @@ const result = await databases.listDocuments<Lehrstelle>(
   );
 };
 
-const MeineLehrstellen: React.FC = () => (
+const MeineAnzeigen: React.FC = () => (
   <AuthGate title="Meine Anzeigen" backHref="/konto">
-    <MeineLehrstellenInner />
+    <MeineAnzeigenInner />
   </AuthGate>
 );
 
-export default MeineLehrstellen;
+export default MeineAnzeigen;

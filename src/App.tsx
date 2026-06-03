@@ -8,10 +8,10 @@ import { IonReactRouter } from "@ionic/react-router";
 import TopNav from "./components/TopNav";
 
 import Homepage from "./pages/Homepage";
-import Lehrstellen from "./pages/Lehrstellen";
-import LehrstelleDetail from "./pages/LehrstelleDetail";
-import LehrstelleForm from "./pages/LehrstelleForm";
-import MeineLehrstellen from "./pages/MeineLehrstellen";
+import Anzeigen from '../pages/Anzeigen';
+import AnzeigeDetail from '../pages/AnzeigeDetail';
+import AnzeigeForm from '../pages/AnzeigeForm';
+import MeineAnzeigen from '../pages/MeineAnzeigen';
 import MeineBewerbungen from "./pages/MeineBewerbungen";
 import ProfilDetail from './pages/ProfilDetail';
 import BewerbungenZurAnzeige from "./pages/BewerbungenZurAnzeige";
@@ -59,33 +59,33 @@ const App: React.FC = () => (
               <Homepage />
             </Route>
 
-            <Route exact path="/lehrstellen">
-              <Lehrstellen />
+            <Route exact path="/anzeigen">
+              <Anzeigen />
             </Route>
-            <Route exact path="/lehrstellen/:id([a-zA-Z0-9]{15,})">
-              <LehrstelleDetail />
+            <Route exact path="/anzeigen/:id([a-zA-Z0-9]{15,})">
+              <AnzeigeDetail />
             </Route>
 
             <Route exact path="/informationen">
               <Informationen />
             </Route>
 
-            <Route exact path="/meine-lehrstellen">
-              <MeineLehrstellen />
+            <Route exact path="/meine-anzeigen">
+              <MeineAnzeigen />
             </Route>
-            <Route exact path="/meine-lehrstellen/neu">
-              <LehrstelleForm />
+            <Route exact path="/meine-anzeigen/neu">
+              <AnzeigeForm />
             </Route>
-            <Route exact path="/meine-lehrstellen/:id([a-zA-Z0-9]{15,})/bearbeiten">
-              <LehrstelleForm />
+            <Route exact path="/meine-anzeigen/:id([a-zA-Z0-9]{15,})/bearbeiten">
+              <AnzeigeForm />
             </Route>
-            <Route exact path="/meine-lehrstellen/:id([a-zA-Z0-9]{15,})">
-              <LehrstelleDetail />
+            <Route exact path="/meine-anzeigen/:id([a-zA-Z0-9]{15,})">
+              <AnzeigeDetail />
             </Route>
             <Route exact path="/meine-bewerbungen">
               <MeineBewerbungen />
             </Route>
-            <Route exact path="/meine-lehrstellen/:id([a-zA-Z0-9]{15,})/bewerbungen">
+            <Route exact path="/meine-anzeigen/:id([a-zA-Z0-9]{15,})/bewerbungen">
               <BewerbungenZurAnzeige />
             </Route>
 

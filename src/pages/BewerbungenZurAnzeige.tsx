@@ -56,7 +56,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user, profile } = useAuth();
   const history = useHistory();
-  const [anzeige, setAnzeige] = useState<Lehrstelle | null>(null);
+  const [anzeige, setAnzeige] = useState<Anzeige | null>(null);
   const [bewerbungen, setBewerbungen] = useState<Bewerbung[]>([]);
   const [bereitsBewertet, setBereitsBewertet] = useState<Set<string>>(new Set());
   const [dokumenteMap, setDokumenteMap] = useState<Map<string, Dokument>>(new Map());
@@ -68,7 +68,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
     setError(null);
     try {
       const [anz, bws] = await Promise.all([
-        databases.getDocument<Lehrstelle>(DB_LEHRSTELLEN, COL_APPRENTICESHIPS, id),
+        databases.getDocument<Anzeige>(DB_LEHRSTELLEN, COL_APPRENTICESHIPS, id),
         databases.listDocuments<Bewerbung>(DB_LEHRSTELLEN, COL_BEWERBUNGEN, [
           Query.equal("apprenticeship_id", id),
           Query.orderDesc("$createdAt"),
@@ -140,7 +140,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/meine-lehrstellen" />
+            <IonBackButton defaultHref="/meine-anzeigen" />
           </IonButtons>
           <IonTitle>Bewerbungen</IonTitle>
         </IonToolbar>
@@ -334,7 +334,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
 };
 
 const BewerbungenZurAnzeige: React.FC = () => (
-  <AuthGate title="Bewerbungen" backHref="/meine-lehrstellen">
+  <AuthGate title="Bewerbungen" backHref="/meine-anzeigen">
     <BewerbungenZurAnzeigeInner />
   </AuthGate>
 );
