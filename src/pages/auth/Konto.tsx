@@ -11,7 +11,6 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonCardContent,
-  IonNote,
   IonChip,
   IonLabel,
   IonSpinner,
@@ -29,7 +28,6 @@ import {
   documentTextOutline,
   chevronForward,
   createOutline,
-  mailUnreadOutline,
   checkmarkCircleOutline,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
@@ -43,6 +41,7 @@ import {
 } from "../../lib/appwrite";
 import Login from "./Login";
 import DokumenteUpload from "../../components/DokumenteUpload";
+import VerifizierungsWand from "../../components/VerifizierungsWand";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -138,28 +137,13 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
 }
 
 const Konto: React.FC = () => {
-  const { user, profile, loading, profileLoading, logout, saveProfile, sendVerification } = useAuth();
+  const { user, profile, loading, profileLoading, logout, saveProfile } = useAuth();
 
   const history = useHistory();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfilFormState>(EMPTY_PROFIL);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const [verifyMsg, setVerifyMsg] = useState<string | null>(null);
-  const [verifyBusy, setVerifyBusy] = useState(false);
-
-  async function handleResendVerification() {
-    setVerifyMsg(null);
-    setVerifyBusy(true);
-    try {
-      await sendVerification();
-      setVerifyMsg("Bestätigungsmail wurde gesendet. Bitte prüfe dein Postfach (auch den Spam-Ordner).");
-    } catch (err: unknown) {
-      setVerifyMsg(translateError(err));
-    } finally {
-      setVerifyBusy(false);
-    }
-  }
 
   // Wenn das Profil aus dem Context da ist, ins Formular spiegeln.
   useEffect(() => {
@@ -240,6 +224,12 @@ const Konto: React.FC = () => {
     return <Login onSuccess={() => {}} />;
   }
 
+  // E-Mail noch nicht bestätigt → Cover-Wand (auch direkt nach der
+  // Registrierung). Erst nach Bestätigung wird das Konto nutzbar.
+  if (!user.emailVerification) {
+    return <VerifizierungsWand title="Konto" />;
+  }
+
   // Nutzer ist eingeloggt, hat aber noch kein Profil → Anlegen-Modus
   const noProfile = !profile;
   if (noProfile || editing) {
@@ -316,38 +306,13 @@ const Konto: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
-        {/* E-Mail-Verifizierungs-Status */}
-        {user.emailVerification ? (
-          <IonChip color="success" style={{ marginBottom: 8 }}>
-            <IonIcon icon={checkmarkCircleOutline} />
-            <IonLabel>E-Mail bestätigt</IonLabel>
-          </IonChip>
-        ) : (
-          <IonCard color="warning">
-            <IonCardContent>
-              <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-                <IonIcon icon={mailUnreadOutline} style={{ fontSize: 22, marginRight: 10 }} />
-                <strong>E-Mail noch nicht bestätigt</strong>
-              </div>
-              <p style={{ margin: "0 0 12px", fontSize: "0.9rem" }}>
-                Bitte bestätige deine E-Mail-Adresse über den Link, den wir dir
-                geschickt haben.
-              </p>
-              <IonButton
-                size="small"
-                fill="solid"
-                color="light"
-                disabled={verifyBusy}
-                onClick={handleResendVerification}
-              >
-                {verifyBusy ? "Senden…" : "Bestätigungsmail erneut senden"}
-              </IonButton>
-              {verifyMsg && (
-                <p style={{ margin: "10px 0 0", fontSize: "0.85rem" }}>{verifyMsg}</p>
-              )}
-            </IonCardContent>
-          </IonCard>
-        )}
+        {/* E-Mail-Verifizierungs-Status. Unbestätigte Nutzer:innen erreichen
+            diesen Hub gar nicht (sie sehen vorher die VerifizierungsWand),
+            daher hier nur noch die Bestätigt-Anzeige. */}
+        <IonChip color="success" style={{ marginBottom: 8 }}>
+          <IonIcon icon={checkmarkCircleOutline} />
+          <IonLabel>E-Mail bestätigt</IonLabel>
+        </IonChip>
 
         {isTalent ? (
           <IonCard>

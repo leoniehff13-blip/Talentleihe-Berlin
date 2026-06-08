@@ -28,7 +28,6 @@ import {
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   COL_BEWERBUNGEN,
-  BUNDESLAENDER,
   MINDESTALTER_OPTIONS,
   type Anzeige,
   type Bundesland,

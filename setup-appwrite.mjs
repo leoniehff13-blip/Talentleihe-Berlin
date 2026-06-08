@@ -1,27 +1,43 @@
 /**
  * Appwrite Setup Script – Talentleihe Berlin
- * Legt die komplette Datenbankstruktur im neuen Appwrite-Projekt an.
+ * Legt die komplette Datenbankstruktur (inkl. Storage-Bucket) in einem
+ * Appwrite-Projekt an. Idempotent: bereits vorhandene Objekte werden
+ * übersprungen (HTTP 409).
  *
  * Verwendung:
  *   1. API Key in Appwrite Console erstellen (Settings → API Keys, alle Scopes)
- *   2. Im Terminal: APPWRITE_API_KEY=dein_key node setup-appwrite.mjs
+ *   2. Endpoint + Projekt des ZIEL-Projekts setzen und Skript starten:
+ *
+ *      APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1 \
+ *      APPWRITE_PROJECT_ID=DEINE_PROJEKT_ID \
+ *      APPWRITE_API_KEY=DEIN_KEY \
+ *      node setup-appwrite.mjs
+ *
+ *   Ohne APPWRITE_ENDPOINT/APPWRITE_PROJECT_ID wird auf das Live-Projekt
+ *   zurückgefallen – also IMMER die Variablen setzen, wenn ein anderes
+ *   (z. B. Dev-)Projekt befüllt werden soll.
  */
 
-import { Client, Databases, Permission, Role } from 'node-appwrite';
+import { Client, Databases, Storage, Permission, Role } from 'node-appwrite';
 
 const API_KEY = process.env.APPWRITE_API_KEY;
+const ENDPOINT = process.env.APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1';
+const PROJECT_ID = process.env.APPWRITE_PROJECT_ID || '6a0ad52d001a8c4fd7f5';
+
 if (!API_KEY) {
   console.error('❌ Bitte APPWRITE_API_KEY setzen: APPWRITE_API_KEY=xxx node setup-appwrite.mjs');
   process.exit(1);
 }
 
 const client = new Client()
-  .setEndpoint('https://fra.cloud.appwrite.io/v1')
-  .setProject('6a0ad52d001a8c4fd7f5')
+  .setEndpoint(ENDPOINT)
+  .setProject(PROJECT_ID)
   .setKey(API_KEY);
 
 const db = new Databases(client);
+const storage = new Storage(client);
 const DB = 'lehrstellen';
+const BUCKET_DOKUMENTE = 'dokumente';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -42,6 +58,9 @@ async function tryCreate(label, fn) {
 async function setup() {
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('  Appwrite Setup – Talentleihe Berlin');
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log(`  Endpoint: ${ENDPOINT}`);
+  console.log(`  Projekt:  ${PROJECT_ID}`);
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
   // ── Datenbank ─────────────────────────────────────────────────────────────
@@ -49,7 +68,7 @@ async function setup() {
   await tryCreate('Datenbank', () => db.create(DB, 'Lehrstellen'));
 
   // ── Tabelle: apprenticeships ───────────────────────────────────────────────
-  console.log('\n📋 Tabelle: apprenticeships (Lehrstellen)');
+  console.log('\n📋 Tabelle: apprenticeships (Anzeigen)');
   await tryCreate('Collection', () =>
     db.createCollection(DB, 'apprenticeships', 'Lehrstellen', [
       Permission.read(Role.any()),
@@ -69,6 +88,7 @@ async function setup() {
     ['mindestalter',      () => db.createIntegerAttribute(DB, 'apprenticeships', 'mindestalter', false, 14, 99)],
     ['vorerfahrung',      () => db.createStringAttribute(DB, 'apprenticeships', 'vorerfahrung', 65535, false)],
     ['aufgabenbeschreibung', () => db.createStringAttribute(DB, 'apprenticeships', 'aufgabenbeschreibung', 65535, true)],
+    ['owner_id',          () => db.createStringAttribute(DB, 'apprenticeships', 'owner_id', 50, false)],
     ['adresse',           () => db.createStringAttribute(DB, 'apprenticeships', 'adresse', 200, false)],
     ['plz',               () => db.createStringAttribute(DB, 'apprenticeships', 'plz', 10, false)],
     ['plz_umkreis',       () => db.createIntegerAttribute(DB, 'apprenticeships', 'plz_umkreis', false, 0, 500)],
@@ -89,6 +109,8 @@ async function setup() {
   await tryCreate('Index: idx_bundesland', () => db.createIndex(DB, 'apprenticeships', 'idx_bundesland', 'key', ['bundesland']));
   await tryCreate('Index: idx_startdatum', () => db.createIndex(DB, 'apprenticeships', 'idx_startdatum', 'key', ['startdatum'], ['DESC']));
   await tryCreate('Index: idx_gewerk',     () => db.createIndex(DB, 'apprenticeships', 'idx_gewerk', 'key', ['gewerk']));
+  await tryCreate('Index: idx_owner',      () => db.createIndex(DB, 'apprenticeships', 'idx_owner', 'key', ['owner_id']));
+  await tryCreate('Index: idx_handwerkskammer', () => db.createIndex(DB, 'apprenticeships', 'idx_handwerkskammer', 'key', ['handwerkskammer']));
 
   // ── Tabelle: profiles ─────────────────────────────────────────────────────
   console.log('\n👤 Tabelle: profiles');
@@ -119,6 +141,8 @@ async function setup() {
   ];
   for (const [label, fn] of profileAttrs) await tryCreate(label, fn);
 
+  await tryCreate('Index: idx_user_id', () => db.createIndex(DB, 'profiles', 'idx_user_id', 'key', ['user_id']));
+
   // ── Tabelle: bewerbungen ──────────────────────────────────────────────────
   console.log('\n📝 Tabelle: bewerbungen');
   await tryCreate('Collection', () =>
@@ -137,6 +161,7 @@ async function setup() {
     ['apprenticeship_titel', () => db.createStringAttribute(DB, 'bewerbungen', 'apprenticeship_titel', 200, false)],
     ['applicant_name',       () => db.createStringAttribute(DB, 'bewerbungen', 'applicant_name', 200, false)],
     ['nachricht',            () => db.createStringAttribute(DB, 'bewerbungen', 'nachricht', 65535, true)],
+    ['dokument_ids',         () => db.createStringAttribute(DB, 'bewerbungen', 'dokument_ids', 50, false, null, true)],
     ['status',               () => db.createEnumAttribute(DB, 'bewerbungen', 'status', ['ausstehend', 'angenommen', 'abgelehnt', 'zurueckgezogen'], false, 'ausstehend')],
   ];
   for (const [label, fn] of bewAttrs) await tryCreate(label, fn);
@@ -147,6 +172,63 @@ async function setup() {
   await tryCreate('Index: idx_applicant',    () => db.createIndex(DB, 'bewerbungen', 'idx_applicant', 'key', ['applicant_user_id']));
   await tryCreate('Index: idx_owner',        () => db.createIndex(DB, 'bewerbungen', 'idx_owner', 'key', ['posting_owner_id']));
   await tryCreate('Index: idx_apprenticeship', () => db.createIndex(DB, 'bewerbungen', 'idx_apprenticeship', 'key', ['apprenticeship_id']));
+
+  // ── Tabelle: bewertungen ──────────────────────────────────────────────────
+  console.log('\n⭐ Tabelle: bewertungen');
+  await tryCreate('Collection', () =>
+    db.createCollection(DB, 'bewertungen', 'Bewertungen', [
+      Permission.read(Role.any()),
+      Permission.create(Role.users()),
+    ], false)
+  );
+
+  const bewertungAttrs = [
+    ['bewerbung_id',   () => db.createStringAttribute(DB, 'bewertungen', 'bewerbung_id', 50, true)],
+    ['rated_user_id',  () => db.createStringAttribute(DB, 'bewertungen', 'rated_user_id', 50, true)],
+    ['rater_user_id',  () => db.createStringAttribute(DB, 'bewertungen', 'rater_user_id', 50, true)],
+    ['rated_type',     () => db.createEnumAttribute(DB, 'bewertungen', 'rated_type', ['talent', 'betrieb'], true)],
+    ['kat1',           () => db.createIntegerAttribute(DB, 'bewertungen', 'kat1', true, 1, 5)],
+    ['kat2',           () => db.createIntegerAttribute(DB, 'bewertungen', 'kat2', true, 1, 5)],
+    ['kat3',           () => db.createIntegerAttribute(DB, 'bewertungen', 'kat3', true, 1, 5)],
+    ['kommentar',      () => db.createStringAttribute(DB, 'bewertungen', 'kommentar', 65535, false)],
+  ];
+  for (const [label, fn] of bewertungAttrs) await tryCreate(label, fn);
+
+  console.log('  ⏳ Warte auf Attribute...');
+  await sleep(3000);
+
+  await tryCreate('Index: idx_rated_user', () => db.createIndex(DB, 'bewertungen', 'idx_rated_user', 'key', ['rated_user_id']));
+  await tryCreate('Index: idx_bewerbung',  () => db.createIndex(DB, 'bewertungen', 'idx_bewerbung', 'key', ['bewerbung_id']));
+
+  // ── Tabelle: dokumente ────────────────────────────────────────────────────
+  console.log('\n📎 Tabelle: dokumente');
+  await tryCreate('Collection', () =>
+    db.createCollection(DB, 'dokumente', 'Dokumente', [
+      Permission.create(Role.users()),
+    ], true)  // documentSecurity = true (Lese-/Löschrechte pro Dokument)
+  );
+
+  const dokAttrs = [
+    ['user_id',   () => db.createStringAttribute(DB, 'dokumente', 'user_id', 50, true)],
+    ['file_id',   () => db.createStringAttribute(DB, 'dokumente', 'file_id', 50, true)],
+    ['filename',  () => db.createStringAttribute(DB, 'dokumente', 'filename', 255, true)],
+    ['size',      () => db.createIntegerAttribute(DB, 'dokumente', 'size', true, 0)],
+    ['mime_type', () => db.createStringAttribute(DB, 'dokumente', 'mime_type', 100, false)],
+  ];
+  for (const [label, fn] of dokAttrs) await tryCreate(label, fn);
+
+  await tryCreate('Index: idx_user', () => db.createIndex(DB, 'dokumente', 'idx_user', 'key', ['user_id']));
+
+  // ── Storage-Bucket: dokumente ─────────────────────────────────────────────
+  console.log('\n🗄️  Storage-Bucket: dokumente');
+  await tryCreate('Bucket', () =>
+    storage.createBucket(
+      BUCKET_DOKUMENTE,
+      'Dokumente',
+      [Permission.create(Role.users())],
+      true   // fileSecurity = true (Lese-/Löschrechte pro Datei)
+    )
+  );
 
   console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
   console.log('🎉 Setup abgeschlossen!');

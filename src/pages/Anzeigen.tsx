@@ -409,6 +409,10 @@ const AnzeigenInner: React.FC = () => {
                     labelPlacement="stacked"
                     placeholder="z. B. Berlin oder 10115"
                     value={filters.ortOrPlz}
+                    // Debounce: erst 500 ms nach dem letzten Tastenanschlag neu
+                    // laden – sonst löst jeder Buchstabe einen kompletten Reload
+                    // inkl. Geocoding aus (Race Conditions möglich).
+                    debounce={500}
                     onIonInput={(e) => setFilter("ortOrPlz", e.detail.value ?? "")}
                   />
                 </IonItem>

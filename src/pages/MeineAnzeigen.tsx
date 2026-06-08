@@ -22,7 +22,7 @@ import {
   useIonViewWillEnter,
 } from "@ionic/react";
 import Footer from "../components/Footer";
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { add, create, trash, peopleOutline } from "ionicons/icons";
 import { Query } from "appwrite";
@@ -77,10 +77,10 @@ const result = await databases.listDocuments<Anzeige>(
     }
   }, [user]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
-
+  // Laden ausschließlich über den Ionic-Lifecycle: useIonViewWillEnter feuert
+  // beim ersten Betreten UND nach jeder Zurück-Navigation (z. B. von „Neu/
+  // Bearbeiten"). Ein zusätzliches useEffect würde beim ersten Öffnen einen
+  // zweiten, identischen Request auslösen (Doppellade-Bug).
   useIonViewWillEnter(() => {
     load();
   });
