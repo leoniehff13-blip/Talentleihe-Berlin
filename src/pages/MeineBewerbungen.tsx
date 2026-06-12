@@ -4,7 +4,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButtons,
   IonText,
   IonCard,
   IonCardHeader,
@@ -24,7 +23,7 @@ import {
   IonIcon,
 } from "@ionic/react";
 import Footer from "../components/Footer";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, Fragment } from "react";
 import ZurueckButton from "../components/ZurueckButton";
 import { useHistory } from "react-router-dom";
 import { trash } from "ionicons/icons";
@@ -171,53 +170,61 @@ const MeineBewerbungenInner: React.FC = () => {
               const kannBewerten = b.status === "angenommen" && !bereitsBewertet.has(b.$id);
               // Rated type: applicant rates the other side
               const ratedType = profile?.type === "talent" ? "betrieb" : "talent";
+              // Talente bewerten den Einsatz-Betrieb (posting_owner_id) – nur
+              // sie sehen hier den Bewerten-Button. Betriebe bewerten Talente
+              // im Detail-Screen einer Anzeige (BewerbungenZurAnzeige).
+              const talentKannBewerten = kannBewerten && profile?.type === "talent";
               return (
-                <IonItemSliding key={b.$id}>
-                  <IonItem
-                    button
-                    onClick={() => history.push(profile?.type === 'betrieb' ? `/meine-anzeigen/${b.apprenticeship_id}/bewerbungen` : `/anzeigen/${b.apprenticeship_id}`)}
-                    detail
-                  >
-                    <IonLabel>
-                      <h2>{b.apprenticeship_titel ?? "Anzeige"}</h2>
-                      <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {b.nachricht}
-                      </p>
-                      <IonNote>
-                        Beworben am{" "}
-                        {new Date(b.$createdAt).toLocaleDateString("de-DE")}
-                      </IonNote>
-                      {kannBewerten && (
-                        <IonNote color="warning" style={{ display: "block", marginTop: 4 }}>
-                          ★ Einsatz abgeschlossen? Bewertung abgeben →
+                <Fragment key={b.$id}>
+                  <IonItemSliding>
+                    <IonItem
+                      button
+                      onClick={() => history.push(profile?.type === 'betrieb' ? `/meine-anzeigen/${b.apprenticeship_id}/bewerbungen` : `/anzeigen/${b.apprenticeship_id}`)}
+                      detail
+                    >
+                      <IonLabel>
+                        <h2>{b.apprenticeship_titel ?? "Anzeige"}</h2>
+                        <p style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {b.nachricht}
+                        </p>
+                        <IonNote>
+                          Beworben am{" "}
+                          {new Date(b.$createdAt).toLocaleDateString("de-DE")}
                         </IonNote>
-                      )}
-                    </IonLabel>
-                    <IonBadge color={BEWERBUNG_STATUS_COLOR[b.status]} slot="end">
-                      {BEWERBUNG_STATUS_LABEL[b.status]}
-                    </IonBadge>
-                  </IonItem>
-                  {kannBewerten && (
-                    <IonItemOptions side="start">
-                      <IonItemOption
+                        {talentKannBewerten && (
+                          <IonNote color="warning" style={{ display: "block", marginTop: 4 }}>
+                            ★ Einsatz abgeschlossen? Jetzt bewerten ↓
+                          </IonNote>
+                        )}
+                      </IonLabel>
+                      <IonBadge color={BEWERBUNG_STATUS_COLOR[b.status]} slot="end">
+                        {BEWERBUNG_STATUS_LABEL[b.status]}
+                      </IonBadge>
+                    </IonItem>
+                    {aktiv && (
+                      <IonItemOptions side="end">
+                        <IonItemOption
+                          color="medium"
+                          onClick={() => setConfirmZurueckziehen(b)}
+                        >
+                          <IonIcon slot="icon-only" icon={trash} />
+                        </IonItemOption>
+                      </IonItemOptions>
+                    )}
+                  </IonItemSliding>
+                  {talentKannBewerten && (
+                    <div className="ion-padding-horizontal" style={{ paddingTop: 6, paddingBottom: 2 }}>
+                      <IonButton
+                        expand="block"
                         color="warning"
+                        fill="outline"
                         onClick={() => history.push(`/bewertung/${b.$id}/${b.posting_owner_id}/${ratedType}`)}
                       >
-                        Bewerten
-                      </IonItemOption>
-                    </IonItemOptions>
+                        ★ Einsatz bewerten
+                      </IonButton>
+                    </div>
                   )}
-                  {aktiv && (
-                    <IonItemOptions side="end">
-                      <IonItemOption
-                        color="medium"
-                        onClick={() => setConfirmZurueckziehen(b)}
-                      >
-                        <IonIcon slot="icon-only" icon={trash} />
-                      </IonItemOption>
-                    </IonItemOptions>
-                  )}
-                </IonItemSliding>
+                </Fragment>
               );
             })}
           </IonList>
