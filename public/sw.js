@@ -11,7 +11,7 @@
  * verworfen werden.
  */
 
-const CACHE_NAME = "winwin-v1";
+const CACHE_NAME = "winwin-v2";
 const PRECACHE_URLS = [
   "/",
   "/manifest.webmanifest",
