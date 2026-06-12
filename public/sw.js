@@ -2,7 +2,9 @@
  * Service Worker – minimales PWA-Setup für Win/Win Talentleihe.
  *
  * Strategie
- *   • App-Shell (HTML/CSS/JS-Bundles) → cache-first
+ *   • App-Shell (HTML/CSS/JS-Bundles) → network-first (online IMMER frisch),
+ *     Cache dient nur als Offline-Fallback. So sehen Nutzer nach einem Deploy
+ *     sofort den neuen Stand, statt ein altes Bundle aus dem Cache.
  *   • Navigation → network-first mit Cache-Fallback (Offline-fallback auf "/")
  *   • API-Calls (Appwrite, Nominatim, OpenStreetMap-Tiles) werden NICHT gecached
  *     – sie sollen immer frisch über das Netz laufen.
@@ -11,7 +13,7 @@
  * verworfen werden.
  */
 
-const CACHE_NAME = "winwin-v2";
+const CACHE_NAME = "winwin-v3";
 const PRECACHE_URLS = [
   "/",
   "/manifest.webmanifest",
@@ -77,19 +79,18 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Statische Assets: cache-first, mit Hintergrund-Update
+  // Statische Assets: network-first – online immer die frische Datei laden,
+  // erfolgreiche Antworten für den Offline-Fall cachen. Nur wenn das Netz
+  // ausfällt, auf den Cache zurückfallen.
   event.respondWith(
-    caches.match(req).then((cached) => {
-      const network = fetch(req)
-        .then((response) => {
-          if (response && response.status === 200 && response.type === "basic") {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-          }
-          return response;
-        })
-        .catch(() => cached);
-      return cached || network;
-    })
+    fetch(req)
+      .then((response) => {
+        if (response && response.status === 200 && response.type === "basic") {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+        }
+        return response;
+      })
+      .catch(() => caches.match(req))
   );
 });
