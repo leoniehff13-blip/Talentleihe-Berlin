@@ -168,12 +168,12 @@ const MeineBewerbungenInner: React.FC = () => {
             {items.map((b) => {
               const aktiv = b.status === "ausstehend" || b.status === "angenommen";
               const kannBewerten = b.status === "angenommen" && !bereitsBewertet.has(b.$id);
-              // Rated type: applicant rates the other side
+              // Jede Seite bewertet die jeweils andere: Talente bewerten den
+              // Einsatz-Betrieb (posting_owner_id), Betriebe den Bewerber
+              // (applicant_user_id).
               const ratedType = profile?.type === "talent" ? "betrieb" : "talent";
-              // Talente bewerten den Einsatz-Betrieb (posting_owner_id) – nur
-              // sie sehen hier den Bewerten-Button. Betriebe bewerten Talente
-              // im Detail-Screen einer Anzeige (BewerbungenZurAnzeige).
-              const talentKannBewerten = kannBewerten && profile?.type === "talent";
+              const ratedUserId =
+                profile?.type === "talent" ? b.posting_owner_id : b.applicant_user_id;
               return (
                 <Fragment key={b.$id}>
                   <IonItemSliding>
@@ -191,7 +191,7 @@ const MeineBewerbungenInner: React.FC = () => {
                           Beworben am{" "}
                           {new Date(b.$createdAt).toLocaleDateString("de-DE")}
                         </IonNote>
-                        {talentKannBewerten && (
+                        {kannBewerten && (
                           <IonNote color="warning" style={{ display: "block", marginTop: 4 }}>
                             ★ Einsatz abgeschlossen? Jetzt bewerten ↓
                           </IonNote>
@@ -212,15 +212,15 @@ const MeineBewerbungenInner: React.FC = () => {
                       </IonItemOptions>
                     )}
                   </IonItemSliding>
-                  {talentKannBewerten && (
+                  {b.status === "angenommen" && ratedUserId && (
                     <div className="ion-padding-horizontal" style={{ paddingTop: 6, paddingBottom: 2 }}>
                       <IonButton
                         expand="block"
                         color="warning"
-                        fill="outline"
-                        onClick={() => history.push(`/bewertung/${b.$id}/${b.posting_owner_id}/${ratedType}`)}
+                        fill={bereitsBewertet.has(b.$id) ? "clear" : "outline"}
+                        onClick={() => history.push(`/bewertung/${b.$id}/${ratedUserId}/${ratedType}`)}
                       >
-                        ★ Einsatz bewerten
+                        {bereitsBewertet.has(b.$id) ? "Bewertung ansehen / bearbeiten" : "★ Einsatz bewerten"}
                       </IonButton>
                     </div>
                   )}
@@ -230,23 +230,29 @@ const MeineBewerbungenInner: React.FC = () => {
           </IonList>
         )}
 
-        {/* Bewertungen für angenommene Einsätze */}
-        {items.filter((b) => b.status === "angenommen" && b.posting_owner_id).length > 0 && (
+        {/* Bewertungen zu angenommenen Einsätzen – Talent sieht die der
+            Betriebe, Betrieb die der Talente. */}
+        {items.filter((b) => b.status === "angenommen").length > 0 && (
           <div className="ion-padding-horizontal" style={{ paddingTop: 8 }}>
             <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1E367A", marginBottom: 4 }}>
-              Bewertungen der Einsatzbetriebe
+              {profile?.type === "talent" ? "Bewertungen der Einsatzbetriebe" : "Bewertungen der Talente"}
             </p>
             {items
-              .filter((b) => b.status === "angenommen" && b.posting_owner_id)
+              .filter((b) => b.status === "angenommen")
               .map((b) => {
                 const ratedType = profile?.type === "talent" ? "betrieb" : "talent";
+                const ratedUserId =
+                  profile?.type === "talent" ? b.posting_owner_id : b.applicant_user_id;
+                if (!ratedUserId) return null;
                 return (
                   <div key={`bew-${b.$id}`}>
                     <p style={{ fontSize: "0.82rem", color: "#4a6080", margin: "8px 0 0", fontWeight: 600 }}>
-                      {b.apprenticeship_titel ?? "Einsatz"}
+                      {profile?.type === "talent"
+                        ? (b.apprenticeship_titel ?? "Einsatz")
+                        : (b.applicant_name ?? "Bewerber:in")}
                     </p>
                     <BewertungsKasten
-                      userId={b.posting_owner_id}
+                      userId={ratedUserId}
                       profileType={ratedType as "talent" | "betrieb"}
                     />
                   </div>

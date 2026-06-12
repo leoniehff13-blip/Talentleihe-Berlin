@@ -4,7 +4,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButtons,
   IonText,
   IonCard,
   IonCardHeader,
@@ -201,7 +200,6 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
           <IonList>
             {bewerbungen.map((b) => {
               const offen = b.status === "ausstehend";
-              const kannBewerten = b.status === "angenommen" && !bereitsBewertet.has(b.$id);
               // Posting owner rates the applicant (opposite type)
               const ratedType = profile?.type === "betrieb" ? "talent" : "betrieb";
               return (
@@ -299,15 +297,15 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
                         Per E-Mail antworten
                       </IonButton>
                     )}
-                    {kannBewerten && (
+                    {b.status === "angenommen" && (
                       <IonButton
                         expand="block"
                         color="warning"
-                        fill="outline"
+                        fill={bereitsBewertet.has(b.$id) ? "clear" : "outline"}
                         style={{ marginTop: 8 }}
                         onClick={() => history.push(`/bewertung/${b.$id}/${b.applicant_user_id}/${ratedType}`)}
                       >
-                        ★ Einsatz bewerten
+                        {bereitsBewertet.has(b.$id) ? "Bewertung ansehen / bearbeiten" : "★ Einsatz bewerten"}
                       </IonButton>
                     )}
                   </IonCardContent>

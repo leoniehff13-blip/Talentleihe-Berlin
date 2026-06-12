@@ -4,7 +4,6 @@ import {
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButtons,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -81,10 +80,12 @@ const BewertungInner: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [bereitsBewertet, setBereitsBewertet] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
 
-  const checkDuplicate = useCallback(async () => {
+  // Bestehende Bewertung laden – falls vorhanden, ins Formular spiegeln, damit
+  // sie eingesehen und bearbeitet werden kann.
+  const ladeBestehende = useCallback(async () => {
     if (!user) return;
     try {
       const result = await databases.listDocuments<Bewertung>(
@@ -96,7 +97,14 @@ const BewertungInner: React.FC = () => {
           Query.limit(1),
         ]
       );
-      setBereitsBewertet(result.total > 0);
+      const existing = result.documents[0];
+      if (existing) {
+        setEditId(existing.$id);
+        setKat1(existing.kat1);
+        setKat2(existing.kat2);
+        setKat3(existing.kat3);
+        setKommentar(existing.kommentar ?? "");
+      }
     } catch {
       // Collection exists but might be empty – no action needed
     } finally {
@@ -105,8 +113,8 @@ const BewertungInner: React.FC = () => {
   }, [user, bewerbungId]);
 
   useEffect(() => {
-    checkDuplicate();
-  }, [checkDuplicate]);
+    ladeBestehende();
+  }, [ladeBestehende]);
 
   async function handleSubmit() {
     if (!user) return;
@@ -117,21 +125,36 @@ const BewertungInner: React.FC = () => {
     setSaving(true);
     setError(null);
     try {
-      await databases.createDocument<Bewertung>(
-        DB_LEHRSTELLEN,
-        COL_BEWERTUNGEN,
-        ID.unique(),
-        {
-          bewerbung_id: bewerbungId,
-          rated_user_id: ratedUserId,
-          rater_user_id: user.$id,
-          rated_type: typ,
-          kat1,
-          kat2,
-          kat3,
-          kommentar: kommentar.trim() || null,
-        }
-      );
+      if (editId) {
+        // Bestehende Bewertung aktualisieren – nur die änderbaren Felder.
+        await databases.updateDocument<Bewertung>(
+          DB_LEHRSTELLEN,
+          COL_BEWERTUNGEN,
+          editId,
+          {
+            kat1,
+            kat2,
+            kat3,
+            kommentar: kommentar.trim() || null,
+          }
+        );
+      } else {
+        await databases.createDocument<Bewertung>(
+          DB_LEHRSTELLEN,
+          COL_BEWERTUNGEN,
+          ID.unique(),
+          {
+            bewerbung_id: bewerbungId,
+            rated_user_id: ratedUserId,
+            rater_user_id: user.$id,
+            rated_type: typ,
+            kat1,
+            kat2,
+            kat3,
+            kommentar: kommentar.trim() || null,
+          }
+        );
+      }
       setSaved(true);
     } catch (err: unknown) {
       setError(translateError(err));
@@ -157,31 +180,17 @@ const BewertungInner: React.FC = () => {
       <IonHeader>
         <IonToolbar>
 
-          <IonTitle>Bewertung abgeben</IonTitle>
+          <IonTitle>{editId ? "Bewertung bearbeiten" : "Bewertung abgeben"}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
         <ZurueckButton style={{ marginBottom: 8 }} />
-        {bereitsBewertet && (
-          <IonCard>
-            <IonCardHeader>
-              <IonCardTitle>Bereits bewertet</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <IonText color="medium">
-                <p>Du hast für diesen Einsatz bereits eine Bewertung abgegeben.</p>
-              </IonText>
-              <IonButton expand="block" onClick={() => history.goBack()} style={{ marginTop: 16 }}>
-                Zurück
-              </IonButton>
-            </IonCardContent>
-          </IonCard>
-        )}
-
         {saved && (
           <IonCard color="success">
             <IonCardContent>
-              <p style={{ color: "white", fontWeight: 700 }}>Vielen Dank! Deine Bewertung wurde gespeichert.</p>
+              <p style={{ color: "white", fontWeight: 700 }}>
+                {editId ? "Deine Bewertung wurde aktualisiert." : "Vielen Dank! Deine Bewertung wurde gespeichert."}
+              </p>
               <IonButton expand="block" fill="outline" color="light" onClick={() => history.replace("/meine-bewerbungen")} style={{ marginTop: 12 }}>
                 Zu meinen Bewerbungen
               </IonButton>
@@ -189,13 +198,21 @@ const BewertungInner: React.FC = () => {
           </IonCard>
         )}
 
-        {!bereitsBewertet && !saved && (
+        {!saved && (
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>
-                {typ === "talent" ? "Azubi bewerten" : "Betrieb bewerten"}
+                {editId
+                  ? "Bewertung bearbeiten"
+                  : typ === "talent"
+                    ? "Azubi bewerten"
+                    : "Betrieb bewerten"}
               </IonCardTitle>
-              <IonCardSubtitle>Gib deine Erfahrungen aus diesem Einsatz weiter</IonCardSubtitle>
+              <IonCardSubtitle>
+                {editId
+                  ? "Du hast diesen Einsatz bereits bewertet – hier kannst du deine Bewertung anpassen."
+                  : "Gib deine Erfahrungen aus diesem Einsatz weiter"}
+              </IonCardSubtitle>
             </IonCardHeader>
             <IonCardContent>
               {([
@@ -239,7 +256,7 @@ const BewertungInner: React.FC = () => {
                 disabled={saving}
                 style={{ marginTop: 20 }}
               >
-                {saving ? "Wird gespeichert …" : "Bewertung abgeben"}
+                {saving ? "Wird gespeichert …" : editId ? "Bewertung aktualisieren" : "Bewertung abgeben"}
               </IonButton>
             </IonCardContent>
           </IonCard>

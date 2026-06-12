@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Query } from "appwrite";
 import {
   IonCard,
@@ -32,6 +32,63 @@ function Stars({ value, size = "1.05rem" }: { value: number; size?: string }) {
         </span>
       ))}
     </span>
+  );
+}
+
+/**
+ * Kommentar-Text mit „mehr lesen" – zeigt zunächst max. 4 Zeilen und blendet
+ * nur dann einen Umschalter ein, wenn der Text tatsächlich abgeschnitten wird.
+ */
+function KommentarText({ text }: { text: string }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [truncated, setTruncated] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (el) setTruncated(el.scrollHeight > el.clientHeight + 1);
+  }, [text]);
+
+  return (
+    <>
+      <p
+        ref={ref}
+        style={{
+          margin: "6px 0 0",
+          fontSize: "0.82rem",
+          color: "#4a6080",
+          lineHeight: 1.5,
+          ...(expanded
+            ? {}
+            : {
+                display: "-webkit-box",
+                WebkitLineClamp: 4,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }),
+        }}
+      >
+        {text}
+      </p>
+      {(truncated || expanded) && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          style={{
+            background: "none",
+            border: "none",
+            padding: 0,
+            marginTop: 4,
+            color: "#47BCC2",
+            fontSize: "0.74rem",
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          {expanded ? "weniger anzeigen" : "mehr lesen"}
+        </button>
+      )}
+    </>
   );
 }
 
@@ -201,20 +258,7 @@ const BewertungsKasten: React.FC<Props> = ({ userId, profileType, inline = false
                 }}
               >
                 <Stars value={avg([b.kat1, b.kat2, b.kat3])} size="0.88rem" />
-                <p
-                  style={{
-                    margin: "6px 0 0",
-                    fontSize: "0.82rem",
-                    color: "#4a6080",
-                    lineHeight: 1.5,
-                    display: "-webkit-box",
-                    WebkitLineClamp: 4,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
-                  }}
-                >
-                  {b.kommentar}
-                </p>
+                <KommentarText text={b.kommentar ?? ""} />
                 <p style={{ margin: "6px 0 0", fontSize: "0.72rem", color: "#aab" }}>
                   {new Date(b.$createdAt).toLocaleDateString("de-DE")}
                 </p>
