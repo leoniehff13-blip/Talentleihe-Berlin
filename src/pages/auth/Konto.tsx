@@ -18,6 +18,7 @@ import {
   IonList,
   IonItem,
   IonIcon,
+  IonAlert,
 } from "@ionic/react";
 import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
@@ -29,9 +30,11 @@ import {
   chevronForward,
   createOutline,
   checkmarkCircleOutline,
+  trashOutline,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
+import { requestAccountDeletion } from "../../lib/accountDeletion";
 import {
   databases,
   DB_LEHRSTELLEN,
@@ -144,6 +147,25 @@ const Konto: React.FC = () => {
   const [form, setForm] = useState<ProfilFormState>(EMPTY_PROFIL);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleteAlertOpen, setDeleteAlertOpen] = useState(false);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteMsg, setDeleteMsg] = useState<{ ok: boolean; text: string } | null>(null);
+
+  async function handleRequestDeletion() {
+    setDeleteBusy(true);
+    setDeleteMsg(null);
+    try {
+      await requestAccountDeletion();
+      setDeleteMsg({
+        ok: true,
+        text: "Wir haben dir eine Bestätigungsmail geschickt. Klicke auf den Link darin, um dein Konto endgültig zu löschen (Link 1 Stunde gültig).",
+      });
+    } catch (err: unknown) {
+      setDeleteMsg({ ok: false, text: translateError(err) });
+    } finally {
+      setDeleteBusy(false);
+    }
+  }
 
   // Wenn das Profil aus dem Context da ist, ins Formular spiegeln.
   useEffect(() => {
@@ -273,6 +295,72 @@ const Konto: React.FC = () => {
               {saving ? "Speichern…" : "Profil speichern"}
             </IonButton>
           </div>
+
+          {/* Gefahrenzone: Konto löschen – nur beim Bearbeiten eines
+              bestehenden Profils, nicht beim Erst-Anlegen. */}
+          {!noProfile && (
+            <div
+              className="ion-padding"
+              style={{
+                marginTop: 12,
+                borderTop: "1px solid rgba(224, 80, 96, 0.18)",
+                paddingTop: 20,
+              }}
+            >
+              <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 700, color: "var(--ion-color-danger)" }}>
+                Konto löschen
+              </h3>
+              <IonText color="medium">
+                <p style={{ margin: "0 0 12px", fontSize: 13.5, lineHeight: 1.5 }}>
+                  Löscht dein Konto und alle zugehörigen Daten (Profil, Anzeigen,
+                  Bewerbungen, Bewertungen und Dokumente) endgültig. Zur Sicherheit
+                  schicken wir dir vorher eine Bestätigungsmail.
+                </p>
+              </IonText>
+              <IonButton
+                expand="block"
+                fill="outline"
+                color="danger"
+                disabled={deleteBusy}
+                onClick={() => setDeleteAlertOpen(true)}
+              >
+                <IonIcon slot="start" icon={trashOutline} />
+                {deleteBusy ? "Sende Bestätigungsmail…" : "Konto löschen"}
+              </IonButton>
+              {deleteMsg && (
+                <div
+                  style={{
+                    marginTop: 14,
+                    padding: "12px 14px",
+                    borderRadius: 12,
+                    fontSize: 13.5,
+                    lineHeight: 1.45,
+                    background: deleteMsg.ok ? "rgba(150, 183, 64, 0.12)" : "rgba(224, 80, 96, 0.10)",
+                    color: deleteMsg.ok ? "var(--ion-color-success-shade)" : "var(--ion-color-danger-shade)",
+                  }}
+                >
+                  {deleteMsg.text}
+                </div>
+              )}
+            </div>
+          )}
+
+          <IonAlert
+            isOpen={deleteAlertOpen}
+            onDidDismiss={() => setDeleteAlertOpen(false)}
+            header="Konto wirklich löschen?"
+            message="Wir senden dir eine Bestätigungsmail. Dein Konto wird erst gelöscht, wenn du den Link darin anklickst."
+            buttons={[
+              { text: "Abbrechen", role: "cancel" },
+              {
+                text: "Bestätigungsmail senden",
+                role: "destructive",
+                handler: () => {
+                  handleRequestDeletion();
+                },
+              },
+            ]}
+          />
         </IonContent>
       </IonPage>
     );

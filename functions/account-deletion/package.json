@@ -1,0 +1,11 @@
+{
+  "name": "account-deletion",
+  "version": "1.0.0",
+  "description": "Talentleihe Berlin – Konto + alle zugehörigen Daten löschen (E-Mail-bestätigt)",
+  "type": "module",
+  "main": "src/main.js",
+  "dependencies": {
+    "node-appwrite": "^14.2.0",
+    "nodemailer": "^6.9.14"
+  }
+}
