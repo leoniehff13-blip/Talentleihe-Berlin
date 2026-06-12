@@ -1,4 +1,5 @@
-import { IonButton } from "@ionic/react";
+import { IonButton, IonIcon } from "@ionic/react";
+import { chevronBack } from "ionicons/icons";
 import { useHistory } from "react-router-dom";
 
 interface Props {
@@ -11,9 +12,10 @@ const ZurueckButton: React.FC<Props> = ({ style }) => {
     <IonButton
       fill="clear"
       onClick={() => history.goBack()}
-      style={{ color: "#47BCC2", fontWeight: 700, fontSize: "0.9rem", ...style }}
+      style={{ marginLeft: -8, ...style }}
     >
-      ← Zurück
+      <IonIcon slot="start" icon={chevronBack} />
+      Zurück
     </IonButton>
   );
 };
