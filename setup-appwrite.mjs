@@ -179,6 +179,7 @@ async function setup() {
     db.createCollection(DB, 'bewertungen', 'Bewertungen', [
       Permission.read(Role.any()),
       Permission.create(Role.users()),
+      Permission.update(Role.users()), // Bewertungen müssen bearbeitbar sein
     ], false)
   );
 
