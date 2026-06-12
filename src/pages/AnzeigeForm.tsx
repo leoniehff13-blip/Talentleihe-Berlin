@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
   IonItem,
   IonInput,
   IonLabel,
@@ -21,6 +20,7 @@ import {
   IonAlert,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
+import ZurueckButton from "../components/ZurueckButton";
 import { useHistory, useParams } from "react-router-dom";
 import { ID, Permission, Role, Query } from "appwrite";
 import {
@@ -356,13 +356,14 @@ const AnzeigeFormInner: React.FC = () => {
                 Speichern
               </IonButton>
             </IonButtons>
-            <IonButtons slot="start">
-            <IonBackButton defaultHref={labels.backDefault} />
-          </IonButtons>
+
           <IonTitle>{labels.title}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <div className="ion-padding-horizontal" style={{ paddingTop: 8, paddingBottom: 4 }}>
+          <ZurueckButton />
+        </div>
         <form onSubmit={handleSubmit}>
           <IonList>
             <IonListHeader>

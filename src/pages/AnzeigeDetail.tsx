@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
   IonSpinner,
   IonText,
   IonCard,
@@ -24,6 +23,7 @@ import {
   IonAlert,
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
+import ZurueckButton from "../components/ZurueckButton";
 import { useParams } from "react-router";
 import { useHistory } from "react-router-dom";
 import { mailOutline, sendOutline, checkmarkCircleOutline } from "ionicons/icons";
@@ -170,9 +170,7 @@ const AnzeigeDetailInner: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/anzeigen" />
-          </IonButtons>
+
           <IonTitle>{item?.gewerk ?? "Detail"}</IonTitle>
           {istEigeneAnzeige && (
             <IonButtons slot="end">
@@ -184,6 +182,7 @@ const AnzeigeDetailInner: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        <ZurueckButton style={{ marginBottom: 8 }} />
         {loading && (
           <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
             <IonSpinner name="crescent" />

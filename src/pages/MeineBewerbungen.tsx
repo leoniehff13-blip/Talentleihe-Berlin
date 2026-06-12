@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
   IonText,
   IonCard,
   IonCardHeader,
@@ -26,6 +25,7 @@ import {
 } from "@ionic/react";
 import Footer from "../components/Footer";
 import { useEffect, useState, useCallback } from "react";
+import ZurueckButton from "../components/ZurueckButton";
 import { useHistory } from "react-router-dom";
 import { trash } from "ionicons/icons";
 import { Query } from "appwrite";
@@ -117,13 +117,14 @@ const MeineBewerbungenInner: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/konto" />
-          </IonButtons>
+
           <IonTitle>{profile?.type === "betrieb" ? "Eingegangene Bewerbungen" : "Meine Bewerbungen"}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <div className="ion-padding-horizontal" style={{ paddingTop: 8, paddingBottom: 4 }}>
+          <ZurueckButton />
+        </div>
         {loading && (
           <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
             <IonSpinner name="crescent" />

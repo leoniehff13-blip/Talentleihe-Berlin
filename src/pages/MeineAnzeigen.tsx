@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
   IonButton,
   IonIcon,
   IonList,
@@ -23,6 +22,7 @@ import {
 } from "@ionic/react";
 import Footer from "../components/Footer";
 import { useState, useCallback } from "react";
+import ZurueckButton from "../components/ZurueckButton";
 import { useHistory } from "react-router-dom";
 import { add, create, trash, peopleOutline } from "ionicons/icons";
 import { Query } from "appwrite";
@@ -98,9 +98,6 @@ const result = await databases.listDocuments<Anzeige>(
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/konto" />
-          </IonButtons>
           <IonTitle>{titleText}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={() => history.push("/meine-anzeigen/neu")}>
@@ -110,6 +107,9 @@ const result = await databases.listDocuments<Anzeige>(
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
+        <div className="ion-padding-horizontal" style={{ paddingTop: 8, paddingBottom: 4 }}>
+          <ZurueckButton />
+        </div>
         {loading && (
           <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
             <IonSpinner name="crescent" />

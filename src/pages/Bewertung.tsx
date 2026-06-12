@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
   IonCard,
   IonCardHeader,
   IonCardTitle,
@@ -18,6 +17,7 @@ import {
   IonSpinner,
 } from "@ionic/react";
 import { useState, useEffect, useCallback } from "react";
+import ZurueckButton from "../components/ZurueckButton";
 import { useParams, useHistory } from "react-router-dom";
 import { ID, Query } from "appwrite";
 import {
@@ -156,13 +156,12 @@ const BewertungInner: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/meine-bewerbungen" />
-          </IonButtons>
+
           <IonTitle>Bewertung abgeben</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        <ZurueckButton style={{ marginBottom: 8 }} />
         {bereitsBewertet && (
           <IonCard>
             <IonCardHeader>

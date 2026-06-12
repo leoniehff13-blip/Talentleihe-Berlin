@@ -5,7 +5,6 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
   IonSpinner,
   IonText,
   IonCard,
@@ -19,6 +18,7 @@ import {
   IonItem,
 } from "@ionic/react";
 import { useEffect, useState } from "react";
+import ZurueckButton from "../components/ZurueckButton";
 import { useParams } from "react-router";
 import { Query } from "appwrite";
 import {
@@ -58,13 +58,12 @@ const ProfilDetailInner: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonBackButton defaultHref="/meine-bewerbungen" />
-          </IonButtons>
+
           <IonTitle>{profile ? (isTalent ? "Talent-Profil" : "Betriebsprofil") : "Profil"}</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        <ZurueckButton style={{ marginBottom: 8 }} />
         {loading && (
           <div style={{ display: "flex", justifyContent: "center", padding: 32 }}>
             <IonSpinner name="crescent" />

@@ -9,6 +9,7 @@ import {
   IonSpinner,
 } from "@ionic/react";
 import { useMemo, useState } from "react";
+import ZurueckButton from "../../components/ZurueckButton";
 import { useHistory, useLocation } from "react-router-dom";
 import { trashOutline, checkmarkCircleOutline, alertCircleOutline } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
@@ -127,10 +128,12 @@ const KontoLoeschen: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+
           <IonTitle>Konto löschen</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
+        <ZurueckButton style={{ marginBottom: 8 }} />
         {linkUnvollstaendig &&
           card(
             <>
