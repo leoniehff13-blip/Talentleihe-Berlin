@@ -9,7 +9,9 @@ import {
   IonButton,
   IonText,
   IonNote,
+  IonIcon,
 } from "@ionic/react";
+import { eyeOutline, eyeOffOutline } from "ionicons/icons";
 import Footer from "../../components/Footer";
 import { useState } from "react";
 import { useHistory, Link } from "react-router-dom";
@@ -44,6 +46,7 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -95,11 +98,20 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
             <IonInput
               label="Passwort"
               labelPlacement="floating"
-              type="password"
+              type={showPassword ? "text" : "password"}
               required
               value={password}
               onIonInput={(e) => setPassword(e.detail.value ?? "")}
             />
+            <IonButton
+              slot="end"
+              fill="clear"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+              style={{ marginTop: 8 }}
+            >
+              <IonIcon icon={showPassword ? eyeOffOutline : eyeOutline} />
+            </IonButton>
           </IonItem>
           {error && (
             <IonText color="danger">
