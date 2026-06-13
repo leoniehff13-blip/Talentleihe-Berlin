@@ -22,7 +22,6 @@ import {
 } from "@ionic/react";
 import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
 import { Query } from "appwrite";
 import {
   briefcaseOutline,
@@ -143,7 +142,6 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
 const Konto: React.FC = () => {
   const { user, profile, loading, profileLoading, logout, saveProfile, refresh } = useAuth();
 
-  const history = useHistory();
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState<ProfilFormState>(EMPTY_PROFIL);
   const [error, setError] = useState<string | null>(null);
@@ -551,7 +549,7 @@ const Konto: React.FC = () => {
         <BewertungSection userId={user.$id} profileType={profile.type} />
 
         {/* Hub-Karten */}
-        <IonCard button onClick={() => history.push("/meine-anzeigen")}>
+        <IonCard button routerLink="/meine-anzeigen">
           <IonCardContent style={{ display: "flex", alignItems: "center" }}>
             <IonIcon
               icon={briefcaseOutline}
@@ -570,7 +568,7 @@ const Konto: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
-        <IonCard button onClick={() => history.push("/meine-bewerbungen")}>
+        <IonCard button routerLink="/meine-bewerbungen">
           <IonCardContent style={{ display: "flex", alignItems: "center" }}>
             <IonIcon
               icon={sendOutline}
@@ -589,7 +587,7 @@ const Konto: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
-        <IonCard button onClick={() => history.push("/eingegangene-anfragen")}>
+        <IonCard button routerLink="/eingegangene-anfragen">
           <IonCardContent style={{ display: "flex", alignItems: "center" }}>
             <IonIcon
               icon={mailOutline}
