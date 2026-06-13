@@ -140,7 +140,7 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
 }
 
 const Konto: React.FC = () => {
-  const { user, profile, loading, profileLoading, logout, saveProfile } = useAuth();
+  const { user, profile, loading, profileLoading, logout, saveProfile, refresh } = useAuth();
 
   const history = useHistory();
   const [editing, setEditing] = useState(false);
@@ -219,6 +219,9 @@ const Konto: React.FC = () => {
     }
     setSaving(true);
     try {
+      // Profil-State vor dem Speichern aktualisieren, falls er veraltet ist.
+      // Verhindert versehentliches Anlegen eines Doppel-Profils.
+      if (!profile) await refresh();
       await saveProfile(profilStateToInput(form));
       setEditing(false);
     } catch (err: unknown) {
