@@ -31,6 +31,7 @@ import {
   downloadOutline,
 } from "ionicons/icons";
 import {
+  account,
   databases,
   storage,
   DB_LEHRSTELLEN,
@@ -50,6 +51,13 @@ import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
+
+async function getAuthDownloadUrl(fileId: string): Promise<string> {
+  const jwt = await account.createJWT();
+  const base = storage.getFileDownload(BUCKET_DOKUMENTE, fileId).toString();
+  const sep = base.includes("?") ? "&" : "?";
+  return `${base}${sep}jwt=${jwt.jwt}`;
+}
 
 const BewerbungenZurAnzeigeInner: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -242,9 +250,15 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
                               expand="block"
                               fill="outline"
                               size="small"
-                              href={storage.getFileDownload(BUCKET_DOKUMENTE, fileId).toString()}
-                              target="_blank"
                               style={{ marginBottom: 4 }}
+                              onClick={async () => {
+                                try {
+                                  const url = await getAuthDownloadUrl(fileId);
+                                  window.open(url, "_blank");
+                                } catch {
+                                  /* Fehler still ignorieren */
+                                }
+                              }}
                             >
                               <IonIcon slot="start" icon={documentOutline} />
                               {dok?.filename ?? fileId}

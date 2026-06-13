@@ -22,6 +22,7 @@ import {
   downloadOutline,
 } from "ionicons/icons";
 import {
+  account,
   databases,
   storage,
   DB_LEHRSTELLEN,
@@ -38,6 +39,17 @@ interface Props {
   mode?: "manage" | "select";
   selectedIds?: string[];
   onSelectionChange?: (ids: string[]) => void;
+}
+
+/** Erzeugt eine authentifizierte Download-URL via JWT (Cookie allein reicht
+ *  bei Cross-Origin-Anfragen nicht aus). */
+async function getAuthUrl(fileId: string, download = true): Promise<string> {
+  const jwt = await account.createJWT();
+  const base = download
+    ? storage.getFileDownload(BUCKET_DOKUMENTE, fileId).toString()
+    : storage.getFileView(BUCKET_DOKUMENTE, fileId).toString();
+  const sep = base.includes("?") ? "&" : "?";
+  return `${base}${sep}jwt=${jwt.jwt}`;
 }
 
 function formatSize(bytes: number) {
@@ -231,8 +243,14 @@ const DokumenteUpload: React.FC<Props> = ({
                 <IonButton
                   fill="clear"
                   slot="end"
-                  href={storage.getFileDownload(BUCKET_DOKUMENTE, dok.file_id).toString()}
-                  target="_blank"
+                  onClick={async () => {
+                    try {
+                      const url = await getAuthUrl(dok.file_id);
+                      window.open(url, "_blank");
+                    } catch (err: unknown) {
+                      setError(translateError(err));
+                    }
+                  }}
                 >
                   <IonIcon slot="icon-only" icon={downloadOutline} />
                 </IonButton>
