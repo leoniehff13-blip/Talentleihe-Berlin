@@ -12,7 +12,9 @@ import {
   IonList,
   IonListHeader,
   IonLabel,
+  IonIcon,
 } from "@ionic/react";
+import { eyeOutline, eyeOffOutline } from "ionicons/icons";
 import Footer from "../../components/Footer";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -34,6 +36,9 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState("");
   const [profil, setProfil] = useState<ProfilFormState>(EMPTY_PROFIL);
 
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -43,6 +48,10 @@ const Register: React.FC = () => {
 
     if (password.length < 8) {
       setError("Passwort muss mindestens 8 Zeichen haben.");
+      return;
+    }
+    if (password !== passwordConfirm) {
+      setError("Die Passwörter stimmen nicht überein.");
       return;
     }
     const missing = validateProfil(profil);
@@ -100,11 +109,39 @@ const Register: React.FC = () => {
               <IonInput
                 label="Passwort * (min. 8 Zeichen)"
                 labelPlacement="stacked"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={password}
                 onIonInput={(e) => setPassword(e.detail.value ?? "")}
               />
+              <IonButton
+                slot="end"
+                fill="clear"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Passwort verbergen" : "Passwort anzeigen"}
+                style={{ marginTop: 8 }}
+              >
+                <IonIcon icon={showPassword ? eyeOffOutline : eyeOutline} />
+              </IonButton>
+            </IonItem>
+            <IonItem>
+              <IonInput
+                label="Passwort wiederholen *"
+                labelPlacement="stacked"
+                type={showPasswordConfirm ? "text" : "password"}
+                required
+                value={passwordConfirm}
+                onIonInput={(e) => setPasswordConfirm(e.detail.value ?? "")}
+              />
+              <IonButton
+                slot="end"
+                fill="clear"
+                onClick={() => setShowPasswordConfirm((v) => !v)}
+                aria-label={showPasswordConfirm ? "Passwort verbergen" : "Passwort anzeigen"}
+                style={{ marginTop: 8 }}
+              >
+                <IonIcon icon={showPasswordConfirm ? eyeOffOutline : eyeOutline} />
+              </IonButton>
             </IonItem>
           </IonList>
 
