@@ -13,6 +13,7 @@ import AnzeigeDetail from './pages/AnzeigeDetail';
 import AnzeigeForm from './pages/AnzeigeForm';
 import MeineAnzeigen from './pages/MeineAnzeigen';
 import MeineBewerbungen from "./pages/MeineBewerbungen";
+import EingegangeneAnfragen from "./pages/EingegangeneAnfragen";
 import ProfilDetail from './pages/ProfilDetail';
 import BewerbungenZurAnzeige from "./pages/BewerbungenZurAnzeige";
 import Informationen from "./pages/Informationen";
@@ -85,6 +86,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/meine-bewerbungen">
               <MeineBewerbungen />
+            </Route>
+            <Route exact path="/eingegangene-anfragen">
+              <EingegangeneAnfragen />
             </Route>
             <Route exact path="/meine-anzeigen/:id([a-zA-Z0-9]{15,})/bewerbungen">
               <BewerbungenZurAnzeige />

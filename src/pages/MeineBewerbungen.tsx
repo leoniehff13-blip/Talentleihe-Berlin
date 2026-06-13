@@ -55,14 +55,13 @@ const MeineBewerbungenInner: React.FC = () => {
   const load = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const isBetrieb = profile?.type === "betrieb";
     setError(null);
     try {
       const result = await databases.listDocuments<Bewerbung>(
         DB_LEHRSTELLEN,
         COL_BEWERBUNGEN,
         [
-          isBetrieb ? Query.equal("posting_owner_id", user.$id) : Query.equal("applicant_user_id", user.$id),
+          Query.equal("applicant_user_id", user.$id),
           Query.orderDesc("$createdAt"),
           Query.limit(100),
         ]
@@ -95,9 +94,7 @@ const MeineBewerbungenInner: React.FC = () => {
     }
   }, [user]);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   async function handleZurueckziehen(b: Bewerbung) {
     try {
@@ -117,7 +114,7 @@ const MeineBewerbungenInner: React.FC = () => {
       <IonHeader>
         <IonToolbar>
 
-          <IonTitle>{profile?.type === "betrieb" ? "Eingegangene Bewerbungen" : "Meine Bewerbungen"}</IonTitle>
+          <IonTitle>Meine Bewerbungen</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -147,8 +144,7 @@ const MeineBewerbungenInner: React.FC = () => {
               <IonCardContent>
                 <IonText>
                   <p>
-                    profile?.type === 'betrieb' ? 'Sobald sich jemand auf eine deiner Anzeigen bewirbt, erscheint sie hier.' : 'Sobald du im Detail einer Anzeige auf <em>„Bewerben" / „Anfrage senden"</em>{" "}
-                    klickst, erscheint die Bewerbung hier mit dem aktuellen Status.
+                    Sobald du dich auf eine Anzeige bewirbst oder eine Anfrage sendest, erscheint sie hier mit dem aktuellen Status.
                   </p>
                 </IonText>
                 <IonButton
@@ -179,7 +175,7 @@ const MeineBewerbungenInner: React.FC = () => {
                   <IonItemSliding>
                     <IonItem
                       button
-                      onClick={() => history.push(profile?.type === 'betrieb' ? `/meine-anzeigen/${b.apprenticeship_id}/bewerbungen` : `/anzeigen/${b.apprenticeship_id}`)}
+                      onClick={() => history.push(`/anzeigen/${b.apprenticeship_id}`)}
                       detail
                     >
                       <IonLabel>

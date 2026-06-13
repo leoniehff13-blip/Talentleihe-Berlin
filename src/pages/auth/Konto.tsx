@@ -26,7 +26,8 @@ import { useHistory } from "react-router-dom";
 import { Query } from "appwrite";
 import {
   briefcaseOutline,
-  documentTextOutline,
+  sendOutline,
+  mailOutline,
   chevronForward,
   createOutline,
   checkmarkCircleOutline,
@@ -572,16 +573,35 @@ const Konto: React.FC = () => {
         <IonCard button onClick={() => history.push("/meine-bewerbungen")}>
           <IonCardContent style={{ display: "flex", alignItems: "center" }}>
             <IonIcon
-              icon={documentTextOutline}
+              icon={sendOutline}
               color="primary"
               style={{ fontSize: 28, marginRight: 16 }}
             />
             <div style={{ flex: 1 }}>
               <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
-                Eingegangene Bewerbungen
+                Meine Bewerbungen
               </h3>
               <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
-                Anfragen und Bewerbungen verfolgen
+                Bewerbungen &amp; Anfragen die ich versendet habe
+              </p>
+            </div>
+            <IonIcon icon={chevronForward} color="medium" />
+          </IonCardContent>
+        </IonCard>
+
+        <IonCard button onClick={() => history.push("/eingegangene-anfragen")}>
+          <IonCardContent style={{ display: "flex", alignItems: "center" }}>
+            <IonIcon
+              icon={mailOutline}
+              color="primary"
+              style={{ fontSize: 28, marginRight: 16 }}
+            />
+            <div style={{ flex: 1 }}>
+              <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
+                Eingegangene Anfragen
+              </h3>
+              <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
+                Anfragen &amp; Bewerbungen die ich erhalten habe
               </p>
             </div>
             <IonIcon icon={chevronForward} color="medium" />

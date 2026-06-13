@@ -164,7 +164,7 @@ type ViewMode = "liste" | "karte";
 
 
 const AnzeigenInner: React.FC = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, profileLoading } = useAuth();
   const [items, setItems] = useState<Anzeige[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -221,6 +221,9 @@ const AnzeigenInner: React.FC = () => {
       setLoading(false);
       return;
     }
+    // Warten bis das Profil geladen ist – sonst läuft die Abfrage ohne Typ-Filter
+    // und zeigt kurz alle Typen (einsatz + talent_angebot) gleichzeitig.
+    if (profileLoading) return;
     setLoading(true);
     setError(null);
     try {
@@ -327,7 +330,7 @@ const AnzeigenInner: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [filters, user, angezeigterTyp]);
+  }, [filters, user, angezeigterTyp, profileLoading]);
 
   useEffect(() => {
     load();
