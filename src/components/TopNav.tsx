@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useIonRouter } from "@ionic/react";
+import NotificationBell from "./NotificationBell";
 
 const NAV_ITEMS = [
   { label: "Home",        href: "/home",         owned: ["/home"] },
@@ -72,12 +73,12 @@ const TopNav: React.FC = () => {
       <style>{`
         @media (min-width: 640px) {
           .topnav-desktop { display: flex !important; }
-          .topnav-hamburger { display: none !important; }
+          .topnav-mobile { display: none !important; }
           .topnav-dropdown { display: none !important; }
         }
         @media (max-width: 639px) {
           .topnav-desktop { display: none !important; }
-          .topnav-hamburger { display: flex !important; }
+          .topnav-mobile { display: flex !important; }
         }
       `}</style>
 
@@ -121,7 +122,7 @@ const TopNav: React.FC = () => {
           </span>
 
           {/* Desktop-Navigation */}
-          <div className="topnav-desktop" style={{ gap: "24px" }}>
+          <div className="topnav-desktop" style={{ gap: "24px", alignItems: "center" }}>
             {NAV_ITEMS.map(({ label, href, owned }) => {
               const active = isActive(location.pathname, owned);
               return (
@@ -148,44 +149,50 @@ const TopNav: React.FC = () => {
                 </button>
               );
             })}
+            <NotificationBell />
           </div>
 
-          {/* Hamburger-Button (nur Mobile) */}
-          <button
-            className="topnav-hamburger"
-            onClick={() => setMenuOpen(o => !o)}
-            aria-label="Menü öffnen"
-            style={{
-              display: "none",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "5px",
-              width: "44px",
-              height: "44px",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              padding: "0",
-            }}
+          {/* Mobile: Bell + Hamburger */}
+          <div
+            className="topnav-mobile"
+            style={{ display: "none", alignItems: "center", gap: "4px" }}
           >
-            {[0, 1, 2].map(i => (
-              <span key={i} style={{
-                display: "block",
-                width: "22px",
-                height: "2px",
-                background: "#47BCC2",
-                borderRadius: "2px",
-                transition: "transform 0.2s, opacity 0.2s",
-                transform: menuOpen
-                  ? i === 0 ? "translateY(7px) rotate(45deg)"
-                  : i === 2 ? "translateY(-7px) rotate(-45deg)"
-                  : "scaleX(0)"
-                  : "none",
-                opacity: menuOpen && i === 1 ? 0 : 1,
-              }} />
-            ))}
-          </button>
+            <NotificationBell />
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Menü öffnen"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "5px",
+                width: "44px",
+                height: "44px",
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                padding: "0",
+              }}
+            >
+              {[0, 1, 2].map(i => (
+                <span key={i} style={{
+                  display: "block",
+                  width: "22px",
+                  height: "2px",
+                  background: "#47BCC2",
+                  borderRadius: "2px",
+                  transition: "transform 0.2s, opacity 0.2s",
+                  transform: menuOpen
+                    ? i === 0 ? "translateY(7px) rotate(45deg)"
+                    : i === 2 ? "translateY(-7px) rotate(-45deg)"
+                    : "scaleX(0)"
+                    : "none",
+                  opacity: menuOpen && i === 1 ? 0 : 1,
+                }} />
+              ))}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Dropdown-Menü */}

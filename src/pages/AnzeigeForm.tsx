@@ -134,7 +134,11 @@ const AnzeigeFormInner: React.FC = () => {
     if (isEdit || prefilled || !profile) return;
     setForm((prev) => ({
       ...prev,
-      gewerk: prev.gewerk || profile.gewerk || "",
+      // Nur vorausfüllen wenn genau ein Gewerk im Profil hinterlegt ist
+      gewerk: prev.gewerk || (() => {
+        const gewerke = (profile.gewerk ?? "").split(",").map(s => s.trim()).filter(Boolean);
+        return gewerke.length === 1 ? gewerke[0] : "";
+      })(),
       firma:
         prev.firma ||
         (profile.type === "betrieb"
