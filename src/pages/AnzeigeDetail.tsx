@@ -26,7 +26,7 @@ import { useEffect, useState, useCallback } from "react";
 import ZurueckButton from "../components/ZurueckButton";
 import { useParams } from "react-router";
 import { useHistory } from "react-router-dom";
-import { mailOutline, sendOutline, checkmarkCircleOutline } from "ionicons/icons";
+import { mailOutline, sendOutline, checkmarkCircleOutline, create, trash, peopleOutline } from "ionicons/icons";
 import { ID, Query } from "appwrite";
 import {
   databases,
@@ -62,6 +62,7 @@ const AnzeigeDetailInner: React.FC = () => {
   const [sendError, setSendError] = useState<string | null>(null);
   const [erfolg, setErfolg] = useState(false);
   const [selectedDokIds, setSelectedDokIds] = useState<string[]>([]);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const ownerId = item ? (item.owner_id ?? extractOwnerId(item.$permissions ?? [])) : null;
   const istEigeneAnzeige = Boolean(user && ownerId === user.$id);
@@ -164,6 +165,16 @@ const AnzeigeDetailInner: React.FC = () => {
     }
   }
 
+  async function handleDelete() {
+    if (!item) return;
+    try {
+      await databases.deleteDocument(DB_LEHRSTELLEN, COL_APPRENTICESHIPS, item.$id);
+      history.replace("/meine-anzeigen");
+    } catch (err: unknown) {
+      setError(translateError(err));
+    }
+  }
+
   const isTalentAnzeige = item?.type === "talent_angebot";
 
   return (
@@ -174,8 +185,14 @@ const AnzeigeDetailInner: React.FC = () => {
           <IonTitle>{item?.gewerk ?? "Detail"}</IonTitle>
           {istEigeneAnzeige && (
             <IonButtons slot="end">
-              <IonButton onClick={() => history.push(`/meine-anzeigen/${id}/bearbeiten`)}>
-                Bearbeiten
+              <IonButton fill="clear" color="tertiary" onClick={() => history.push(`/meine-anzeigen/${id}/bewerbungen`)}>
+                <IonIcon slot="icon-only" icon={peopleOutline} />
+              </IonButton>
+              <IonButton fill="clear" color="primary" onClick={() => history.push(`/meine-anzeigen/${id}/bearbeiten`)}>
+                <IonIcon slot="icon-only" icon={create} />
+              </IonButton>
+              <IonButton fill="clear" color="danger" onClick={() => setConfirmDelete(true)}>
+                <IonIcon slot="icon-only" icon={trash} />
               </IonButton>
             </IonButtons>
           )}
@@ -316,16 +333,22 @@ const AnzeigeDetailInner: React.FC = () => {
               </IonCardContent>
             </IonCard>
 
-            {/* Bewerben-Karte */}
+            {/* Aktions-Karte für eigene Anzeigen */}
             {istEigeneAnzeige && (
               <IonCard color="light">
-                <IonCardContent>
-                  <IonText color="medium">
-                    <p style={{ margin: 0 }}>
-                      Das ist deine eigene Anzeige. Eingegangene Bewerbungen
-                      siehst du im Konto unter „{isTalentAnzeige ? "Meine Talent-Angebote" : "Meine Einsätze"}" → Anzeige öffnen.
-                    </p>
-                  </IonText>
+                <IonCardContent style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <IonButton fill="outline" color="tertiary" onClick={() => history.push(`/meine-anzeigen/${id}/bewerbungen`)}>
+                    <IonIcon slot="start" icon={peopleOutline} />
+                    Bewerbungen
+                  </IonButton>
+                  <IonButton fill="outline" color="primary" onClick={() => history.push(`/meine-anzeigen/${id}/bearbeiten`)}>
+                    <IonIcon slot="start" icon={create} />
+                    Bearbeiten
+                  </IonButton>
+                  <IonButton fill="outline" color="danger" onClick={() => setConfirmDelete(true)}>
+                    <IonIcon slot="start" icon={trash} />
+                    Löschen
+                  </IonButton>
                 </IonCardContent>
               </IonCard>
             )}
@@ -470,6 +493,19 @@ const AnzeigeDetailInner: React.FC = () => {
         <span style={{ display: "none" }}>
           <IonIcon icon={checkmarkCircleOutline} />
         </span>
+        <IonAlert
+          isOpen={confirmDelete}
+          header="Wirklich löschen?"
+          message={item ? `"${item.gewerk}" bei ${item.firma} wird unwiderruflich entfernt.` : ""}
+          buttons={[
+            { text: "Abbrechen", role: "cancel", handler: () => setConfirmDelete(false) },
+            {
+              text: "Löschen",
+              role: "destructive",
+              handler: () => { setConfirmDelete(false); handleDelete(); },
+            },
+          ]}
+        />
       </IonContent>
     </IonPage>
   );
