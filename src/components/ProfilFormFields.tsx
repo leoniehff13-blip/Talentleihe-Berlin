@@ -19,6 +19,7 @@ import {
   IonButton,
   IonChip,
   IonIcon,
+  IonToggle,
 } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
@@ -45,6 +46,7 @@ export interface ProfilFormState {
   ansprechpartner: string;
   ansprechpartner_email: string;
   spezialisierung: string;
+  initiativbewerbungen: boolean;
 }
 
 export const EMPTY_PROFIL: ProfilFormState = {
@@ -67,6 +69,7 @@ export const EMPTY_PROFIL: ProfilFormState = {
   ansprechpartner: "",
   ansprechpartner_email: "",
   spezialisierung: "",
+  initiativbewerbungen: true,
 };
 
 /** Hilfsfunktionen zum Kombinieren und Parsen der Adressfelder. */
@@ -549,6 +552,14 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 onIonInput={(e) => set("spezialisierung", e.detail.value ?? "")}
               />
             </IonItem>
+            <IonItem>
+              <IonLabel>Initiativbewerbungen annehmen</IonLabel>
+              <IonToggle
+                slot="end"
+                checked={state.initiativbewerbungen}
+                onIonChange={(e) => set("initiativbewerbungen", e.detail.checked)}
+              />
+            </IonItem>
           </>
         )}
       </IonList>
@@ -609,6 +620,7 @@ export function profilStateToInput(state: ProfilFormState) {
     ansprechpartner: !isTalent ? state.ansprechpartner.trim() || null : null,
     ansprechpartner_email: !isTalent ? state.ansprechpartner_email.trim() || null : null,
     spezialisierung: !isTalent ? split(state.spezialisierung) : [],
+    initiativbewerbungen: !isTalent ? state.initiativbewerbungen : null,
     user_id: "",
   };
 }
