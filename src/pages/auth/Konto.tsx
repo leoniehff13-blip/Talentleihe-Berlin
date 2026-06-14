@@ -196,6 +196,7 @@ const Konto: React.FC = () => {
         ansprechpartner: profile.ansprechpartner ?? "",
         ansprechpartner_email: profile.ansprechpartner_email ?? "",
         spezialisierung: (profile.spezialisierung ?? []).join(", "),
+        initiativbewerbungen: (profile as any).initiativbewerbungen ?? true,
       });
     } else {
       setForm(EMPTY_PROFIL);
