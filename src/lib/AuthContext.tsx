@@ -199,7 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Bestehendes Profil aus State nehmen ODER direkt in Appwrite nachschauen
-    const existingProfile = profile ?? await fetchProfileFor(userId);
+    const existingProfile = await fetchProfileFor(userId);
 
     if (existingProfile) {
       const updated = await databases.updateDocument<Profile>(
