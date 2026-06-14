@@ -151,8 +151,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function confirmVerification(userId: string, secret: string) {
-    await account.updateVerification(userId, secret);
-    await refresh();
+    try {
+      await account.updateVerification(userId, secret);
+    } catch (err: unknown) {
+      const code = (err as { code?: number })?.code;
+      if (code !== 401) throw err;
+    }
+    try { await refresh(); } catch { /* ignore */ }
   }
 
   async function requestPasswordReset(email: string) {
