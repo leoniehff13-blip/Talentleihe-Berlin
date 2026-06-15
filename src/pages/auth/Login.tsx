@@ -18,21 +18,6 @@ import { useHistory, Link } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
 
-const DEV_ACCOUNTS = [
-  {
-    label: "Dev-Login: Betrieb",
-    email: "dev-betrieb@winwin-berlin.de",
-    password: "DevBetrieb2025!",
-    color: "primary" as const,
-  },
-  {
-    label: "Dev-Login: Talent",
-    email: "dev-talent@winwin-berlin.de",
-    password: "DevTalent2025!",
-    color: "tertiary" as const,
-  },
-];
-
 interface LoginProps {
   /** Wenn gesetzt, wird nach erfolgreichem Login diese Funktion aufgerufen
    *  statt zu /konto zu navigieren (z.B. wenn Login innerhalb von Konto eingebettet ist). */
@@ -54,19 +39,6 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
     setBusy(true);
     try {
       await login(email, password);
-      if (onSuccess) onSuccess(); else history.replace("/konto");
-    } catch (err: unknown) {
-      setError(translateError(err));
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function quickLogin(acc: (typeof DEV_ACCOUNTS)[number]) {
-    setError(null);
-    setBusy(true);
-    try {
-      await login(acc.email, acc.password);
       if (onSuccess) onSuccess(); else history.replace("/konto");
     } catch (err: unknown) {
       setError(translateError(err));
@@ -130,31 +102,6 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
             Noch kein Konto? <Link to="/registrieren">Jetzt registrieren</Link>
           </p>
         </IonNote>
-
-        {/* Dev-Schnellzugänge */}
-        <div style={{ marginTop: 32, borderTop: "1px solid #e0e0e0", paddingTop: 20 }}>
-          <p style={{ fontSize: "0.78rem", color: "#888", textAlign: "center", marginBottom: 10 }}>
-            DEV-SCHNELLZUGANG
-          </p>
-          {DEV_ACCOUNTS.map((acc) => (
-            <IonButton
-              key={acc.email}
-              expand="block"
-              fill="outline"
-              color={acc.color}
-              disabled={busy}
-              style={{ marginBottom: 8 }}
-              onClick={() => quickLogin(acc)}
-            >
-              {acc.label}
-            </IonButton>
-          ))}
-          <p style={{ fontSize: "0.72rem", color: "#aaa", textAlign: "center", margin: "4px 0 0" }}>
-            Betrieb: dev-betrieb@winwin-berlin.de · DevBetrieb2025!
-            <br />
-            Talent: dev-talent@winwin-berlin.de · DevTalent2025!
-          </p>
-        </div>
         <Footer />
       </IonContent>
     </IonPage>

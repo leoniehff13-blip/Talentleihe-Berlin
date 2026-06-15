@@ -12,33 +12,12 @@ type AuthUser = Models.User<Models.Preferences> | null;
 
 export type ProfileInput = Omit<Profile, keyof Models.Document>;
 
-const DEV_USER = {
-  $id: "dev", $createdAt: "", $updatedAt: "",
-  name: "Dev User", registration: "", status: true, labels: [],
-  passwordUpdate: "", email: "dev@winwin-berlin.de", phone: "",
-  // Dev-Login soll die E-Mail-Verifizierungs-Wand nicht auslösen.
-  emailVerification: true, phoneVerification: false, mfa: false,
-  prefs: {}, targets: [], accessedAt: "",
-} as unknown as Models.User<Models.Preferences>;
-
-const DEV_PROFILE = {
-  $id: "dev-profile", $collectionId: COL_PROFILES,
-  $databaseId: DB_LEHRSTELLEN, $createdAt: "", $updatedAt: "", $permissions: [],
-  type: "betrieb" as const, user_id: "dev", name: "Win/Win Berlin (Dev)",
-  vorname: null, anrede: null, ort: null, adresse: "Musterstraße 1\n10115 Berlin",
-  gewerk: "Mehrere Gewerke", handwerkskammer: "HWK Berlin", lehrjahr: null,
-  unternehmen: null, berufsschule: null, faehigkeiten: [],
-  ansprechpartner: "Entwickler:in", ansprechpartner_email: "dev@winwin-berlin.de",
-  spezialisierung: [],
-} as Profile;
-
 interface AuthContextValue {
   user: AuthUser;
   profile: Profile | null;
   loading: boolean;
   profileLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  devLogin: () => void;
   signup: (name: string, email: string, password: string) => Promise<Models.User<Models.Preferences>>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -75,13 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profileLoading, setProfileLoading] = useState(true);
 
   async function refresh() {
-    if (sessionStorage.getItem("devMode")) {
-      setUser(DEV_USER);
-      setProfile(DEV_PROFILE);
-      setLoading(false);
-      setProfileLoading(false);
-      return;
-    }
     setLoading(true);
     setProfileLoading(true);
     try {
@@ -104,13 +76,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  function devLogin() {
-    sessionStorage.setItem("devMode", "1");
-    setUser(DEV_USER);
-    setProfile(DEV_PROFILE);
-    setLoading(false);
-  }
-
   useEffect(() => {
     refresh();
   }, []);
@@ -119,8 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await account.createEmailPasswordSession(email, password);
     } catch (err) {
-      // Falls bereits eine aktive Session existiert (z. B. beim Wechsel zwischen
-      // Dev-Zugängen), alle Sessions löschen und einen neuen Login starten.
+      // Falls bereits eine aktive Session existiert, alle Sessions löschen
+      // und einen neuen Login starten.
       if (
         err instanceof AppwriteException &&
         (err.type === "user_session_already_exists" || err.code === 401)
@@ -169,13 +134,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function logout() {
-    const wasDevMode = sessionStorage.getItem("devMode");
-    sessionStorage.removeItem("devMode");
-    if (wasDevMode) {
-      setUser(null);
-      setProfile(null);
-      return;
-    }
     // Alle aktiven Sessions löschen (nicht nur die aktuelle), damit
     // keine "Mehrere Sessions aktiv"-Fehler beim erneuten Login entstehen.
     try {
@@ -230,7 +188,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user, profile, loading, profileLoading, login, devLogin, signup, logout, refresh, saveProfile,
+        user, profile, loading, profileLoading, login, signup, logout, refresh, saveProfile,
         sendVerification, confirmVerification, requestPasswordReset, confirmPasswordReset,
       }}
     >
