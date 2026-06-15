@@ -107,6 +107,7 @@ export interface Anzeige extends Models.Document {
   stadt: string | null;
   bundesland: Bundesland | null;
   handwerkskammer: string | null;
+  talent_name: string | null;
 }
 
 /* -------- Profil (Talent oder Betrieb) -------- */
@@ -199,6 +200,7 @@ export interface Profile extends Models.Document {
   adresse: string | null;
   gewerk: string | null;    // Talent: einzelnes Gewerk; Betrieb: kommagetrennte Liste
   handwerkskammer: string | null;
+  talent_name: string | null;
   lehrjahr: Lehrjahr | null;
   unternehmen: string | null;
   berufsschule: string | null;

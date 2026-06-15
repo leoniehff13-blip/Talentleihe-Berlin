@@ -59,6 +59,7 @@ interface FormState {
   stadt: string;
   bundesland: Bundesland | "";
   handwerkskammer: string;
+  talent_name: string;
 }
 
 const EMPTY: FormState = {
@@ -80,6 +81,7 @@ const EMPTY: FormState = {
   stadt: "",
   bundesland: "Berlin",
   handwerkskammer: "",
+  talent_name: "",
 };
 
 function toIsoOrNull(date: string): string | null {
@@ -161,6 +163,11 @@ const AnzeigeFormInner: React.FC = () => {
         })(),
       handwerkskammer:
         prev.handwerkskammer || profile.handwerkskammer || "",
+      talent_name:
+        prev.talent_name ||
+        (profile.type === "talent"
+          ? [profile.vorname, profile.name].filter(Boolean).join(" ")
+          : ""),
       spezialisierungen:
         prev.spezialisierungen ||
         (profile.spezialisierung ?? []).join(", "),
@@ -209,6 +216,7 @@ const AnzeigeFormInner: React.FC = () => {
           stadt: doc.stadt ?? "",
           bundesland: doc.bundesland ?? "",
           handwerkskammer: doc.handwerkskammer ?? "",
+          talent_name: doc.talent_name ?? "",
         });
       } catch (err: unknown) {
         if (!cancelled) setError(translateError(err));
@@ -272,6 +280,7 @@ const AnzeigeFormInner: React.FC = () => {
 
     if (isTalent) {
       Object.assign(data, {
+        talent_name: form.talent_name.trim() || null,
         ort: form.ort.trim() || form.plz.trim(),
         lernziele: split(form.lernziele),
         plz: form.plz.trim() || null,

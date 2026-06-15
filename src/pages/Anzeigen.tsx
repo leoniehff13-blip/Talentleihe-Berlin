@@ -578,10 +578,10 @@ const AnzeigenInner: React.FC = () => {
                   <IonLabel>
                     {profile?.type === "betrieb" ? (
                       <>
-                        <h2>{item.firma}</h2>
-                        <p>{item.gewerk}{item.ort ? ` · ${item.ort}` : ""}</p>
+                        <h2>{item.talent_name || item.firma}</h2>
+                        <p>{item.gewerk}{item.firma ? ` · ${item.firma}` : ""}</p>
                         <IonNote>
-                          {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
+                          Verfügbar ab:{" "}
                           {new Date(item.startdatum).toLocaleDateString("de-DE")}
                           {kammerKurz ? ` · ${kammerKurz}` : ""}
                         </IonNote>
