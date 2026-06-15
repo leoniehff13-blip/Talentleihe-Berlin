@@ -96,9 +96,7 @@ const Register: React.FC = () => {
             <p style={{ fontSize: 16, lineHeight: 1.6, color: "var(--ion-color-medium)", maxWidth: 340 }}>
               Dein Konto wurde erstellt. Wir haben dir eine Bestätigungsmail geschickt — klicke auf den Link darin und dann kann es losgehen!
             </p>
-            <IonButton expand="block" style={{ marginTop: 32, maxWidth: 340, width: "100%" }} onClick={() => history.replace("/konto")}>
-              Zum Konto
-            </IonButton>
+
           </div>
         </IonContent>
       </IonPage>
