@@ -356,17 +356,19 @@ const AnzeigenInner: React.FC = () => {
           <IonTitle>Talentleihe</IonTitle>
         </IonToolbar>
         <IonToolbar>
-          <IonSegment
-            value={view}
-            onIonChange={(e) => setView((e.detail.value as ViewMode) ?? "liste")}
-          >
-            <IonSegmentButton value="liste">
-              <IonLabel>Liste</IonLabel>
-            </IonSegmentButton>
-            <IonSegmentButton value="karte">
-              <IonLabel>Karte</IonLabel>
-            </IonSegmentButton>
-          </IonSegment>
+          {profile?.type !== "betrieb" && (
+            <IonSegment
+              value={view}
+              onIonChange={(e) => setView((e.detail.value as ViewMode) ?? "liste")}
+            >
+              <IonSegmentButton value="liste">
+                <IonLabel>Liste</IonLabel>
+              </IonSegmentButton>
+              <IonSegmentButton value="karte">
+                <IonLabel>Karte</IonLabel>
+              </IonSegmentButton>
+            </IonSegment>
+          )}
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
