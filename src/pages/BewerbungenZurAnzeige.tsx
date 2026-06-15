@@ -49,6 +49,7 @@ import {
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
+import { notifyBewerbungAngenommen } from "../lib/notifications";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
 
@@ -137,6 +138,8 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
       setBewerbungen((prev) =>
         prev.map((x) => (x.$id === b.$id ? { ...x, status } : x))
       );
+      // Bewerber:in per Mail über die Annahme informieren (fire-and-forget).
+      if (status === "angenommen") void notifyBewerbungAngenommen(b.$id);
     } catch (err: unknown) {
       setError(translateError(err));
     }

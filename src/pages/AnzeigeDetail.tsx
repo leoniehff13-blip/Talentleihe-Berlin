@@ -41,6 +41,7 @@ import {
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import { translateError } from "../lib/errors";
+import { notifyNeueBewerbung } from "../lib/notifications";
 import AuthGate from "../components/AuthGate";
 import BewertungsKasten from "../components/BewertungsKasten";
 import DokumenteUpload from "../components/DokumenteUpload";
@@ -132,7 +133,7 @@ const AnzeigeDetailInner: React.FC = () => {
           : profile.name
         : user.name || user.email;
 
-      await databases.createDocument<Bewerbung>(
+      const erstellteBewerbung = await databases.createDocument<Bewerbung>(
         DB_LEHRSTELLEN,
         COL_BEWERBUNGEN,
         ID.unique(),
@@ -157,6 +158,9 @@ const AnzeigeDetailInner: React.FC = () => {
       setNachricht("");
       setSelectedDokIds([]);
       setErfolg(true);
+      // Anzeigen-Inhaber:in per Mail über die neue Bewerbung informieren
+      // (fire-and-forget – Fehler brechen die Bewerbung nicht ab).
+      void notifyNeueBewerbung(erstellteBewerbung.$id);
       await loadEigeneBewerbung();
     } catch (err: unknown) {
       setSendError(translateError(err));

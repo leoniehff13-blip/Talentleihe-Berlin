@@ -162,6 +162,7 @@ async function setup() {
     ['applicant_name',       () => db.createStringAttribute(DB, 'bewerbungen', 'applicant_name', 200, false)],
     ['nachricht',            () => db.createStringAttribute(DB, 'bewerbungen', 'nachricht', 65535, true)],
     ['dokument_ids',         () => db.createStringAttribute(DB, 'bewerbungen', 'dokument_ids', 50, false, null, true)],
+    ['erinnerung_gesendet',  () => db.createBooleanAttribute(DB, 'bewerbungen', 'erinnerung_gesendet', false, false)],
     ['status',               () => db.createEnumAttribute(DB, 'bewerbungen', 'status', ['ausstehend', 'angenommen', 'abgelehnt', 'zurueckgezogen'], false, 'ausstehend')],
   ];
   for (const [label, fn] of bewAttrs) await tryCreate(label, fn);
