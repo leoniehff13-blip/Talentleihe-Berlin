@@ -576,15 +576,27 @@ const AnzeigenInner: React.FC = () => {
                   detail
                 >
                   <IonLabel>
-                    <h2>{item.gewerk}</h2>
-                    <p>
-                      {item.firma} · {item.ort}
-                    </p>
-                    <IonNote>
-                      {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
-                      {new Date(item.startdatum).toLocaleDateString("de-DE")}
-                      {kammerKurz ? ` · ${kammerKurz}` : ""}
-                    </IonNote>
+                    {profile?.type === "betrieb" ? (
+                      <>
+                        <h2>{item.firma}</h2>
+                        <p>{item.gewerk}{item.ort ? ` · ${item.ort}` : ""}</p>
+                        <IonNote>
+                          {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
+                          {new Date(item.startdatum).toLocaleDateString("de-DE")}
+                          {kammerKurz ? ` · ${kammerKurz}` : ""}
+                        </IonNote>
+                      </>
+                    ) : (
+                      <>
+                        <h2>{item.gewerk}</h2>
+                        <p>{item.firma} · {item.ort}</p>
+                        <IonNote>
+                          {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
+                          {new Date(item.startdatum).toLocaleDateString("de-DE")}
+                          {kammerKurz ? ` · ${kammerKurz}` : ""}
+                        </IonNote>
+                      </>
+                    )}
                   </IonLabel>
                   <IonBadge color={itemIsTalent ? "tertiary" : "primary"} slot="end">
                     {itemIsTalent ? "Talent" : "Einsatz"}
