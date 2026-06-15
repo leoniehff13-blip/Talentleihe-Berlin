@@ -147,16 +147,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function saveProfile(data: ProfileInput): Promise<Profile> {
-    // React-State kann nach signup() oder bei Race Conditions veraltet sein
-    // → Appwrite IMMER direkt befragen, ob bereits ein Profil existiert.
-    // Das verhindert doppelte Profile wenn profile-State kurz null war.
-    let userId = user?.$id;
-    if (!userId) {
-      const currentUser = await account.get();
-      userId = currentUser.$id;
-    }
+    // Immer direkt von Appwrite holen – State kann nach signup() veraltet sein
+    const currentUser = await account.get();
+    const userId = currentUser.$id;
 
-    // Bestehendes Profil aus State nehmen ODER direkt in Appwrite nachschauen
     const existingProfile = await fetchProfileFor(userId);
 
     if (existingProfile) {
