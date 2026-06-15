@@ -251,9 +251,8 @@ const Konto: React.FC = () => {
 
   // E-Mail noch nicht bestätigt → Cover-Wand (auch direkt nach der
   // Registrierung). Erst nach Bestätigung wird das Konto nutzbar.
-  if (!user.emailVerification) {
-    return <VerifizierungsWand title="Konto" />;
-  }
+  // E-Mail-Banner statt Vollsperre – Nutzer kommt direkt ins Konto
+  const zeigeEmailBanner = !user.emailVerification;
 
   // Nutzer ist eingeloggt, hat aber noch kein Profil → Anlegen-Modus
   const noProfile = !profile;
