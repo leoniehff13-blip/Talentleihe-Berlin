@@ -41,6 +41,7 @@ const Register: React.FC = () => {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -72,12 +73,36 @@ const Register: React.FC = () => {
       // signup() hat bereits eine Session angelegt und refresh() aufgerufen.
       // Profil anlegen – danach direkt weiterleiten, keine zweite Session nötig.
       await saveProfile(profilStateToInput(profil));
-      history.replace("/konto");
+      setSuccess(true);
     } catch (err: unknown) {
       setError(translateError(err));
     } finally {
       setBusy(false);
     }
+  }
+
+  if (success) {
+    return (
+      <IonPage>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Konto erstellt</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent fullscreen className="ion-padding">
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60%", textAlign: "center", padding: "32px 16px" }}>
+            <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
+            <h2 style={{ marginBottom: 8 }}>Vielen Dank!</h2>
+            <p style={{ fontSize: 16, lineHeight: 1.6, color: "var(--ion-color-medium)", maxWidth: 340 }}>
+              Dein Konto wurde erstellt. Wir haben dir eine Bestätigungsmail geschickt — klicke auf den Link darin und dann kann es losgehen!
+            </p>
+            <IonButton expand="block" style={{ marginTop: 32, maxWidth: 340, width: "100%" }} onClick={() => history.replace("/konto")}>
+              Zum Konto
+            </IonButton>
+          </div>
+        </IonContent>
+      </IonPage>
+    );
   }
 
   return (
