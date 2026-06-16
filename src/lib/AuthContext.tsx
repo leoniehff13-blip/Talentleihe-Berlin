@@ -195,8 +195,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isAdmin = email.trim().toLowerCase() === VERBUNDBUERO_ADMIN_EMAIL;
     // type ist im Schema required → wir setzen einen Platzhalter (betrieb).
     // role und approved sind die eigentlich relevanten Felder.
-    const data: ProfileInput = {
-      type: "betrieb",
+    // Achtung: talent_name ist im Profile-Interface, aber NICHT in der DB.
+    // Es darf hier nicht mitgesendet werden, sonst lehnt Appwrite das Dokument
+    // mit "document_invalid_structure" ab. Wir umgehen den TS-Cast mit einem
+    // Record-Typ – die Liste hier muss zur tatsächlichen DB-Schema-Spaltenliste passen.
+    const data = {
+      type: "betrieb" as const,
       user_id: userId,
       name: name.trim(),
       vorname: null,
@@ -205,7 +209,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       adresse: null,
       gewerk: null,
       handwerkskammer: null,
-      talent_name: null,
       lehrjahr: null,
       unternehmen: null,
       berufsschule: null,
@@ -213,9 +216,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ansprechpartner: null,
       ansprechpartner_email: null,
       spezialisierung: [],
-      role: "verbundbuero",
+      role: "verbundbuero" as const,
       approved: isAdmin,
-    };
+    } as unknown as ProfileInput;
     const created = await databases.createDocument<Profile>(
       DB_LEHRSTELLEN,
       COL_PROFILES,
