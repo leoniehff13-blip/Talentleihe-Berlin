@@ -1,0 +1,10 @@
+{
+  "name": "notify-verbundbuero-admin",
+  "version": "1.0.0",
+  "description": "Schickt eine Benachrichtigungs-Mail an das Verbundbüro Berlin, wenn ein:e Verbundbüro-User:in die eigene E-Mail bestätigt hat.",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/main.js"
+  }
+}

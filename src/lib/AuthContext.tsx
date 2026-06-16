@@ -3,11 +3,35 @@ import { AppwriteException, ID, Permission, Query, Role, type Models } from "app
 import {
   account,
   databases,
+  functions,
   DB_LEHRSTELLEN,
   COL_PROFILES,
   VERBUNDBUERO_ADMIN_EMAIL,
   type Profile,
 } from "./appwrite";
+
+/**
+ * Function-ID der Appwrite-Function, die das Verbundbüro per E-Mail
+ * benachrichtigt. Muss in der Appwrite-Konsole exakt so heißen.
+ */
+const FN_NOTIFY_VERBUNDBUERO_ADMIN = "notify-verbundbuero-admin";
+
+async function notifyVerbundbueroAdmin(name: string, email: string) {
+  try {
+    await functions.createExecution(
+      FN_NOTIFY_VERBUNDBUERO_ADMIN,
+      JSON.stringify({ applicantName: name, applicantEmail: email }),
+      false, // synchron ausführen, damit Fehler im Log sichtbar werden
+      "/",
+      "POST" as never,
+      { "Content-Type": "application/json" } as never
+    );
+  } catch (err) {
+    // Benachrichtigung darf den Login-/Verifizierungs-Flow NICHT blockieren.
+    // eslint-disable-next-line no-console
+    console.warn("Notify Verbundbüro-Admin fehlgeschlagen:", err);
+  }
+}
 
 type AuthUser = Models.User<Models.Preferences> | null;
 
@@ -130,6 +154,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (code !== 401) throw err;
     }
     try { await refresh(); } catch { /* ignore */ }
+
+    // Verbundbüro-Approval-Benachrichtigung: wenn das Profil ein
+    // Verbundbüro-Profil ist und noch nicht freigegeben wurde, schicken
+    // wir das Verbundbüro Berlin per Function-Call eine Mail. Der Admin-
+    // Account (leonie@3hoffis.de) wird übersprungen, da der sowieso
+    // automatisch freigegeben ist.
+    try {
+      const u = await account.get();
+      if (u.email.trim().toLowerCase() === VERBUNDBUERO_ADMIN_EMAIL) return;
+      const p = await fetchProfileFor(u.$id);
+      if (p?.role === "verbundbuero" && !p?.approved) {
+        await notifyVerbundbueroAdmin(p.name, u.email);
+      }
+    } catch {
+      /* ignore – Benachrichtigung ist best-effort */
+    }
   }
 
   async function requestPasswordReset(email: string) {

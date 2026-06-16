@@ -24,7 +24,6 @@ import { eyeOutline, eyeOffOutline, shieldCheckmarkOutline } from "ionicons/icon
 import Footer from "../../components/Footer";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
-import { VERBUNDBUERO_ADMIN_EMAIL } from "../../lib/appwrite";
 
 /**
  * Registrierung für Mitarbeitende des Verbundbüro Berlin.
@@ -128,9 +127,8 @@ const RegisterVerbundbuero: React.FC = () => {
                 maxWidth: 380,
               }}
             >
-              Danach wird dein Konto durch das Verbundbüro Berlin geprüft und
-              freigegeben (außer du bist <strong>{VERBUNDBUERO_ADMIN_EMAIL}</strong>
-              {" "}— dann bist du sofort einsatzbereit).
+              Danach wird dein Konto durch das <strong>Verbundbüro Berlin</strong>{" "}
+              geprüft und freigegeben.
             </p>
             <IonButton
               expand="block"
@@ -181,8 +179,8 @@ const RegisterVerbundbuero: React.FC = () => {
                 <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.5 }}>
                   Diese Registrierung ist ausschließlich für Mitarbeitende des
                   Verbundbüro Berlin gedacht. Dein Konto wird erst nach
-                  E-Mail-Bestätigung <strong>und</strong> Freigabe durch{" "}
-                  <strong>{VERBUNDBUERO_ADMIN_EMAIL}</strong> aktiv.
+                  E-Mail-Bestätigung <strong>und</strong> Freigabe durch das{" "}
+                  <strong>Verbundbüro Berlin</strong> aktiv.
                 </p>
               </IonText>
             </div>

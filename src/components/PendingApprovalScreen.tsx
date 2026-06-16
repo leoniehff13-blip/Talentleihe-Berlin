@@ -13,7 +13,6 @@ import {
 import { useHistory } from "react-router-dom";
 import { hourglassOutline } from "ionicons/icons";
 import { useAuth } from "../lib/AuthContext";
-import { VERBUNDBUERO_ADMIN_EMAIL } from "../lib/appwrite";
 
 /**
  * Wird angezeigt, wenn ein Verbundbüro-User eingeloggt ist, aber noch nicht
@@ -60,9 +59,9 @@ const PendingApprovalScreen: React.FC = () => {
                 das <strong>Verbundbüro Berlin</strong> freigegeben werden.
               </p>
               <p style={{ margin: "12px 0 0", lineHeight: 1.55 }}>
-                Sobald die Freigabe durch{" "}
-                <strong>{VERBUNDBUERO_ADMIN_EMAIL}</strong> erfolgt ist, kannst
-                du dich erneut einloggen und das Portal nutzen.
+                Sobald das <strong>Verbundbüro Berlin</strong> dich
+                freigegeben hat, kannst du dich erneut einloggen und das
+                Portal nutzen.
               </p>
               {user?.email && (
                 <p
