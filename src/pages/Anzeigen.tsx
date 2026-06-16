@@ -656,8 +656,8 @@ const AnzeigenInner: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <h2>{item.gewerk}</h2>
-                        <p>{item.firma} · {item.ort}</p>
+                        <h2>{item.firma}</h2>
+                        <p>{item.gewerk} · {item.ort}</p>
                         <IonNote>
                           {itemIsTalent ? "Verfügbar ab" : "Start"}:{" "}
                           {new Date(item.startdatum).toLocaleDateString("de-DE")}
