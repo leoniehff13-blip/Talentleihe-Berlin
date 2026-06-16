@@ -190,6 +190,15 @@ export const BEWERTUNG_KATEGORIEN: Record<"talent" | "betrieb", [string, string,
   betrieb: ["Zuverlässigkeit", "Arbeitsumfeld", "Wissensvermittlung"],
 };
 
+/**
+ * Mailadresse, die als Verbundbüro-Admin gilt. Nur dieser Account wird
+ * beim Anlegen automatisch freigeschaltet. Alle anderen Verbundbüro-
+ * Registrierungen benötigen eine manuelle Freigabe.
+ */
+export const VERBUNDBUERO_ADMIN_EMAIL = "leonie@3hoffis.de";
+
+export type ProfileRole = "user" | "verbundbuero";
+
 export interface Profile extends Models.Document {
   type: ProfileType;
   user_id: string;
@@ -208,4 +217,6 @@ export interface Profile extends Models.Document {
   ansprechpartner: string | null;
   ansprechpartner_email: string | null;
   spezialisierung: string[];
+  role: ProfileRole | null;
+  approved: boolean | null;
 }

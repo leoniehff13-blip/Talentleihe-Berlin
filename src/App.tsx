@@ -19,6 +19,7 @@ import BewerbungenZurAnzeige from "./pages/BewerbungenZurAnzeige";
 import Informationen from "./pages/Informationen";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import RegisterVerbundbuero from "./pages/auth/RegisterVerbundbuero";
 import Konto from "./pages/auth/Konto";
 import KontoLoeschen from "./pages/auth/KontoLoeschen";
 import Verifizieren from "./pages/auth/Verifizieren";
@@ -105,6 +106,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/registrieren">
               <Register />
+            </Route>
+            <Route exact path="/registrieren/verbundbuero">
+              <RegisterVerbundbuero />
             </Route>
             <Route exact path="/verifizieren">
               <Verifizieren />

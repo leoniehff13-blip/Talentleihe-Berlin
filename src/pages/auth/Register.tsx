@@ -193,6 +193,25 @@ const Register: React.FC = () => {
               Schon registriert? Hier einloggen
             </IonButton>
           </div>
+
+          <div
+            style={{
+              margin: "16px 16px 32px",
+              paddingTop: 20,
+              borderTop: "1px solid rgba(0,0,0,0.08)",
+              textAlign: "center",
+            }}
+          >
+            <IonButton
+              fill="clear"
+              color="medium"
+              size="small"
+              type="button"
+              onClick={() => history.push("/registrieren/verbundbuero")}
+            >
+              Als Mitarbeiter:in Verbundbüro Berlin registrieren
+            </IonButton>
+          </div>
         </form>
         <Footer />
       </IonContent>

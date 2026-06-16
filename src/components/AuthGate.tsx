@@ -17,6 +17,7 @@ import { useHistory } from "react-router-dom";
 import { lockClosedOutline } from "ionicons/icons";
 import { useAuth } from "../lib/AuthContext";
 import VerifizierungsWand from "./VerifizierungsWand";
+import PendingApprovalScreen from "./PendingApprovalScreen";
 import type { ReactNode } from "react";
 
 interface AuthGateProps {
@@ -38,7 +39,7 @@ interface AuthGateProps {
  * Sobald jemand eingeloggt UND verifiziert ist, werden die Children gerendert.
  */
 const AuthGate: React.FC<AuthGateProps> = ({ title, backHref, children }) => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const history = useHistory();
 
   const Toolbar = (
@@ -119,6 +120,11 @@ const AuthGate: React.FC<AuthGateProps> = ({ title, backHref, children }) => {
 
   if (!user.emailVerification) {
     return <VerifizierungsWand title={title} backHref={backHref} />;
+  }
+
+  // Verbundbüro-User ohne Freigabe sehen nur den Warteschirm
+  if (profile?.role === "verbundbuero" && !profile?.approved) {
+    return <PendingApprovalScreen />;
   }
 
   return <>{children}</>;

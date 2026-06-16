@@ -45,6 +45,7 @@ import {
 import Login from "./Login";
 import DokumenteUpload from "../../components/DokumenteUpload";
 import VerifizierungsWand from "../../components/VerifizierungsWand";
+import PendingApprovalScreen from "../../components/PendingApprovalScreen";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -253,6 +254,11 @@ const Konto: React.FC = () => {
   // Registrierung). Erst nach Bestätigung wird das Konto nutzbar.
   // E-Mail-Banner statt Vollsperre – Nutzer kommt direkt ins Konto
   const zeigeEmailBanner = !user.emailVerification;
+
+  // Verbundbüro-User ohne Freigabe → Warteschirm
+  if (profile?.role === "verbundbuero" && !profile?.approved) {
+    return <PendingApprovalScreen />;
+  }
 
   // Nutzer ist eingeloggt, hat aber noch kein Profil → Anlegen-Modus
   const noProfile = !profile;

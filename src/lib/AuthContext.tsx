@@ -5,6 +5,7 @@ import {
   databases,
   DB_LEHRSTELLEN,
   COL_PROFILES,
+  VERBUNDBUERO_ADMIN_EMAIL,
   type Profile,
 } from "./appwrite";
 
@@ -22,6 +23,12 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
   saveProfile: (data: ProfileInput) => Promise<Profile>;
+  /**
+   * Legt ein Verbundbüro-Profil an. Wird beim Registrierungs-Flow für die
+   * Verbundbüro-Rolle aufgerufen. Bei der Admin-Mailadresse direkt freigegeben,
+   * sonst muss die Person manuell freigeschaltet werden.
+   */
+  saveVerbundbueroProfile: (name: string, email: string) => Promise<Profile>;
   sendVerification: () => Promise<void>;
   confirmVerification: (userId: string, secret: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -179,10 +186,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return created;
   }
 
+  async function saveVerbundbueroProfile(
+    name: string,
+    email: string
+  ): Promise<Profile> {
+    const currentUser = await account.get();
+    const userId = currentUser.$id;
+    const isAdmin = email.trim().toLowerCase() === VERBUNDBUERO_ADMIN_EMAIL;
+    // type ist im Schema required → wir setzen einen Platzhalter (betrieb).
+    // role und approved sind die eigentlich relevanten Felder.
+    const data: ProfileInput = {
+      type: "betrieb",
+      user_id: userId,
+      name: name.trim(),
+      vorname: null,
+      anrede: null,
+      ort: null,
+      adresse: null,
+      gewerk: null,
+      handwerkskammer: null,
+      talent_name: null,
+      lehrjahr: null,
+      unternehmen: null,
+      berufsschule: null,
+      faehigkeiten: [],
+      ansprechpartner: null,
+      ansprechpartner_email: null,
+      spezialisierung: [],
+      role: "verbundbuero",
+      approved: isAdmin,
+    };
+    const created = await databases.createDocument<Profile>(
+      DB_LEHRSTELLEN,
+      COL_PROFILES,
+      ID.unique(),
+      data,
+      [
+        Permission.read(Role.user(userId)),
+        Permission.update(Role.user(userId)),
+        Permission.delete(Role.user(userId)),
+      ]
+    );
+    setProfile(created);
+    return created;
+  }
+
   return (
     <AuthContext.Provider
       value={{
         user, profile, loading, profileLoading, login, signup, logout, refresh, saveProfile,
+        saveVerbundbueroProfile,
         sendVerification, confirmVerification, requestPasswordReset, confirmPasswordReset,
       }}
     >

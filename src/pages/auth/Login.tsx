@@ -102,6 +102,24 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
             Noch kein Konto? <Link to="/registrieren">Jetzt registrieren</Link>
           </p>
         </IonNote>
+
+        <div
+          style={{
+            marginTop: 32,
+            paddingTop: 20,
+            borderTop: "1px solid rgba(0,0,0,0.08)",
+            textAlign: "center",
+          }}
+        >
+          <IonButton
+            fill="clear"
+            color="medium"
+            size="small"
+            onClick={() => history.push("/registrieren/verbundbuero")}
+          >
+            Als Mitarbeiter:in Verbundbüro Berlin registrieren
+          </IonButton>
+        </div>
         <Footer />
       </IonContent>
     </IonPage>
