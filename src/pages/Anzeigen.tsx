@@ -171,6 +171,7 @@ const AnzeigenInner: React.FC = () => {
   const [items, setItems] = useState<Anzeige[]>([]);
   const [betriebProfile, setBetriebProfile] = useState<Profile[]>([]);
   const [zeigAlleBetriebe, setZeigAlleBetriebe] = useState(false);
+  const [nurOffene, setNurOffene] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
@@ -430,6 +431,16 @@ const AnzeigenInner: React.FC = () => {
             />
           </IonItem>
         )}
+        {profile?.type === "talent" && !zeigAlleBetriebe && (
+          <IonItem lines="none">
+            <IonLabel>Nur aktuell offene Einsätze</IonLabel>
+            <IonToggle
+              slot="end"
+              checked={nurOffene}
+              onIonChange={(e) => setNurOffene(e.detail.checked)}
+            />
+          </IonItem>
+        )}
         <IonAccordionGroup>
           <IonAccordion value="filter">
             <IonItem slot="header">
@@ -606,9 +617,19 @@ const AnzeigenInner: React.FC = () => {
           </IonList>
         )}
 
-        {!zeigAlleBetriebe && !loading && items.length > 0 && view === "liste" && (
+        {!zeigAlleBetriebe && !loading && view === "liste" && (() => {
+          const today = new Date(); today.setHours(0,0,0,0);
+          const sichtbar = nurOffene
+            ? items.filter(item => {
+                const start = new Date(item.startdatum);
+                const end = item.enddatum ? new Date(item.enddatum) : null;
+                return start <= today && (end === null || end >= today);
+              })
+            : items;
+          if (!sichtbar.length) return null;
+          return (
           <IonList>
-            {items.map((item) => {
+            {sichtbar.map((item) => {
               const itemIsTalent = item.type === "talent_angebot";
               const kammer = item.handwerkskammer ?? "";
               const kammerKurz = kammer.includes("Frankfurt")
@@ -652,7 +673,8 @@ const AnzeigenInner: React.FC = () => {
               );
             })}
           </IonList>
-        )}
+          );
+        })()}
 
         {!zeigAlleBetriebe && !loading && items.length > 0 && view === "karte" && (
           <div className="ion-padding" style={{ paddingTop: 8 }}>
