@@ -452,29 +452,31 @@ const AnzeigenInner: React.FC = () => {
                     onIonInput={(e) => setFilter("ortOrPlz", e.detail.value ?? "")}
                   />
                 </IonItem>
-                <IonItem>
-                  <IonLabel position="stacked">
-                    Umkreis: {filters.umkreis} km
-                  </IonLabel>
-                  <IonRange
-                    min={0}
-                    max={200}
-                    step={5}
-                    snaps
-                    ticks={false}
-                    pin={true}
-                    pinFormatter={(v: number) => `${v} km`}
-                    value={filters.umkreis}
-                    onIonInput={(e) => {
-                      const v = (e.detail.value as number) ?? 50;
-                      setFilter("umkreis", v);
-                    }}
-                    disabled={!filters.ortOrPlz.trim()}
-                  >
-                    <IonLabel slot="start" style={{ fontSize: 12 }}>0</IonLabel>
-                    <IonLabel slot="end" style={{ fontSize: 12 }}>200</IonLabel>
-                  </IonRange>
-                </IonItem>
+                {profile?.type !== "betrieb" && (
+                  <IonItem>
+                    <IonLabel position="stacked">
+                      Umkreis: {filters.umkreis} km
+                    </IonLabel>
+                    <IonRange
+                      min={0}
+                      max={200}
+                      step={5}
+                      snaps
+                      ticks={false}
+                      pin={true}
+                      pinFormatter={(v: number) => `${v} km`}
+                      value={filters.umkreis}
+                      onIonInput={(e) => {
+                        const v = (e.detail.value as number) ?? 50;
+                        setFilter("umkreis", v);
+                      }}
+                      disabled={!filters.ortOrPlz.trim()}
+                    >
+                      <IonLabel slot="start" style={{ fontSize: 12 }}>0</IonLabel>
+                      <IonLabel slot="end" style={{ fontSize: 12 }}>200</IonLabel>
+                    </IonRange>
+                  </IonItem>
+                )}
                 <GewerkMultiPicker
                   value={filters.gewerke}
                   onChange={(v) => setFilter("gewerke", v)}
