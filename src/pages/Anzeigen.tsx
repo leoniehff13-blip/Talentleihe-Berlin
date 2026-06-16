@@ -25,6 +25,7 @@ import {
   IonModal,
   IonSearchbar,
   IonButtons,
+  IonToggle,
 } from "@ionic/react";
 import Footer from "../components/Footer";
 import { useEffect, useState, useCallback } from "react";
@@ -33,8 +34,10 @@ import {
   databases,
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
+  COL_PROFILES,
   MINDESTALTER_OPTIONS,
   type Anzeige,
+  type Profile,
 } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
 import AuthGate from "../components/AuthGate";
@@ -166,6 +169,8 @@ type ViewMode = "liste" | "karte";
 const AnzeigenInner: React.FC = () => {
   const { user, profile, profileLoading } = useAuth();
   const [items, setItems] = useState<Anzeige[]>([]);
+  const [betriebProfile, setBetriebProfile] = useState<Profile[]>([]);
+  const [zeigAlleBetriebe, setZeigAlleBetriebe] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
@@ -214,6 +219,22 @@ const AnzeigenInner: React.FC = () => {
       : angezeigterTyp === "talent_angebot"
         ? "Aktuelle Talent-Angebote von Azubis"
         : "Alle aktuellen Angebote";
+
+  // Alle Betriebe laden (nur für Talent-Ansicht)
+  useEffect(() => {
+    if (!zeigAlleBetriebe || profile?.type !== "talent") return;
+    let cancelled = false;
+    async function loadBetriebe() {
+      const result = await databases.listDocuments<Profile>(
+        DB_LEHRSTELLEN,
+        COL_PROFILES,
+        [Query.equal("type", "betrieb"), Query.limit(100)]
+      );
+      if (!cancelled) setBetriebProfile(result.documents);
+    }
+    loadBetriebe();
+    return () => { cancelled = true; };
+  }, [zeigAlleBetriebe, profile]);
 
   const load = useCallback(async () => {
     if (!user) {
@@ -399,6 +420,16 @@ const AnzeigenInner: React.FC = () => {
           )}
         </div>
 
+        {profile?.type === "talent" && (
+          <IonItem lines="none">
+            <IonLabel>Alle Betriebe anzeigen</IonLabel>
+            <IonToggle
+              slot="end"
+              checked={zeigAlleBetriebe}
+              onIonChange={(e) => setZeigAlleBetriebe(e.detail.checked)}
+            />
+          </IonItem>
+        )}
         <IonAccordionGroup>
           <IonAccordion value="filter">
             <IonItem slot="header">
@@ -541,7 +572,7 @@ const AnzeigenInner: React.FC = () => {
           </div>
         )}
 
-        {!loading && !error && items.length === 0 && (
+        {!zeigAlleBetriebe && !loading && !error && items.length === 0 && (
           <div className="ion-padding">
             <IonText color="medium">
               <p>
@@ -559,7 +590,21 @@ const AnzeigenInner: React.FC = () => {
           </div>
         )}
 
-        {!loading && items.length > 0 && view === "liste" && (
+        {zeigAlleBetriebe && profile?.type === "talent" && (
+          <IonList>
+            {betriebProfile.map((bp) => (
+              <IonItem key={bp.$id} routerLink={`/profil/${bp.user_id}`} detail>
+                <IonLabel>
+                  <h2>{bp.name}</h2>
+                  <p>{(bp.gewerk ?? "").split(",").map(s => s.trim()).filter(Boolean).join(" · ")}</p>
+                  <IonNote>{bp.ort ?? ""}</IonNote>
+                </IonLabel>
+              </IonItem>
+            ))}
+          </IonList>
+        )}
+
+        {!zeigAlleBetriebe && !loading && items.length > 0 && view === "liste" && (
           <IonList>
             {items.map((item) => {
               const itemIsTalent = item.type === "talent_angebot";
@@ -607,7 +652,7 @@ const AnzeigenInner: React.FC = () => {
           </IonList>
         )}
 
-        {!loading && items.length > 0 && view === "karte" && (
+        {!zeigAlleBetriebe && !loading && items.length > 0 && view === "karte" && (
           <div className="ion-padding" style={{ paddingTop: 8 }}>
             <AnzeigenMap items={items} showKammerAreas />
             <IonText color="medium">
