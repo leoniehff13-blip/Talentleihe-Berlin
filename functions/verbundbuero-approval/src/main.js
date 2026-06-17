@@ -112,10 +112,19 @@ export default async ({ req, res, log, error }) => {
       );
     }
 
+    // Achtung: Variablennamen mit Präfix APPWRITE_ kollidieren in manchen
+    // Appwrite-Versionen mit internen Reserved-Names. Daher hier eigene
+    // Namen ohne dieses Präfix. Endpoint und Project-ID können wir teils
+    // auch aus den Appwrite-intern bereitgestellten Variablen lesen.
     const env = {
-      endpoint: process.env.APPWRITE_ENDPOINT || "https://fra.cloud.appwrite.io/v1",
-      projectId: process.env.APPWRITE_PROJECT_ID,
-      apiKey: process.env.APPWRITE_API_KEY,
+      endpoint:
+        process.env.AW_ENDPOINT ||
+        process.env.APPWRITE_FUNCTION_API_ENDPOINT ||
+        "https://fra.cloud.appwrite.io/v1",
+      projectId:
+        process.env.AW_PROJECT_ID ||
+        process.env.APPWRITE_FUNCTION_PROJECT_ID,
+      apiKey: process.env.AW_API_KEY,
       databaseId: process.env.DATABASE_ID || "lehrstellen",
       profilesTable: process.env.PROFILES_TABLE_ID || "profiles",
       resendApiKey: process.env.RESEND_API_KEY,
