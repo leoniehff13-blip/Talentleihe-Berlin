@@ -12,9 +12,11 @@ import {
 
 /**
  * Function-ID der Appwrite-Function, die das Verbundbüro per E-Mail
- * benachrichtigt. Muss in der Appwrite-Konsole exakt so heißen.
+ * benachrichtigt. Beim ersten Anlegen hat Appwrite eine zufällige ID
+ * generiert; daher hier der konkrete Wert. Falls die Function jemals
+ * neu angelegt wird, diese Konstante mit der neuen ID aktualisieren.
  */
-const FN_NOTIFY_VERBUNDBUERO_ADMIN = "notify-verbundbuero-admin";
+const FN_NOTIFY_VERBUNDBUERO_ADMIN = "6a312ffc0009bd7f56b0";
 
 async function notifyVerbundbueroAdmin(name: string, email: string) {
   // eslint-disable-next-line no-console
