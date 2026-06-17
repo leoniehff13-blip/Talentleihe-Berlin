@@ -158,34 +158,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (code !== 401) throw err;
     }
     try { await refresh(); } catch { /* ignore */ }
-
-    // Verbundbüro-Approval-Benachrichtigung: wenn das Profil ein
-    // Verbundbüro-Profil ist und noch nicht freigegeben wurde, schicken
-    // wir das Verbundbüro Berlin per Function-Call eine Mail. Der Admin-
-    // Account (praxisprojekt5@gmail.com) wird übersprungen, da der sowieso
-    // automatisch freigegeben ist.
-    try {
-      const u = await account.get();
-      // eslint-disable-next-line no-console
-      console.log("[Verbundbüro] Verifizierung erfolgreich, prüfe Profil…", u.email);
-      if (u.email.trim().toLowerCase() === VERBUNDBUERO_ADMIN_EMAIL) {
-        // eslint-disable-next-line no-console
-        console.log("[Verbundbüro] Admin-Account – keine Benachrichtigung nötig.");
-        return;
-      }
-      const p = await fetchProfileFor(u.$id);
-      // eslint-disable-next-line no-console
-      console.log("[Verbundbüro] Profil:", { role: p?.role, approved: p?.approved });
-      if (p?.role === "verbundbuero" && !p?.approved) {
-        await notifyVerbundbueroAdmin(p.name, u.email);
-      } else {
-        // eslint-disable-next-line no-console
-        console.log("[Verbundbüro] Kein Verbundbüro-Approval-Fall – Skip.");
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error("[Verbundbüro] Fehler beim Approval-Check:", err);
-    }
+    // Hinweis: Die Verbundbüro-Benachrichtigung wird bei der Registrierung
+    // verschickt (saveVerbundbueroProfile), NICHT hier. Grund: der
+    // Verifizierungs-Link kann in einem Tab ohne Session geklickt werden,
+    // dann fehlen die Berechtigungen für den Function-Aufruf.
   }
 
   async function requestPasswordReset(email: string) {
@@ -287,6 +263,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ]
     );
     setProfile(created);
+
+    // Wenn nicht der Admin selbst → Verbundbüro per Mail benachrichtigen.
+    // Wir machen das hier (statt nach E-Mail-Verifizierung), weil die
+    // Verifizierung in einem anderen Tab/Browser ohne Session geklickt werden
+    // kann und der Function-Call dann fehlschlägt. Hier ist die Session
+    // garantiert frisch (signup hat sie gerade angelegt).
+    if (!isAdmin) {
+      await notifyVerbundbueroAdmin(name.trim(), email.trim());
+    }
+
     return created;
   }
 
