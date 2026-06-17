@@ -21,7 +21,7 @@ import {
   IonAccordion,
   IonAccordionGroup,
 } from "@ionic/react";
-import { chevronBackOutline } from "ionicons/icons";
+import { chevronBackOutline, personOutline, businessOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Query } from "appwrite";
@@ -168,17 +168,17 @@ const VerbundbueroUebersichtInner: React.FC = () => {
               onClick={() => history.push(`/verbundbuero-anzeige/${a.$id}`)}
               detail
             >
+              {/* Icon links: Person für Talent-Angebot, Firma für Einsatz */}
+              <IonIcon
+                slot="start"
+                icon={istTalent ? personOutline : businessOutline}
+                color={istTalent ? "tertiary" : "primary"}
+                aria-label={istTalent ? "Talent-Angebot" : "Einsatz"}
+                style={{ fontSize: 28 }}
+              />
               <IonLabel>
                 {/* Zeile 1: Name des Betriebs/Talents */}
-                <h2 style={{ fontWeight: 700 }}>
-                  {a.firma || "—"}
-                  <IonBadge
-                    color={istTalent ? "tertiary" : "primary"}
-                    style={{ marginLeft: 8 }}
-                  >
-                    {istTalent ? "Talent" : "Einsatz"}
-                  </IonBadge>
-                </h2>
+                <h2 style={{ fontWeight: 700 }}>{a.firma || "—"}</h2>
                 {/* Zeile 2: Gewerk + Ort */}
                 <p>
                   {a.gewerk}
@@ -246,6 +246,20 @@ const VerbundbueroUebersichtInner: React.FC = () => {
 
         {!loading && !error && (
           <>
+            {/* Sichtbarer Zurück-Button im Body, damit er nicht in der
+                Toolbar verloren geht */}
+            <div className="ion-padding" style={{ paddingBottom: 0 }}>
+              <IonButton
+                fill="outline"
+                color="secondary"
+                size="small"
+                onClick={() => history.replace("/konto")}
+              >
+                <IonIcon slot="start" icon={chevronBackOutline} />
+                Zurück zum Konto
+              </IonButton>
+            </div>
+
             <IonCard>
               <IonCardContent>
                 <IonText color="medium">
