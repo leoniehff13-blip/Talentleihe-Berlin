@@ -416,7 +416,7 @@ const Konto: React.FC = () => {
           <IonLabel>E-Mail bestätigt</IonLabel>
         </IonChip>
 
-        {isTalent ? (
+        {!isVerbundbuero && isTalent ? (
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>Ausbildung</IonCardTitle>
@@ -476,7 +476,7 @@ const Konto: React.FC = () => {
               </IonList>
             </IonCardContent>
           </IonCard>
-        ) : (
+        ) : !isVerbundbuero ? (
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>Betrieb</IonCardTitle>
@@ -540,7 +540,7 @@ const Konto: React.FC = () => {
               </IonList>
             </IonCardContent>
           </IonCard>
-        )}
+        ) : null}
 
         {/* Profil bearbeiten (nicht für Verbundbüro) */}
         {!isVerbundbuero && (
@@ -566,22 +566,49 @@ const Konto: React.FC = () => {
 
         {/* Verbundbüro-spezifische Karte: Übersicht aller Bewerbungen */}
         {isVerbundbuero && (
-          <IonCard button routerLink="/verbundbuero-uebersicht">
-            <IonCardContent style={{ display: "flex", alignItems: "center" }}>
+          <IonCard
+            button
+            routerLink="/verbundbuero-uebersicht"
+            color="primary"
+            style={{ marginTop: 16, marginBottom: 16 }}
+          >
+            <IonCardContent
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 20,
+                padding: 28,
+              }}
+            >
               <IonIcon
                 icon={sendOutline}
-                color="primary"
-                style={{ fontSize: 28, marginRight: 16 }}
+                style={{ fontSize: 44, color: "#ffffff" }}
               />
               <div style={{ flex: 1 }}>
-                <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
+                <h2
+                  style={{
+                    margin: 0,
+                    color: "#ffffff",
+                    fontSize: 22,
+                    fontWeight: 700,
+                  }}
+                >
                   Aktuelle Bewerbungen
-                </h3>
-                <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
+                </h2>
+                <p
+                  style={{
+                    margin: "4px 0 0",
+                    color: "rgba(255,255,255,0.88)",
+                    fontSize: 14,
+                  }}
+                >
                   Alle Einsätze und Talent-Angebote mit Bewerbungen
                 </p>
               </div>
-              <IonIcon icon={chevronForward} color="medium" />
+              <IonIcon
+                icon={chevronForward}
+                style={{ fontSize: 28, color: "#ffffff" }}
+              />
             </IonCardContent>
           </IonCard>
         )}
