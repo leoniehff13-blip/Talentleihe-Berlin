@@ -5,7 +5,8 @@ import {
   IonTitle,
   IonToolbar,
   IonButtons,
-  IonBackButton,
+  IonButton,
+  IonIcon,
   IonText,
   IonSpinner,
   IonList,
@@ -20,6 +21,7 @@ import {
   IonAccordion,
   IonAccordionGroup,
 } from "@ionic/react";
+import { chevronBackOutline } from "ionicons/icons";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { Query } from "appwrite";
@@ -163,12 +165,13 @@ const VerbundbueroUebersichtInner: React.FC = () => {
             <IonItem
               key={a.$id}
               button
-              onClick={() => history.push(`/anzeigen/${a.$id}`)}
+              onClick={() => history.push(`/verbundbuero-anzeige/${a.$id}`)}
               detail
             >
               <IonLabel>
-                <h2>
-                  {a.gewerk}
+                {/* Zeile 1: Name des Betriebs/Talents */}
+                <h2 style={{ fontWeight: 700 }}>
+                  {a.firma || "—"}
                   <IonBadge
                     color={istTalent ? "tertiary" : "primary"}
                     style={{ marginLeft: 8 }}
@@ -176,14 +179,19 @@ const VerbundbueroUebersichtInner: React.FC = () => {
                     {istTalent ? "Talent" : "Einsatz"}
                   </IonBadge>
                 </h2>
+                {/* Zeile 2: Gewerk + Ort */}
                 <p>
-                  {a.firma} · {a.ort}
+                  {a.gewerk}
+                  {a.ort && ` · ${a.ort}`}
                 </p>
+                {/* Zeile 3: Start- und Enddatum */}
                 <IonNote>
-                  {a.startdatum &&
-                    `Start ${new Date(a.startdatum).toLocaleDateString("de-DE")}`}
-                  {a.enddatum &&
-                    ` · Ende ${new Date(a.enddatum).toLocaleDateString("de-DE")}`}
+                  {a.startdatum
+                    ? `Start ${new Date(a.startdatum).toLocaleDateString("de-DE")}`
+                    : "Start —"}
+                  {a.enddatum
+                    ? ` · Ende ${new Date(a.enddatum).toLocaleDateString("de-DE")}`
+                    : ""}
                 </IonNote>
                 <div style={{ marginTop: 6, display: "flex", gap: 6, flexWrap: "wrap" }}>
                   <IonBadge color="warning">
@@ -213,7 +221,10 @@ const VerbundbueroUebersichtInner: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton defaultHref="/konto" />
+            <IonButton onClick={() => history.replace("/konto")} fill="clear">
+              <IonIcon slot="start" icon={chevronBackOutline} />
+              Zurück
+            </IonButton>
           </IonButtons>
           <IonTitle>Aktuelle Bewerbungen</IonTitle>
         </IonToolbar>
