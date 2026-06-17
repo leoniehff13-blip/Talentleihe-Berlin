@@ -29,21 +29,35 @@ const safeHtml = (s) =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
   );
 
-async function appwriteFetch(method, path, env, body) {
+async function appwriteFetch(method, path, env, body, log) {
   const url = `${env.endpoint}${path}`;
-  const res = await fetch(url, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      "X-Appwrite-Project": env.projectId,
-      "X-Appwrite-Key": env.apiKey,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch { /* ignore */ }
-  return { ok: res.ok, status: res.status, data, text };
+  if (log) log(`-> ${method} ${url}`);
+  // Timeout: 10 Sekunden pro HTTP-Call, damit wir nicht ins 30-Sekunden-
+  // Function-Timeout laufen, wenn der Endpoint hängt.
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), 10_000);
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "X-Appwrite-Project": env.projectId,
+        "X-Appwrite-Key": env.apiKey,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+      signal: ctrl.signal,
+    });
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { /* ignore */ }
+    if (log) log(`<- ${method} ${url} (${res.status})`);
+    return { ok: res.ok, status: res.status, data, text };
+  } catch (e) {
+    if (log) log(`!! ${method} ${url} failed: ${e && e.message}`);
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function sendRejectionMail(to, name, env, log, error) {
@@ -116,20 +130,24 @@ export default async ({ req, res, log, error }) => {
     // Appwrite-Versionen mit internen Reserved-Names. Daher hier eigene
     // Namen ohne dieses Präfix. Endpoint und Project-ID können wir teils
     // auch aus den Appwrite-intern bereitgestellten Variablen lesen.
+    // Wichtig: aus einer Appwrite-Function HEIM ins eigene Projekt rufen wir
+    // den intern injizierten Endpoint auf, NICHT die public URL. Der Aufruf
+    // an https://fra.cloud.appwrite.io kann sonst durch Firewall/DNS hängen.
     const env = {
       endpoint:
-        process.env.AW_ENDPOINT ||
         process.env.APPWRITE_FUNCTION_API_ENDPOINT ||
+        process.env.AW_ENDPOINT ||
         "https://fra.cloud.appwrite.io/v1",
       projectId:
-        process.env.AW_PROJECT_ID ||
-        process.env.APPWRITE_FUNCTION_PROJECT_ID,
+        process.env.APPWRITE_FUNCTION_PROJECT_ID ||
+        process.env.AW_PROJECT_ID,
       apiKey: process.env.AW_API_KEY,
       databaseId: process.env.DATABASE_ID || "lehrstellen",
       profilesTable: process.env.PROFILES_TABLE_ID || "profiles",
       resendApiKey: process.env.RESEND_API_KEY,
       fromEmail: process.env.FROM_EMAIL || "onboarding@resend.dev",
     };
+    log(`Using endpoint=${env.endpoint}, projectId=${env.projectId ? "set" : "MISSING"}, apiKey=${env.apiKey ? "set" : "MISSING"}`);
 
     if (!env.projectId || !env.apiKey) {
       error("APPWRITE_PROJECT_ID und APPWRITE_API_KEY müssen gesetzt sein.");
@@ -143,7 +161,9 @@ export default async ({ req, res, log, error }) => {
     const getRes = await appwriteFetch(
       "GET",
       `/databases/${env.databaseId}/collections/${env.profilesTable}/documents/${profileId}`,
-      env
+      env,
+      undefined,
+      log
     );
     if (!getRes.ok || !getRes.data) {
       return res.json(
@@ -179,7 +199,8 @@ export default async ({ req, res, log, error }) => {
         "PATCH",
         `/databases/${env.databaseId}/collections/${env.profilesTable}/documents/${profileId}`,
         env,
-        { data: { approved: true, approval_token: null } }
+        { data: { approved: true, approval_token: null } },
+        log
       );
       if (!updateRes.ok) {
         error(`PATCH ${updateRes.status}: ${updateRes.text}`);
@@ -195,7 +216,7 @@ export default async ({ req, res, log, error }) => {
     let applicantEmail = null;
     let applicantName = profile.name || "";
     try {
-      const userRes = await appwriteFetch("GET", `/users/${userId}`, env);
+      const userRes = await appwriteFetch("GET", `/users/${userId}`, env, undefined, log);
       if (userRes.ok && userRes.data) {
         applicantEmail = userRes.data.email || null;
         applicantName = applicantName || userRes.data.name || "";
@@ -208,7 +229,9 @@ export default async ({ req, res, log, error }) => {
     const delProfile = await appwriteFetch(
       "DELETE",
       `/databases/${env.databaseId}/collections/${env.profilesTable}/documents/${profileId}`,
-      env
+      env,
+      undefined,
+      log
     );
     if (!delProfile.ok) {
       error(`Profil-Delete ${delProfile.status}: ${delProfile.text}`);
