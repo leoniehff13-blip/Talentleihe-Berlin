@@ -16,10 +16,10 @@ import { checkmarkCircleOutline, alertCircleOutline } from "ionicons/icons";
 import { functions } from "../lib/appwrite";
 
 /**
- * Function-ID der Approval-Function. Beim ersten Anlegen in der Appwrite-
- * Konsole exakt diese ID setzen — sonst hier mit der echten ID überschreiben.
+ * Function-ID der Approval-Function. Beim Anlegen hat Appwrite eine zufällige
+ * ID generiert, daher hier der konkrete Wert.
  */
-const FN_VERBUNDBUERO_APPROVAL = "verbundbuero-approval";
+const FN_VERBUNDBUERO_APPROVAL = "6a324f6600063f754aab";
 
 type Status = "pending" | "approved" | "rejected" | "alreadyDone" | "error" | "missing";
 
