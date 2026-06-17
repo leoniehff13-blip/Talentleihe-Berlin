@@ -17,19 +17,23 @@ import {
 const FN_NOTIFY_VERBUNDBUERO_ADMIN = "notify-verbundbuero-admin";
 
 async function notifyVerbundbueroAdmin(name: string, email: string) {
+  // eslint-disable-next-line no-console
+  console.log("[Verbundbüro] notify-Function wird aufgerufen für:", name, email);
   try {
-    await functions.createExecution(
+    const result = await functions.createExecution(
       FN_NOTIFY_VERBUNDBUERO_ADMIN,
       JSON.stringify({ applicantName: name, applicantEmail: email }),
-      false, // synchron ausführen, damit Fehler im Log sichtbar werden
+      false,
       "/",
       "POST" as never,
       { "Content-Type": "application/json" } as never
     );
+    // eslint-disable-next-line no-console
+    console.log("[Verbundbüro] notify-Function fertig:", result);
   } catch (err) {
     // Benachrichtigung darf den Login-/Verifizierungs-Flow NICHT blockieren.
     // eslint-disable-next-line no-console
-    console.warn("Notify Verbundbüro-Admin fehlgeschlagen:", err);
+    console.error("[Verbundbüro] notify-Function fehlgeschlagen:", err);
   }
 }
 
@@ -162,13 +166,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // automatisch freigegeben ist.
     try {
       const u = await account.get();
-      if (u.email.trim().toLowerCase() === VERBUNDBUERO_ADMIN_EMAIL) return;
+      // eslint-disable-next-line no-console
+      console.log("[Verbundbüro] Verifizierung erfolgreich, prüfe Profil…", u.email);
+      if (u.email.trim().toLowerCase() === VERBUNDBUERO_ADMIN_EMAIL) {
+        // eslint-disable-next-line no-console
+        console.log("[Verbundbüro] Admin-Account – keine Benachrichtigung nötig.");
+        return;
+      }
       const p = await fetchProfileFor(u.$id);
+      // eslint-disable-next-line no-console
+      console.log("[Verbundbüro] Profil:", { role: p?.role, approved: p?.approved });
       if (p?.role === "verbundbuero" && !p?.approved) {
         await notifyVerbundbueroAdmin(p.name, u.email);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log("[Verbundbüro] Kein Verbundbüro-Approval-Fall – Skip.");
       }
-    } catch {
-      /* ignore – Benachrichtigung ist best-effort */
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error("[Verbundbüro] Fehler beim Approval-Check:", err);
     }
   }
 
