@@ -219,4 +219,5 @@ export interface Profile extends Models.Document {
   spezialisierung: string[];
   role: ProfileRole | null;
   approved: boolean | null;
+  approval_token: string | null;
 }

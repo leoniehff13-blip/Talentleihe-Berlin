@@ -18,13 +18,30 @@ import {
  */
 const FN_NOTIFY_VERBUNDBUERO_ADMIN = "6a312ffc0009bd7f56b0";
 
-async function notifyVerbundbueroAdmin(name: string, email: string) {
+/** Baut eine absolute App-URL für einen Pfad (berücksichtigt Vite-Base). */
+function appUrlForApproval(path: string): string {
+  const raw = import.meta.env.BASE_URL || "/";
+  const base = raw.endsWith("/") ? raw : `${raw}/`;
+  return `${window.location.origin}${base}${path}`;
+}
+
+async function notifyVerbundbueroAdmin(
+  name: string,
+  email: string,
+  approveUrl: string,
+  rejectUrl: string
+) {
   // eslint-disable-next-line no-console
   console.log("[Verbundbüro] notify-Function wird aufgerufen für:", name, email);
   try {
     const result = await functions.createExecution(
       FN_NOTIFY_VERBUNDBUERO_ADMIN,
-      JSON.stringify({ applicantName: name, applicantEmail: email }),
+      JSON.stringify({
+        applicantName: name,
+        applicantEmail: email,
+        approveUrl,
+        rejectUrl,
+      }),
       false,
       "/",
       "POST" as never,
@@ -33,10 +50,18 @@ async function notifyVerbundbueroAdmin(name: string, email: string) {
     // eslint-disable-next-line no-console
     console.log("[Verbundbüro] notify-Function fertig:", result);
   } catch (err) {
-    // Benachrichtigung darf den Login-/Verifizierungs-Flow NICHT blockieren.
     // eslint-disable-next-line no-console
     console.error("[Verbundbüro] notify-Function fehlgeschlagen:", err);
   }
+}
+
+/** Zufalls-Token erzeugen — als Geheimnis für den Approval-Link. */
+function generateApprovalToken(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID().replace(/-/g, "");
+  }
+  // Fallback (unwahrscheinlich nötig in modernen Browsern)
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
 type AuthUser = Models.User<Models.Preferences> | null;
@@ -233,6 +258,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Es darf hier nicht mitgesendet werden, sonst lehnt Appwrite das Dokument
     // mit "document_invalid_structure" ab. Wir umgehen den TS-Cast mit einem
     // Record-Typ – die Liste hier muss zur tatsächlichen DB-Schema-Spaltenliste passen.
+    // Token für die Approval-Links (nur bei Nicht-Admin nötig).
+    const approvalToken = isAdmin ? null : generateApprovalToken();
+
     const data = {
       type: "betrieb" as const,
       user_id: userId,
@@ -252,6 +280,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       spezialisierung: [],
       role: "verbundbuero" as const,
       approved: isAdmin,
+      approval_token: approvalToken,
     } as unknown as ProfileInput;
     const created = await databases.createDocument<Profile>(
       DB_LEHRSTELLEN,
@@ -271,8 +300,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Verifizierung in einem anderen Tab/Browser ohne Session geklickt werden
     // kann und der Function-Call dann fehlschlägt. Hier ist die Session
     // garantiert frisch (signup hat sie gerade angelegt).
-    if (!isAdmin) {
-      await notifyVerbundbueroAdmin(name.trim(), email.trim());
+    if (!isAdmin && approvalToken) {
+      const baseUrl = appUrlForApproval(`verbundbuero-freigabe`);
+      const params = `profile=${encodeURIComponent(created.$id)}&token=${encodeURIComponent(approvalToken)}`;
+      const approveUrl = `${baseUrl}?${params}&action=approve`;
+      const rejectUrl = `${baseUrl}?${params}&action=reject`;
+      await notifyVerbundbueroAdmin(name.trim(), email.trim(), approveUrl, rejectUrl);
     }
 
     return created;

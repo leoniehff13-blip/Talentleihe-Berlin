@@ -2,22 +2,27 @@
  * Appwrite Function: notify-verbundbuero-admin
  *
  * Wird vom Frontend aufgerufen, sobald ein:e Verbundbüro-User:in
- * ihre eigene E-Mail-Adresse bestätigt hat. Verschickt eine
- * Benachrichtigung an das Verbundbüro Berlin, damit dort die
- * Freigabe erteilt werden kann.
+ * angelegt wurde (während noch eine Session aktiv ist). Verschickt eine
+ * Benachrichtigung an das Verbundbüro Berlin mit zwei Buttons:
+ * „Freigeben" und „Ablehnen". Die Buttons sind signierte URLs auf die
+ * App-Route /verbundbuero-freigabe.
  *
  * Erwartetes Body-JSON:
- *   { "applicantName": "...", "applicantEmail": "..." }
+ *   {
+ *     "applicantName": "...",
+ *     "applicantEmail": "...",
+ *     "approveUrl": "https://…/verbundbuero-freigabe?…&action=approve",
+ *     "rejectUrl":  "https://…/verbundbuero-freigabe?…&action=reject"
+ *   }
  *
- * Environment-Variablen (in der Appwrite-Konsole zu setzen):
+ * Environment-Variablen:
  *   RESEND_API_KEY  – API-Key von resend.com (Pflicht)
  *   ADMIN_EMAIL     – Mail-Adresse des Verbundbüros (Default: praxisprojekt5@gmail.com)
- *   FROM_EMAIL      – Absender (Default: onboarding@resend.dev für Tests)
+ *   FROM_EMAIL      – Absender (Default: onboarding@resend.dev)
  */
 
 export default async ({ req, res, log, error }) => {
   try {
-    // Body parsen (kommt je nach Appwrite-Version als String oder Object)
     let body = {};
     if (typeof req.body === "string") {
       try { body = JSON.parse(req.body || "{}"); } catch { body = {}; }
@@ -27,6 +32,8 @@ export default async ({ req, res, log, error }) => {
 
     const applicantName = String(body.applicantName || "").trim();
     const applicantEmail = String(body.applicantEmail || "").trim();
+    const approveUrl = String(body.approveUrl || "").trim();
+    const rejectUrl = String(body.rejectUrl || "").trim();
 
     if (!applicantName || !applicantEmail) {
       return res.json(
@@ -52,23 +59,44 @@ export default async ({ req, res, log, error }) => {
         ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
       );
 
+    const buttonsHtml = approveUrl && rejectUrl
+      ? `
+        <table cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+          <tr>
+            <td style="padding-right: 12px;">
+              <a href="${safe(approveUrl)}"
+                 style="display:inline-block;padding:14px 28px;background:#2dd36f;color:#ffffff;
+                        font-family:-apple-system,Segoe UI,sans-serif;font-weight:600;font-size:14px;
+                        text-decoration:none;border-radius:6px;">
+                ✓ Freigeben
+              </a>
+            </td>
+            <td>
+              <a href="${safe(rejectUrl)}"
+                 style="display:inline-block;padding:14px 28px;background:#eb445a;color:#ffffff;
+                        font-family:-apple-system,Segoe UI,sans-serif;font-weight:600;font-size:14px;
+                        text-decoration:none;border-radius:6px;">
+                ✕ Ablehnen
+              </a>
+            </td>
+          </tr>
+        </table>
+        <p style="color:#888;font-size:12px;margin:0 0 16px;">
+          Beim Klick auf „Ablehnen" wird das Konto gelöscht und der Antragsteller benachrichtigt.
+          Beim Klick auf „Freigeben" wird das Konto sofort aktiv.
+        </p>`
+      : "";
+
     const html = `
       <div style="font-family: -apple-system, Segoe UI, sans-serif; max-width: 540px; margin: 0 auto; padding: 20px; color: #0d1b38;">
         <h2 style="color: #0b1f4a; margin: 0 0 16px;">Neue Verbundbüro-Anfrage</h2>
         <p>Hallo Verbundbüro Berlin,</p>
-        <p>eine Person hat sich auf der Talentleihe-Plattform als Mitarbeiter:in registriert und ihre E-Mail-Adresse bestätigt:</p>
+        <p>eine Person hat sich auf der Talentleihe-Plattform als Mitarbeiter:in registriert:</p>
         <table style="margin: 20px 0; border-collapse: collapse;">
           <tr><td style="padding: 6px 12px; color: #555;">Name:</td><td style="padding: 6px 12px;"><strong>${safe(applicantName)}</strong></td></tr>
           <tr><td style="padding: 6px 12px; color: #555;">E-Mail:</td><td style="padding: 6px 12px;"><strong>${safe(applicantEmail)}</strong></td></tr>
         </table>
-        <p>Damit die Person Zugriff auf das Portal bekommt, muss das Profil in der Appwrite-Konsole freigegeben werden:</p>
-        <ol style="line-height: 1.7;">
-          <li>Appwrite-Konsole öffnen</li>
-          <li>Projekt &rarr; Datenbank <code>lehrstellen</code> &rarr; Tabelle <code>profiles</code></li>
-          <li>Datensatz dieser Person suchen (Filter: <code>user_id</code> oder <code>name</code>)</li>
-          <li><code>approved</code> auf <strong>true</strong> setzen &amp; speichern</li>
-        </ol>
-        <p>Die Person wird ab dann beim nächsten Login direkt ins Portal weitergeleitet.</p>
+        ${buttonsHtml}
         <p style="color: #888; font-size: 13px; margin-top: 30px;">
           Diese Mail wurde automatisch von der Talentleihe-Plattform versendet.
         </p>
@@ -79,7 +107,8 @@ export default async ({ req, res, log, error }) => {
       `Neue Verbundbüro-Anfrage\n\n` +
       `Name: ${applicantName}\n` +
       `E-Mail: ${applicantEmail}\n\n` +
-      `Bitte in der Appwrite-Konsole bei der Tabelle "profiles" für diesen User "approved" auf true setzen.\n`;
+      (approveUrl ? `Freigeben:  ${approveUrl}\n` : "") +
+      (rejectUrl ? `Ablehnen:   ${rejectUrl}\n` : "");
 
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
