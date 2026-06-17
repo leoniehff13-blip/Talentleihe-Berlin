@@ -68,6 +68,7 @@ const AnzeigeDetailInner: React.FC = () => {
   const ownerId = item ? (item.owner_id ?? extractOwnerId(item.$permissions ?? [])) : null;
   const istEigeneAnzeige = Boolean(user && ownerId === user.$id);
   const istTalent = profile?.type === "talent";
+  const istVerbundbuero = profile?.role === "verbundbuero";
   const istBewerbungVergeben = istEigeneAnzeige === false && istTalent;
 
   const loadItem = useCallback(async () => {
@@ -382,7 +383,7 @@ const AnzeigeDetailInner: React.FC = () => {
               </IonCard>
             )}
 
-            {!istEigeneAnzeige && !eigeneBewerbung && (
+            {!istEigeneAnzeige && !eigeneBewerbung && !istVerbundbuero && (
               <IonCard>
                 <IonCardHeader>
                   <IonCardTitle>Interesse?</IonCardTitle>

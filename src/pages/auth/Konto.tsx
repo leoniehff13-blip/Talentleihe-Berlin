@@ -375,11 +375,19 @@ const Konto: React.FC = () => {
   }
 
   // Profil-Anzeige als Hub
-  const isTalent = profile.type === "talent";
-  const headlineName = isTalent
-    ? [profile.anrede, profile.vorname, profile.name].filter(Boolean).join(" ")
-    : profile.name;
+  const isVerbundbuero = profile.role === "verbundbuero";
+  const isTalent = !isVerbundbuero && profile.type === "talent";
+  const headlineName = isVerbundbuero
+    ? profile.name
+    : isTalent
+      ? [profile.anrede, profile.vorname, profile.name].filter(Boolean).join(" ")
+      : profile.name;
   const anzeigenLabel = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
+  const rollenLabel = isVerbundbuero
+    ? "Mitarbeiter Verbundbüro"
+    : isTalent
+      ? "Talent (Azubi)"
+      : "Betrieb";
 
   return (
     <IonPage>
@@ -392,9 +400,7 @@ const Konto: React.FC = () => {
         {/* Profil-Karte */}
         <IonCard>
           <IonCardHeader>
-            <IonCardSubtitle>
-              {isTalent ? "Talent (Azubi)" : "Betrieb"}
-            </IonCardSubtitle>
+            <IonCardSubtitle>{rollenLabel}</IonCardSubtitle>
             <IonCardTitle>{headlineName || "—"}</IonCardTitle>
           </IonCardHeader>
           <IonCardContent>
@@ -536,25 +542,53 @@ const Konto: React.FC = () => {
           </IonCard>
         )}
 
-        {/* Profil bearbeiten */}
-        <IonButton
-          expand="block"
-          fill="outline"
-          color="secondary"
-          onClick={() => setEditing(true)}
-          style={{ marginBottom: 8 }}
-        >
-          <IonIcon slot="start" icon={createOutline} />
-          Profil bearbeiten
-        </IonButton>
+        {/* Profil bearbeiten (nicht für Verbundbüro) */}
+        {!isVerbundbuero && (
+          <IonButton
+            expand="block"
+            fill="outline"
+            color="secondary"
+            onClick={() => setEditing(true)}
+            style={{ marginBottom: 8 }}
+          >
+            <IonIcon slot="start" icon={createOutline} />
+            Profil bearbeiten
+          </IonButton>
+        )}
 
         {/* Bewerbungsunterlagen (nur für Talents) */}
         {isTalent && <DokumenteUpload mode="manage" />}
 
-        {/* Bewertungen */}
-        <BewertungSection userId={user.$id} profileType={profile.type} />
+        {/* Bewertungen (nicht für Verbundbüro) */}
+        {!isVerbundbuero && (
+          <BewertungSection userId={user.$id} profileType={profile.type} />
+        )}
 
-        {/* Hub-Karten */}
+        {/* Verbundbüro-spezifische Karte: Übersicht aller Bewerbungen */}
+        {isVerbundbuero && (
+          <IonCard button routerLink="/verbundbuero-uebersicht">
+            <IonCardContent style={{ display: "flex", alignItems: "center" }}>
+              <IonIcon
+                icon={sendOutline}
+                color="primary"
+                style={{ fontSize: 28, marginRight: 16 }}
+              />
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
+                  Aktuelle Bewerbungen
+                </h3>
+                <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
+                  Alle Einsätze und Talent-Angebote mit Bewerbungen
+                </p>
+              </div>
+              <IonIcon icon={chevronForward} color="medium" />
+            </IonCardContent>
+          </IonCard>
+        )}
+
+        {/* Hub-Karten (nicht für Verbundbüro – die haben einen anderen Funktionsumfang) */}
+        {!isVerbundbuero && (
+        <>
         <IonCard button routerLink="/meine-anzeigen">
           <IonCardContent style={{ display: "flex", alignItems: "center" }}>
             <IonIcon
@@ -611,6 +645,8 @@ const Konto: React.FC = () => {
             <IonIcon icon={chevronForward} color="medium" />
           </IonCardContent>
         </IonCard>
+        </>
+        )}
 
         <IonButton expand="block" color="medium" onClick={handleLogout} style={{ marginTop: 16 }}>
           Logout
