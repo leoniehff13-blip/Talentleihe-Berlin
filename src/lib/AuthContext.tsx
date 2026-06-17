@@ -158,7 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Verbundbüro-Approval-Benachrichtigung: wenn das Profil ein
     // Verbundbüro-Profil ist und noch nicht freigegeben wurde, schicken
     // wir das Verbundbüro Berlin per Function-Call eine Mail. Der Admin-
-    // Account (leonie@3hoffis.de) wird übersprungen, da der sowieso
+    // Account (praxisprojekt5@gmail.com) wird übersprungen, da der sowieso
     // automatisch freigegeben ist.
     try {
       const u = await account.get();

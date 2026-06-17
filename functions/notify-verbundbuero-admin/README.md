@@ -38,7 +38,7 @@ In der Function-Konfiguration im Tab **Settings → Environment variables**:
 | Key | Wert |
 |---|---|
 | `RESEND_API_KEY` | dein Resend-Key aus Schritt 1 |
-| `ADMIN_EMAIL` | `leonie@3hoffis.de` |
+| `ADMIN_EMAIL` | `praxisprojekt5@gmail.com` |
 | `FROM_EMAIL` | `onboarding@resend.dev` (oder eigene verifizierte Adresse) |
 
 ### 4. Function deployen
@@ -49,7 +49,7 @@ automatisch neu. Im Tab **Deployments** der Function siehst du den Status.
 ### 5. Testen
 
 Im Frontend einen neuen Verbundbüro-Account anlegen (mit einer **anderen**
-Mail als `leonie@3hoffis.de`). Nach Klick auf den Verifizierungs-Link in der
+Mail als `praxisprojekt5@gmail.com`). Nach Klick auf den Verifizierungs-Link in der
 ersten Mail wird die Function getriggert. Im Resend-Dashboard sollte die
 gesendete Mail auftauchen.
 

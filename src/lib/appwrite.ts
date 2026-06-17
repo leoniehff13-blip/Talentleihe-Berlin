@@ -195,7 +195,7 @@ export const BEWERTUNG_KATEGORIEN: Record<"talent" | "betrieb", [string, string,
  * beim Anlegen automatisch freigeschaltet. Alle anderen Verbundbüro-
  * Registrierungen benötigen eine manuelle Freigabe.
  */
-export const VERBUNDBUERO_ADMIN_EMAIL = "leonie@3hoffis.de";
+export const VERBUNDBUERO_ADMIN_EMAIL = "praxisprojekt5@gmail.com";
 
 export type ProfileRole = "user" | "verbundbuero";
 

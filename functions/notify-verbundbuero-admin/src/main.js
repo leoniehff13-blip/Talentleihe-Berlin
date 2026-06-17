@@ -11,7 +11,7 @@
  *
  * Environment-Variablen (in der Appwrite-Konsole zu setzen):
  *   RESEND_API_KEY  – API-Key von resend.com (Pflicht)
- *   ADMIN_EMAIL     – Mail-Adresse des Verbundbüros (Default: leonie@3hoffis.de)
+ *   ADMIN_EMAIL     – Mail-Adresse des Verbundbüros (Default: praxisprojekt5@gmail.com)
  *   FROM_EMAIL      – Absender (Default: onboarding@resend.dev für Tests)
  */
 
@@ -36,7 +36,7 @@ export default async ({ req, res, log, error }) => {
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
-    const adminEmail = process.env.ADMIN_EMAIL || "leonie@3hoffis.de";
+    const adminEmail = process.env.ADMIN_EMAIL || "praxisprojekt5@gmail.com";
     const fromEmail = process.env.FROM_EMAIL || "onboarding@resend.dev";
 
     if (!resendApiKey) {
