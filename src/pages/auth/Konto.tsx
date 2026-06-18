@@ -256,7 +256,7 @@ const Konto: React.FC = () => {
   const zeigeEmailBanner = !user.emailVerification;
 
   // Verbundberatung-User ohne Freigabe → Warteschirm
-  if (profile?.role === "verbundbuero" && !profile?.approved) {
+  if (profile?.role === "verbundberatung" && !profile?.approved) {
     return <PendingApprovalScreen />;
   }
 
@@ -375,7 +375,7 @@ const Konto: React.FC = () => {
   }
 
   // Profil-Anzeige als Hub
-  const isVerbundbuero = profile.role === "verbundbuero";
+  const isVerbundbuero = profile.role === "verbundberatung";
   const isTalent = !isVerbundbuero && profile.type === "talent";
   const headlineName = isVerbundbuero
     ? profile.name

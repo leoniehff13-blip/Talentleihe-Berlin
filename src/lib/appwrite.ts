@@ -197,7 +197,7 @@ export const BEWERTUNG_KATEGORIEN: Record<"talent" | "betrieb", [string, string,
  */
 export const VERBUNDBUERO_ADMIN_EMAIL = "praxisprojekt5@gmail.com";
 
-export type ProfileRole = "user" | "verbundbuero";
+export type ProfileRole = "user" | "verbundberatung";
 
 export interface Profile extends Models.Document {
   type: ProfileType;

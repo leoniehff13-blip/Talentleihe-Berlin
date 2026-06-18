@@ -54,7 +54,7 @@ const VerbundbueroUebersichtInner: React.FC = () => {
   }>({ beworben: [], aktuell: [], abgeschlossen: [] });
 
   useEffect(() => {
-    if (profile?.role !== "verbundbuero") {
+    if (profile?.role !== "verbundberatung") {
       setError("Diese Seite ist nur für Mitarbeitende der Verbundberatung zugänglich.");
       setLoading(false);
       return;

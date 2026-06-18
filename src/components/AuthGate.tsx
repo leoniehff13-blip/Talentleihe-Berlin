@@ -123,7 +123,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ title, backHref, children }) => {
   }
 
   // Verbundberatung-User ohne Freigabe sehen nur den Warteschirm
-  if (profile?.role === "verbundbuero" && !profile?.approved) {
+  if (profile?.role === "verbundberatung" && !profile?.approved) {
     return <PendingApprovalScreen />;
   }
 

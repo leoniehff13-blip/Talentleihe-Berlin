@@ -278,7 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ansprechpartner: null,
       ansprechpartner_email: null,
       spezialisierung: [],
-      role: "verbundbuero" as const,
+      role: "verbundberatung" as const,
       approved: isAdmin,
       approval_token: approvalToken,
     } as unknown as ProfileInput;
