@@ -286,7 +286,7 @@ const VerbundbueroAnzeigeDetailInner: React.FC = () => {
           <IonButtons slot="start">
             <IonButton
               fill="clear"
-              onClick={() => history.replace("/verbundbuero-uebersicht")}
+              onClick={() => history.replace("/verbundberatung-uebersicht")}
             >
               <IonIcon slot="start" icon={chevronBackOutline} />
               Zurück
@@ -503,7 +503,7 @@ const VerbundbueroAnzeigeDetailInner: React.FC = () => {
 };
 
 const VerbundbueroAnzeigeDetail: React.FC = () => (
-  <AuthGate title="Detail" backHref="/verbundbuero-uebersicht">
+  <AuthGate title="Detail" backHref="/verbundberatung-uebersicht">
     <VerbundbueroAnzeigeDetailInner />
   </AuthGate>
 );

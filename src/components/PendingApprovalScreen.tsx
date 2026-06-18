@@ -15,7 +15,7 @@ import { hourglassOutline } from "ionicons/icons";
 import { useAuth } from "../lib/AuthContext";
 
 /**
- * Wird angezeigt, wenn ein Verbundbüro-User eingeloggt ist, aber noch nicht
+ * Wird angezeigt, wenn ein Verbundberatung-User eingeloggt ist, aber noch nicht
  * freigegeben wurde.
  */
 const PendingApprovalScreen: React.FC = () => {
@@ -31,7 +31,7 @@ const PendingApprovalScreen: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Verbundbüro Berlin</IonTitle>
+          <IonTitle>Verbundberatung Berlin</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -54,12 +54,12 @@ const PendingApprovalScreen: React.FC = () => {
             </h2>
             <IonText color="medium">
               <p style={{ margin: "10px 0 0", lineHeight: 1.55 }}>
-                Du hast dich als Mitarbeiter:in des Verbundbüros registriert.
+                Du hast dich als Mitarbeiter:in der Verbundberatung registriert.
                 Damit du Zugriff auf alle Daten bekommst, muss dein Konto durch
-                das <strong>Verbundbüro Berlin</strong> freigegeben werden.
+                das <strong>Verbundberatung Berlin</strong> freigegeben werden.
               </p>
               <p style={{ margin: "12px 0 0", lineHeight: 1.55 }}>
-                Sobald das <strong>Verbundbüro Berlin</strong> dich
+                Sobald das <strong>Verbundberatung Berlin</strong> dich
                 freigegeben hat, kannst du dich erneut einloggen und das
                 Portal nutzen.
               </p>

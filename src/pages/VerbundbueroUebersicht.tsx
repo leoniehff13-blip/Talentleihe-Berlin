@@ -55,7 +55,7 @@ const VerbundbueroUebersichtInner: React.FC = () => {
 
   useEffect(() => {
     if (profile?.role !== "verbundbuero") {
-      setError("Diese Seite ist nur für Mitarbeitende des Verbundbüros zugänglich.");
+      setError("Diese Seite ist nur für Mitarbeitende der Verbundberatung zugänglich.");
       setLoading(false);
       return;
     }
@@ -165,7 +165,7 @@ const VerbundbueroUebersichtInner: React.FC = () => {
             <IonItem
               key={a.$id}
               button
-              onClick={() => history.push(`/verbundbuero-anzeige/${a.$id}`)}
+              onClick={() => history.push(`/verbundberatung-anzeige/${a.$id}`)}
               detail
             >
               {/* Icon links: Person für Talent-Angebot, Firma für Einsatz */}

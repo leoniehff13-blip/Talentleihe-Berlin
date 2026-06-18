@@ -122,7 +122,7 @@ const AuthGate: React.FC<AuthGateProps> = ({ title, backHref, children }) => {
     return <VerifizierungsWand title={title} backHref={backHref} />;
   }
 
-  // Verbundbüro-User ohne Freigabe sehen nur den Warteschirm
+  // Verbundberatung-User ohne Freigabe sehen nur den Warteschirm
   if (profile?.role === "verbundbuero" && !profile?.approved) {
     return <PendingApprovalScreen />;
   }

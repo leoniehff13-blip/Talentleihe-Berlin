@@ -207,9 +207,9 @@ const Register: React.FC = () => {
               color="medium"
               size="small"
               type="button"
-              onClick={() => history.push("/registrieren/verbundbuero")}
+              onClick={() => history.push("/registrieren/verbundberatung")}
             >
-              Als Mitarbeiter:in Verbundbüro Berlin registrieren
+              Als Mitarbeiter:in Verbundberatung Berlin registrieren
             </IonButton>
           </div>
         </form>

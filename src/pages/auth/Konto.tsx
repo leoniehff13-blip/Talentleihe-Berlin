@@ -255,7 +255,7 @@ const Konto: React.FC = () => {
   // E-Mail-Banner statt Vollsperre – Nutzer kommt direkt ins Konto
   const zeigeEmailBanner = !user.emailVerification;
 
-  // Verbundbüro-User ohne Freigabe → Warteschirm
+  // Verbundberatung-User ohne Freigabe → Warteschirm
   if (profile?.role === "verbundbuero" && !profile?.approved) {
     return <PendingApprovalScreen />;
   }
@@ -384,7 +384,7 @@ const Konto: React.FC = () => {
       : profile.name;
   const anzeigenLabel = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
   const rollenLabel = isVerbundbuero
-    ? "Mitarbeiter Verbundbüro"
+    ? "Mitarbeiter Verbundberatung"
     : isTalent
       ? "Talent (Azubi)"
       : "Betrieb";
@@ -542,7 +542,7 @@ const Konto: React.FC = () => {
           </IonCard>
         ) : null}
 
-        {/* Profil bearbeiten (nicht für Verbundbüro) */}
+        {/* Profil bearbeiten (nicht für Verbundberatung) */}
         {!isVerbundbuero && (
           <IonButton
             expand="block"
@@ -559,16 +559,16 @@ const Konto: React.FC = () => {
         {/* Bewerbungsunterlagen (nur für Talents) */}
         {isTalent && <DokumenteUpload mode="manage" />}
 
-        {/* Bewertungen (nicht für Verbundbüro) */}
+        {/* Bewertungen (nicht für Verbundberatung) */}
         {!isVerbundbuero && (
           <BewertungSection userId={user.$id} profileType={profile.type} />
         )}
 
-        {/* Verbundbüro-spezifische Karte: Übersicht aller Bewerbungen */}
+        {/* Verbundberatung-spezifische Karte: Übersicht aller Bewerbungen */}
         {isVerbundbuero && (
           <IonCard
             button
-            routerLink="/verbundbuero-uebersicht"
+            routerLink="/verbundberatung-uebersicht"
             color="primary"
             style={{ marginTop: 16, marginBottom: 16 }}
           >
@@ -613,7 +613,7 @@ const Konto: React.FC = () => {
           </IonCard>
         )}
 
-        {/* Hub-Karten (nicht für Verbundbüro – die haben einen anderen Funktionsumfang) */}
+        {/* Hub-Karten (nicht für Verbundberatung – die haben einen anderen Funktionsumfang) */}
         {!isVerbundbuero && (
         <>
         <IonCard button routerLink="/meine-anzeigen">

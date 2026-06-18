@@ -26,7 +26,7 @@ import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
 
 /**
- * Registrierung für Mitarbeitende des Verbundbüro Berlin.
+ * Registrierung für Mitarbeitende der Verbundberatung Berlin.
  * Bei der Admin-Mailadresse wird das Profil sofort freigegeben,
  * sonst muss eine manuelle Freigabe folgen (über die Appwrite-Konsole,
  * später über eine eigene Admin-Oberfläche).
@@ -127,7 +127,7 @@ const RegisterVerbundbuero: React.FC = () => {
                 maxWidth: 380,
               }}
             >
-              Danach wird dein Konto durch das <strong>Verbundbüro Berlin</strong>{" "}
+              Danach wird dein Konto durch das <strong>Verbundberatung Berlin</strong>{" "}
               geprüft und freigegeben.
             </p>
             <IonButton
@@ -151,7 +151,7 @@ const RegisterVerbundbuero: React.FC = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/registrieren" />
           </IonButtons>
-          <IonTitle>Verbundbüro Berlin</IonTitle>
+          <IonTitle>Verbundberatung Berlin</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -178,9 +178,9 @@ const RegisterVerbundbuero: React.FC = () => {
               <IonText color="medium">
                 <p style={{ margin: "6px 0 0", fontSize: 13, lineHeight: 1.5 }}>
                   Diese Registrierung ist ausschließlich für Mitarbeitende des
-                  Verbundbüro Berlin gedacht. Dein Konto wird erst nach
+                  Verbundberatung Berlin gedacht. Dein Konto wird erst nach
                   E-Mail-Bestätigung <strong>und</strong> Freigabe durch das{" "}
-                  <strong>Verbundbüro Berlin</strong> aktiv.
+                  <strong>Verbundberatung Berlin</strong> aktiv.
                 </p>
               </IonText>
             </div>
@@ -266,7 +266,7 @@ const RegisterVerbundbuero: React.FC = () => {
             <IonNote>
               <p style={{ marginTop: 8 }}>* = Pflichtfeld</p>
               <p style={{ marginTop: 16 }}>
-                Bist du keine Mitarbeiter:in des Verbundbüros?{" "}
+                Bist du keine Mitarbeiter:in der Verbundberatung?{" "}
                 <Link to="/registrieren">Hier regulär als Talent oder Betrieb registrieren</Link>.
               </p>
             </IonNote>

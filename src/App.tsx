@@ -110,16 +110,16 @@ const App: React.FC = () => (
             <Route exact path="/registrieren">
               <Register />
             </Route>
-            <Route exact path="/registrieren/verbundbuero">
+            <Route exact path="/registrieren/verbundberatung">
               <RegisterVerbundbuero />
             </Route>
-            <Route exact path="/verbundbuero-freigabe">
+            <Route exact path="/verbundberatung-freigabe">
               <VerbundbueroFreigabe />
             </Route>
-            <Route exact path="/verbundbuero-uebersicht">
+            <Route exact path="/verbundberatung-uebersicht">
               <VerbundbueroUebersicht />
             </Route>
-            <Route exact path="/verbundbuero-anzeige/:id([a-zA-Z0-9]{15,})">
+            <Route exact path="/verbundberatung-anzeige/:id([a-zA-Z0-9]{15,})">
               <VerbundbueroAnzeigeDetail />
             </Route>
             <Route exact path="/verifizieren">

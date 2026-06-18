@@ -110,8 +110,8 @@ export interface Anzeige extends Models.Document {
   talent_name: string | null;
 }
 
-/* -------- Profil (Talent oder Betrieb) -------- */
-export type ProfileType = "talent" | "betrieb";
+/* -------- Profil (Talent, Betrieb oder Verbundberatung) -------- */
+export type ProfileType = "talent" | "betrieb" | "verbundberatung";
 
 export const LEHRJAHRE = [1, 2, 3, 4] as const;
 export type Lehrjahr = (typeof LEHRJAHRE)[number];
@@ -191,8 +191,8 @@ export const BEWERTUNG_KATEGORIEN: Record<"talent" | "betrieb", [string, string,
 };
 
 /**
- * Mailadresse, die als Verbundbüro-Admin gilt. Nur dieser Account wird
- * beim Anlegen automatisch freigeschaltet. Alle anderen Verbundbüro-
+ * Mailadresse, die als Verbundberatung-Admin gilt. Nur dieser Account wird
+ * beim Anlegen automatisch freigeschaltet. Alle anderen Verbundberatung-
  * Registrierungen benötigen eine manuelle Freigabe.
  */
 export const VERBUNDBUERO_ADMIN_EMAIL = "praxisprojekt5@gmail.com";

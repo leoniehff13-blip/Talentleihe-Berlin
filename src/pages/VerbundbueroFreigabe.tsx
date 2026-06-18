@@ -89,7 +89,7 @@ const VerbundbueroFreigabe: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Verbundbüro-Freigabe</IonTitle>
+          <IonTitle>Verbundberatung-Freigabe</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen className="ion-padding">
@@ -113,7 +113,7 @@ const VerbundbueroFreigabe: React.FC = () => {
                   <h2 style={{ marginTop: 12 }}>Konto freigegeben</h2>
                   <IonText color="medium">
                     <p>
-                      Der/die neue Verbundbüro-Mitarbeiter:in hat ab sofort Zugriff
+                      Der/die neue Verbundberatung-Mitarbeiter:in hat ab sofort Zugriff
                       auf das Portal.
                     </p>
                   </IonText>

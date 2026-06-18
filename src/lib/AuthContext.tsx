@@ -11,7 +11,7 @@ import {
 } from "./appwrite";
 
 /**
- * Function-ID der Appwrite-Function, die das Verbundbüro per E-Mail
+ * Function-ID der Appwrite-Function, die das Verbundberatung per E-Mail
  * benachrichtigt. Beim ersten Anlegen hat Appwrite eine zufällige ID
  * generiert; daher hier der konkrete Wert. Falls die Function jemals
  * neu angelegt wird, diese Konstante mit der neuen ID aktualisieren.
@@ -32,7 +32,7 @@ async function notifyVerbundbueroAdmin(
   rejectUrl: string
 ) {
   // eslint-disable-next-line no-console
-  console.log("[Verbundbüro] notify-Function wird aufgerufen für:", name, email);
+  console.log("[Verbundberatung] notify-Function wird aufgerufen für:", name, email);
   try {
     const result = await functions.createExecution(
       FN_NOTIFY_VERBUNDBUERO_ADMIN,
@@ -48,10 +48,10 @@ async function notifyVerbundbueroAdmin(
       { "Content-Type": "application/json" } as never
     );
     // eslint-disable-next-line no-console
-    console.log("[Verbundbüro] notify-Function fertig:", result);
+    console.log("[Verbundberatung] notify-Function fertig:", result);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.error("[Verbundbüro] notify-Function fehlgeschlagen:", err);
+    console.error("[Verbundberatung] notify-Function fehlgeschlagen:", err);
   }
 }
 
@@ -79,8 +79,8 @@ interface AuthContextValue {
   refresh: () => Promise<void>;
   saveProfile: (data: ProfileInput) => Promise<Profile>;
   /**
-   * Legt ein Verbundbüro-Profil an. Wird beim Registrierungs-Flow für die
-   * Verbundbüro-Rolle aufgerufen. Bei der Admin-Mailadresse direkt freigegeben,
+   * Legt ein Verbundberatung-Profil an. Wird beim Registrierungs-Flow für die
+   * Verbundberatung-Rolle aufgerufen. Bei der Admin-Mailadresse direkt freigegeben,
    * sonst muss die Person manuell freigeschaltet werden.
    */
   saveVerbundbueroProfile: (name: string, email: string) => Promise<Profile>;
@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (code !== 401) throw err;
     }
     try { await refresh(); } catch { /* ignore */ }
-    // Hinweis: Die Verbundbüro-Benachrichtigung wird bei der Registrierung
+    // Hinweis: Die Verbundberatung-Benachrichtigung wird bei der Registrierung
     // verschickt (saveVerbundbueroProfile), NICHT hier. Grund: der
     // Verifizierungs-Link kann in einem Tab ohne Session geklickt werden,
     // dann fehlen die Berechtigungen für den Function-Aufruf.
@@ -262,7 +262,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const approvalToken = isAdmin ? null : generateApprovalToken();
 
     const data = {
-      type: "betrieb" as const,
+      type: "verbundberatung" as const,
       user_id: userId,
       name: name.trim(),
       vorname: null,
@@ -295,13 +295,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
     setProfile(created);
 
-    // Wenn nicht der Admin selbst → Verbundbüro per Mail benachrichtigen.
+    // Wenn nicht der Admin selbst → Verbundberatung per Mail benachrichtigen.
     // Wir machen das hier (statt nach E-Mail-Verifizierung), weil die
     // Verifizierung in einem anderen Tab/Browser ohne Session geklickt werden
     // kann und der Function-Call dann fehlschlägt. Hier ist die Session
     // garantiert frisch (signup hat sie gerade angelegt).
     if (!isAdmin && approvalToken) {
-      const baseUrl = appUrlForApproval(`verbundbuero-freigabe`);
+      const baseUrl = appUrlForApproval(`verbundberatung-freigabe`);
       const params = `profile=${encodeURIComponent(created.$id)}&token=${encodeURIComponent(approvalToken)}`;
       const approveUrl = `${baseUrl}?${params}&action=approve`;
       const rejectUrl = `${baseUrl}?${params}&action=reject`;

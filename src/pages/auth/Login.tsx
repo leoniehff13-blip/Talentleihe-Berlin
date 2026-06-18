@@ -115,9 +115,9 @@ const Login: React.FC<LoginProps> = ({ onSuccess }) => {
             fill="clear"
             color="medium"
             size="small"
-            onClick={() => history.push("/registrieren/verbundbuero")}
+            onClick={() => history.push("/registrieren/verbundberatung")}
           >
-            Als Mitarbeiter:in Verbundbüro Berlin registrieren
+            Als Mitarbeiter:in Verbundberatung Berlin registrieren
           </IonButton>
         </div>
         <Footer />
