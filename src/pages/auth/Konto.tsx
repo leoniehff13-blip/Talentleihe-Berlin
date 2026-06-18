@@ -561,7 +561,7 @@ const Konto: React.FC = () => {
 
         {/* Bewertungen (nicht für Verbundberatung) */}
         {!isVerbundbuero && (
-          <BewertungSection userId={user.$id} profileType={profile.type} />
+          <BewertungSection userId={user.$id} profileType={profile.type as "talent" | "betrieb"} />
         )}
 
         {/* Verbundberatung-spezifische Karte: Übersicht aller Bewerbungen */}
