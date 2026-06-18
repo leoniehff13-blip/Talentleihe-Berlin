@@ -2,7 +2,7 @@
  * Appwrite Function: verbundbuero-approval
  *
  * Wird von der öffentlichen Approval-Seite (/verbundbuero-freigabe) aufgerufen,
- * wenn das Verbundbüro auf „Freigeben" oder „Ablehnen" klickt.
+ * wenn das Verbundberatung auf „Freigeben" oder „Ablehnen" klickt.
  *
  * Body (JSON):
  *   { profileId, token, action }   // action: "approve" | "reject"
@@ -67,18 +67,18 @@ async function sendRejectionMail(to, name, env, log, error) {
   }
   const html = `
     <div style="font-family:-apple-system,Segoe UI,sans-serif;max-width:540px;margin:0 auto;padding:20px;color:#0d1b38;">
-      <h2 style="color:#0b1f4a;margin:0 0 16px;">Verbundbüro Berlin — Anfrage abgelehnt</h2>
+      <h2 style="color:#0b1f4a;margin:0 0 16px;">Verbundberatung Berlin — Anfrage abgelehnt</h2>
       <p>Hallo ${safeHtml(name)},</p>
-      <p>deine Anfrage zur Registrierung als Mitarbeiter:in beim Verbundbüro Berlin wurde leider <strong>abgelehnt</strong>.</p>
-      <p>Dein angelegtes Konto wurde entsprechend entfernt. Wenn du der Meinung bist, dass das ein Versehen ist oder Rückfragen hast, melde dich gerne beim Verbundbüro Berlin.</p>
+      <p>deine Anfrage zur Registrierung als Mitarbeiter:in beim Verbundberatung Berlin wurde leider <strong>abgelehnt</strong>.</p>
+      <p>Dein angelegtes Konto wurde entsprechend entfernt. Wenn du der Meinung bist, dass das ein Versehen ist oder Rückfragen hast, melde dich gerne beim Verbundberatung Berlin.</p>
       <p style="color:#888;font-size:13px;margin-top:30px;">Diese Mail wurde automatisch von der Talentleihe-Plattform versendet.</p>
     </div>
   `;
   const text =
     `Hallo ${name},\n\n` +
-    `deine Anfrage zur Registrierung als Mitarbeiter:in beim Verbundbüro Berlin wurde leider abgelehnt.\n` +
+    `deine Anfrage zur Registrierung als Mitarbeiter:in beim Verbundberatung Berlin wurde leider abgelehnt.\n` +
     `Dein angelegtes Konto wurde entsprechend entfernt.\n\n` +
-    `Bei Rückfragen wende dich gerne an das Verbundbüro Berlin.\n`;
+    `Bei Rückfragen wende dich gerne an das Verbundberatung Berlin.\n`;
   try {
     const r = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -89,7 +89,7 @@ async function sendRejectionMail(to, name, env, log, error) {
       body: JSON.stringify({
         from: env.fromEmail,
         to: [to],
-        subject: "Verbundbüro Berlin — Anfrage abgelehnt",
+        subject: "Verbundberatung Berlin — Anfrage abgelehnt",
         html,
         text,
       }),
@@ -181,9 +181,9 @@ export default async ({ req, res, log, error }) => {
       );
     }
 
-    if (profile.role !== "verbundbuero") {
+    if (profile.role !== "verbundberatung") {
       return res.json(
-        { success: false, error: "Profil hat keine Verbundbüro-Rolle." },
+        { success: false, error: "Profil hat keine Verbundberatung-Rolle." },
         400
       );
     }
