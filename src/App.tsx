@@ -25,6 +25,7 @@ import VerbundbueroUebersicht from "./pages/VerbundbueroUebersicht";
 import VerbundbueroAnzeigeDetail from "./pages/VerbundbueroAnzeigeDetail";
 import Konto from "./pages/auth/Konto";
 import KontoLoeschen from "./pages/auth/KontoLoeschen";
+import Einstellungen from "./pages/auth/Einstellungen";
 import Verifizieren from "./pages/auth/Verifizieren";
 import PasswortVergessen from "./pages/auth/PasswortVergessen";
 import PasswortNeu from "./pages/auth/PasswortNeu";
@@ -103,6 +104,9 @@ const App: React.FC = () => (
             </Route>
             <Route exact path="/konto-loeschen">
               <KontoLoeschen />
+            </Route>
+            <Route exact path="/einstellungen">
+              <Einstellungen />
             </Route>
             <Route exact path="/login">
               <Login />

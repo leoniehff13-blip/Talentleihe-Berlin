@@ -31,6 +31,7 @@ import {
   createOutline,
   checkmarkCircleOutline,
   trashOutline,
+  settingsOutline,
 } from "ionicons/icons";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
@@ -675,7 +676,17 @@ const Konto: React.FC = () => {
         </>
         )}
 
-        <IonButton expand="block" color="medium" onClick={handleLogout} style={{ marginTop: 16 }}>
+        <IonButton
+          expand="block"
+          fill="outline"
+          color="medium"
+          routerLink="/einstellungen"
+          style={{ marginBottom: 8, marginTop: 16 }}
+        >
+          <IonIcon slot="start" icon={settingsOutline} />
+          Einstellungen
+        </IonButton>
+        <IonButton expand="block" color="medium" onClick={handleLogout}>
           Logout
         </IonButton>
         <Footer />
