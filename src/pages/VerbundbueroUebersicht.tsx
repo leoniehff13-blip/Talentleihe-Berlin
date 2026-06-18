@@ -30,6 +30,7 @@ import {
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   COL_BEWERBUNGEN,
+  COL_PROFILES,
   BEWERBUNG_STATUS_LABEL,
   BEWERBUNG_STATUS_COLOR,
   type Anzeige,
@@ -47,6 +48,14 @@ const VerbundbueroUebersichtInner: React.FC = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<{
+    talente: number;
+    betriebe: number;
+    bewerbungenGesamt: number;
+    bewerbungenOffen: number;
+    bewerbungenAngenommen: number;
+    matchingQuote: number;
+  } | null>(null);
   const [groups, setGroups] = useState<{
     beworben: AnzeigeMitBewerbungen[];
     aktuell: AnzeigeMitBewerbungen[];
@@ -64,12 +73,22 @@ const VerbundbueroUebersichtInner: React.FC = () => {
       setLoading(true);
       setError(null);
       try {
-        // 1) Alle Bewerbungen laden (max 200 für den Anfang)
-        const bewerbungenRes = await databases.listDocuments<Bewerbung>(
-          DB_LEHRSTELLEN,
-          COL_BEWERBUNGEN,
-          [Query.orderDesc("$createdAt"), Query.limit(200)]
-        );
+        // 1) Bewerbungen + Profilzählungen parallel laden
+        const [bewerbungenRes, talenteRes, betriebeRes] = await Promise.all([
+          databases.listDocuments<Bewerbung>(
+            DB_LEHRSTELLEN,
+            COL_BEWERBUNGEN,
+            [Query.orderDesc("$createdAt"), Query.limit(200)]
+          ),
+          databases.listDocuments(DB_LEHRSTELLEN, COL_PROFILES, [
+            Query.equal("type", "talent"),
+            Query.limit(1),
+          ]),
+          databases.listDocuments(DB_LEHRSTELLEN, COL_PROFILES, [
+            Query.equal("type", "betrieb"),
+            Query.limit(1),
+          ]),
+        ]);
         const bewerbungen = bewerbungenRes.documents;
 
         // 2) Eindeutige Anzeigen-IDs ermitteln
@@ -78,6 +97,16 @@ const VerbundbueroUebersichtInner: React.FC = () => {
         );
         if (anzeigeIds.length === 0) {
           if (!cancelled) {
+            const bwG = bewerbungen.length;
+            const bwA = bewerbungen.filter((b) => b.status === "angenommen").length;
+            setStats({
+              talente: talenteRes.total,
+              betriebe: betriebeRes.total,
+              bewerbungenGesamt: bwG,
+              bewerbungenOffen: bewerbungen.filter((b) => b.status === "ausstehend").length,
+              bewerbungenAngenommen: bwA,
+              matchingQuote: bwG > 0 ? Math.round((bwA / bwG) * 100) : 0,
+            });
             setGroups({ beworben: [], aktuell: [], abgeschlossen: [] });
             setLoading(false);
           }
@@ -129,6 +158,16 @@ const VerbundbueroUebersichtInner: React.FC = () => {
         }
 
         if (!cancelled) {
+          const bwG = bewerbungen.length;
+          const bwA = bewerbungen.filter((b) => b.status === "angenommen").length;
+          setStats({
+            talente: talenteRes.total,
+            betriebe: betriebeRes.total,
+            bewerbungenGesamt: bwG,
+            bewerbungenOffen: bewerbungen.filter((b) => b.status === "ausstehend").length,
+            bewerbungenAngenommen: bwA,
+            matchingQuote: bwG > 0 ? Math.round((bwA / bwG) * 100) : 0,
+          });
           setGroups({ beworben, aktuell, abgeschlossen });
           setLoading(false);
         }
@@ -271,6 +310,78 @@ const VerbundbueroUebersichtInner: React.FC = () => {
                 </IonText>
               </IonCardContent>
             </IonCard>
+
+            {/* ── Dashboard ── */}
+            {stats && (
+              <div style={{ padding: "0 16px 8px" }}>
+                <IonText>
+                  <h3 style={{ margin: "16px 0 10px", fontWeight: 700, fontSize: 16 }}>
+                    Dashboard
+                  </h3>
+                </IonText>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                  <IonCard style={{ margin: 0, borderRadius: 12 }}>
+                    <IonCardContent style={{ padding: "12px 16px" }}>
+                      <IonText color="medium">
+                        <p style={{ margin: 0, fontSize: 12 }}>Registrierte Talente</p>
+                      </IonText>
+                      <p style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 700, color: "var(--ion-color-tertiary)" }}>
+                        {stats.talente}
+                      </p>
+                    </IonCardContent>
+                  </IonCard>
+
+                  <IonCard style={{ margin: 0, borderRadius: 12 }}>
+                    <IonCardContent style={{ padding: "12px 16px" }}>
+                      <IonText color="medium">
+                        <p style={{ margin: 0, fontSize: 12 }}>Registrierte Betriebe</p>
+                      </IonText>
+                      <p style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 700, color: "var(--ion-color-primary)" }}>
+                        {stats.betriebe}
+                      </p>
+                    </IonCardContent>
+                  </IonCard>
+
+                  <IonCard style={{ margin: 0, borderRadius: 12 }}>
+                    <IonCardContent style={{ padding: "12px 16px" }}>
+                      <IonText color="medium">
+                        <p style={{ margin: 0, fontSize: 12 }}>Offene Bewerbungen</p>
+                      </IonText>
+                      <p style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 700, color: "var(--ion-color-warning)" }}>
+                        {stats.bewerbungenOffen}
+                      </p>
+                    </IonCardContent>
+                  </IonCard>
+
+                  <IonCard style={{ margin: 0, borderRadius: 12 }}>
+                    <IonCardContent style={{ padding: "12px 16px" }}>
+                      <IonText color="medium">
+                        <p style={{ margin: 0, fontSize: 12 }}>Laufende Einsätze</p>
+                      </IonText>
+                      <p style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 700, color: "var(--ion-color-success)" }}>
+                        {groups.aktuell.length}
+                      </p>
+                    </IonCardContent>
+                  </IonCard>
+
+                  <IonCard style={{ margin: 0, borderRadius: 12, gridColumn: "1 / -1" }}>
+                    <IonCardContent style={{ padding: "12px 16px" }}>
+                      <IonText color="medium">
+                        <p style={{ margin: 0, fontSize: 12 }}>Matching-Quote</p>
+                      </IonText>
+                      <p style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 700, color: "var(--ion-color-success)" }}>
+                        {stats.matchingQuote}%
+                      </p>
+                      <IonText color="medium">
+                        <p style={{ margin: 0, fontSize: 12 }}>
+                          {stats.bewerbungenAngenommen} von {stats.bewerbungenGesamt} Bewerbungen angenommen
+                        </p>
+                      </IonText>
+                    </IonCardContent>
+                  </IonCard>
+                </div>
+              </div>
+            )}
 
             <IonAccordionGroup multiple value={["beworben", "aktuell", "abgeschlossen"]}>
               <IonAccordion value="beworben">
