@@ -45,6 +45,7 @@ export const COL_BEWERBUNGEN = "bewerbungen";
 export const COL_BEWERTUNGEN = "bewertungen";
 export const COL_DOKUMENTE = "dokumente";
 export const BUCKET_DOKUMENTE = "dokumente";
+export const BUCKET_AVATARS = "avatars";
 
 /* -------- Bundesländer -------- */
 export type Bundesland =
@@ -108,6 +109,7 @@ export interface Anzeige extends Models.Document {
   bundesland: Bundesland | null;
   handwerkskammer: string | null;
   talent_name: string | null;
+  avatar_file_id: string | null;
 }
 
 /* -------- Profil (Talent, Betrieb oder Verbundberatung) -------- */
@@ -220,4 +222,5 @@ export interface Profile extends Models.Document {
   role: ProfileRole | null;
   approved: boolean | null;
   approval_token: string | null;
+  avatar_file_id: string | null;
 }

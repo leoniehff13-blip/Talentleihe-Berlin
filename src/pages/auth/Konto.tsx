@@ -21,6 +21,7 @@ import {
   IonAlert,
 } from "@ionic/react";
 import Footer from "../../components/Footer";
+import { getAvatarUrl } from "../../components/ProfilbildUpload";
 import { useEffect, useState } from "react";
 import { Query } from "appwrite";
 import {
@@ -296,6 +297,7 @@ const Konto: React.FC = () => {
         ansprechpartner_email: profile.ansprechpartner_email ?? "",
         spezialisierung: (profile.spezialisierung ?? []).join(", "),
         initiativbewerbungen: (profile as any).initiativbewerbungen ?? true,
+        avatar_file_id: profile.avatar_file_id ?? null,
       });
     } else {
       setForm(EMPTY_PROFIL);
@@ -497,6 +499,21 @@ const Konto: React.FC = () => {
       <IonContent fullscreen className="ion-padding">
         {/* Profil-Karte */}
         <IonCard>
+          {profile.avatar_file_id && (
+            <div style={{ display: "flex", justifyContent: "center", paddingTop: 20 }}>
+              <img
+                src={getAvatarUrl(profile.avatar_file_id)}
+                alt="Profilbild"
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  border: "3px solid var(--ion-color-light-shade)",
+                }}
+              />
+            </div>
+          )}
           <IonCardHeader>
             <IonCardSubtitle>{rollenLabel}</IonCardSubtitle>
             <IonCardTitle>{headlineName || "—"}</IonCardTitle>

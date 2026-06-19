@@ -25,6 +25,7 @@ import { closeCircle } from "ionicons/icons";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
 import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
+import ProfilbildUpload from "./ProfilbildUpload";
 
 export interface ProfilFormState {
   type: ProfileType;
@@ -47,6 +48,7 @@ export interface ProfilFormState {
   ansprechpartner_email: string;
   spezialisierung: string;
   initiativbewerbungen: boolean;
+  avatar_file_id: string | null;
 }
 
 export const EMPTY_PROFIL: ProfilFormState = {
@@ -70,6 +72,7 @@ export const EMPTY_PROFIL: ProfilFormState = {
   ansprechpartner_email: "",
   spezialisierung: "",
   initiativbewerbungen: true,
+  avatar_file_id: null,
 };
 
 /** Hilfsfunktionen zum Kombinieren und Parsen der Adressfelder. */
@@ -334,6 +337,10 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
 
   return (
     <>
+      <ProfilbildUpload
+        fileId={state.avatar_file_id}
+        onChange={(id) => set("avatar_file_id", id)}
+      />
       {!hideTypeSwitch && (
         <div className="ion-padding">
           <IonSegment
@@ -622,5 +629,6 @@ export function profilStateToInput(state: ProfilFormState) {
     spezialisierung: !isTalent ? split(state.spezialisierung) : [],
     initiativbewerbungen: !isTalent ? state.initiativbewerbungen : null,
     user_id: "",
+    avatar_file_id: state.avatar_file_id,
   };
 }
