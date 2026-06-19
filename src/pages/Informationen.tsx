@@ -434,19 +434,15 @@ const Informationen: React.FC = () => {
             </div>
           </InfoCard>
 
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
-              Berlin ist bundesweit eine Ausnahme: Auf dem Stadtgebiet und in der direkten Umgebung gibt es <strong style={{ color: C.teal }}>zwei zuständige Handwerkskammern</strong>.
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "14px" }}>
-              <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.teal}` }}>
-                <a
-                  href="https://www.hwk-berlin.de/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.teal}60`, display: "block" }}
-                >Handwerkskammer Berlin ↗</a>
-                <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Zuständig für Betriebe mit Sitz im Stadtgebiet Berlin. Administriert das Berliner Förderungsprogramm FBB. Blücherstraße 68, 10961 Berlin.</p>
-                            </div>
+          <InfoCard icon="🏛️" title="Zuständige Handwerkskammer" accentColor={C.teal}>
+            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.teal}`, margin: "14px 0" }}>
+              <a
+                href="https://www.hwk-berlin.de/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.teal}60`, display: "block" }}
+              >Handwerkskammer Berlin ↗</a>
+              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Zuständig für Betriebe mit Sitz im Stadtgebiet Berlin. Administriert das Berliner Förderungsprogramm FBB. Blücherstraße 68, 10961 Berlin.</p>
             </div>
           </InfoCard>
 
