@@ -12,7 +12,9 @@ interface Props {
 }
 
 export function getAvatarUrl(fileId: string): string {
-  return storage.getFilePreview(BUCKET_AVATARS, fileId, 200, 200).toString();
+  const endpoint = (import.meta.env.VITE_APPWRITE_ENDPOINT as string ?? "https://fra.cloud.appwrite.io/v1").replace(/\/+$/, "");
+  const project = import.meta.env.VITE_APPWRITE_PROJECT_ID as string ?? "";
+  return `${endpoint}/storage/buckets/avatars/files/${fileId}/view?project=${project}`;
 }
 
 const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
