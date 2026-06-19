@@ -434,7 +434,6 @@ const Informationen: React.FC = () => {
             </div>
           </InfoCard>
 
-          <InfoCard icon="🏛️" title="Berlins besondere Ausgangslage – Zwei Kammern" accentColor={C.blue}>
             <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
               Berlin ist bundesweit eine Ausnahme: Auf dem Stadtgebiet und in der direkten Umgebung gibt es <strong style={{ color: C.teal }}>zwei zuständige Handwerkskammern</strong>.
             </p>
@@ -450,17 +449,13 @@ const Informationen: React.FC = () => {
               </div>
               <div style={{ background: "#f0f4ff", borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.blue}` }}>
                 <a
-                  href="https://www.hwk-ff.de"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.blue}60`, display: "block" }}
-                >HWK Frankfurt (Oder) – Region Ostbrandenburg ↗</a>
-                <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Grenzt auf 91 km direkt an Berlin an. Umfasst Barnim, Märkisch-Oderland, Oder-Spree, Uckermark und Frankfurt (Oder). Über 11.500 Mitgliedsunternehmen.</p>
               </div>
             </div>
             <div style={{ background: "#fff8e6", borderRadius: "10px", padding: "12px 14px", borderLeft: `3px solid #f0a030` }}>
               <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>
-                ⚠️ <strong style={{ color: C.blue }}>Wichtig für Verbundausbildungen:</strong> Kooperieren ein Berliner Stammbetrieb und ein Brandenburger Partnerbetrieb, können zwei verschiedene Kammern zuständig sein. Verträge, Prüfungsanmeldungen und Förderanträge müssen jeweils bei der zuständigen Kammer eingereicht werden.
               </p>
             </div>
           </InfoCard>
