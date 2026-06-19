@@ -9,7 +9,7 @@ ein:e neu registrierte:r Verbundbüro-User:in die eigene E-Mail bestätigt hat.
 
 1. Auf https://resend.com registrieren (gratis, kein Kreditkarten-Zwang)
 2. Im Resend-Dashboard unter **API Keys** einen neuen Key erstellen
-   (`Create API Key` → Name z. B. „Talentleihe Verbundbüro" → Permission: **Sending access**)
+   (`Create API Key` → Name z. B. „VerbundPraxis Verbundbüro" → Permission: **Sending access**)
 3. Den Key kopieren (beginnt mit `re_…`)
 
 Optional, aber empfohlen:

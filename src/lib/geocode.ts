@@ -1,5 +1,5 @@
 /**
- * Geocoding-Helper für die Talentleihe.
+ * Geocoding-Helper für die VerbundPraxis.
  * Verwendet Nominatim (OpenStreetMap) – kostenlos, max 1 Request/Sekunde.
  * Ergebnisse werden in sessionStorage gecached, sodass Filter und Karte sich
  * den gleichen Cache teilen.

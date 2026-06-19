@@ -152,7 +152,7 @@ const MeineBewerbungenInner: React.FC = () => {
                   onClick={() => history.push("/anzeigen")}
                   style={{ marginTop: 16 }}
                 >
-                  Zur Talentleihe
+                  Zur VerbundPraxis
                 </IonButton>
               </IonCardContent>
             </IonCard>

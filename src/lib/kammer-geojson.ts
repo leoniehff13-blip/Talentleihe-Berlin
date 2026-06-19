@@ -1,6 +1,6 @@
 /**
  * Vereinfachte GeoJSON-Polygone für die Zuständigkeitsbereiche
- * der beiden für Talentleihe Berlin relevanten Handwerkskammern.
+ * der beiden für VerbundPraxis Berlin relevanten Handwerkskammern.
  *
  * HWK Berlin            → Stadtgebiet Berlin   → Farbe Teal  (#47BCC2)
  * HWK Frankfurt (Oder)  → Region Ostbrandenburg → Farbe Blau  (#1E367A)

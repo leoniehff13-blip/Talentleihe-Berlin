@@ -155,7 +155,7 @@ const KontoLoeschen: React.FC = () => {
               {badge(checkmarkCircleOutline, "var(--ion-color-success)", "rgba(150, 183, 64, 0.14)")}
               {heading("Konto gelöscht")}
               {paragraph(
-                "Dein Konto und alle zugehörigen Daten wurden endgültig gelöscht. Schade, dass du gehst – danke, dass du Talentleihe Berlin genutzt hast."
+                "Dein Konto und alle zugehörigen Daten wurden endgültig gelöscht. Schade, dass du gehst – danke, dass du VerbundPraxis Berlin genutzt hast."
               )}
               <IonButton expand="block" onClick={() => history.replace("/home")}>
                 Zur Startseite

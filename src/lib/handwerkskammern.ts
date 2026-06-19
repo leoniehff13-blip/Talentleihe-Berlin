@@ -62,7 +62,7 @@ export const HANDWERKSKAMMERN: string[] = [
 ];
 
 /**
- * Die zwei für Talentleihe Berlin relevanten Handwerkskammern.
+ * Die zwei für VerbundPraxis Berlin relevanten Handwerkskammern.
  * HWK Berlin:           zuständig für das Stadtgebiet Berlin
  * HWK Frankfurt (Oder): zuständig für Barnim, Märkisch-Oderland,
  *                       Oder-Spree, Uckermark und Frankfurt (Oder)

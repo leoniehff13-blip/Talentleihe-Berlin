@@ -252,7 +252,7 @@ const AnzeigenInner: React.FC = () => {
       // Regionale Eingrenzung über die Handwerkskammer statt über bundesland:
       // Das Anzeigen-Formular setzt bundesland immer auf null, füllt aber
       // handwerkskammer aus einem Dropdown. Wir zeigen daher genau die zwei
-      // für Talentleihe relevanten Kammern (Berlin + Frankfurt/Oder).
+      // für VerbundPraxis relevanten Kammern (Berlin + Frankfurt/Oder).
       const queries: string[] = [
         Query.orderDesc("startdatum"),
         Query.limit(100),
@@ -375,7 +375,7 @@ const AnzeigenInner: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Talentleihe</IonTitle>
+          <IonTitle>VerbundPraxis</IonTitle>
         </IonToolbar>
         <IonToolbar>
           {profile?.type !== "betrieb" && (
@@ -695,7 +695,7 @@ const AnzeigenInner: React.FC = () => {
 };
 
 const Anzeigen: React.FC = () => (
-  <AuthGate title="Talentleihe">
+  <AuthGate title="VerbundPraxis">
     <AnzeigenInner />
   </AuthGate>
 );

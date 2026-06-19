@@ -1,5 +1,5 @@
 #!/bin/bash
-# Umbenennung: "Lehrstelle" → "Anzeige" in der Talentleihe-Berlin App
+# Umbenennung: "Lehrstelle" → "Anzeige" in der VerbundPraxis-Berlin App
 # Ausführen aus dem Projektroot: bash rename-lehrstelle.sh
 
 set -e

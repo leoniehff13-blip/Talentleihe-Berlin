@@ -17,7 +17,7 @@ const AGB: React.FC = () => {
 
           <h1 style={{ fontSize: "clamp(1.8rem, 4vw, 2.4rem)", fontWeight: 800, letterSpacing: "-0.03em", marginBottom: "8px" }}>
             Allgemeine Geschäftsbedingungen<br />
-            <span style={{ fontSize: "0.6em", fontWeight: 600, color: "#47BCC2" }}>der Plattform Talentleihe Berlin</span>
+            <span style={{ fontSize: "0.6em", fontWeight: 600, color: "#47BCC2" }}>der Plattform VerbundPraxis Berlin</span>
           </h1>
           <p style={{ color: "#4a6080", fontSize: "0.9rem", marginBottom: "32px" }}>Stand: Mai 2026</p>
 
@@ -36,7 +36,7 @@ const AGB: React.FC = () => {
 
           <Section title="§ 1 Geltungsbereich">
             <Ol>
-              <li>Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung der Plattform Talentleihe Berlin (nachfolgend „Plattform"), betrieben durch Max Mustermann, Platzhalterverein e.V., Beispielstrasse 1, 54321 Konz (nachfolgend „Betreiber").</li>
+              <li>Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung der Plattform VerbundPraxis Berlin (nachfolgend „Plattform"), betrieben durch Max Mustermann, Platzhalterverein e.V., Beispielstrasse 1, 54321 Konz (nachfolgend „Betreiber").</li>
               <li>Die Plattform richtet sich ausschließlich an Auszubildende im Handwerk (nachfolgend „Azubis") und Handwerksbetriebe (nachfolgend „Betriebe") im Zuständigkeitsbereich der Handwerkskammer Berlin sowie der Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg.</li>
               <li>Mit der Registrierung auf der Plattform erkennen Nutzer diese AGB an. Abweichende Bedingungen der Nutzer gelten nicht.</li>
             </Ol>

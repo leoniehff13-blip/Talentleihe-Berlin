@@ -47,7 +47,7 @@ const Footer: React.FC = () => {
         <button className="ww-legal-link" onClick={() => history.push("/agb")}>AGB</button>
         <span className="ww-legal-sep">·</span>
         <button className="ww-legal-link" onClick={() => history.push("/impressum")}>Impressum</button>
-        <p className="ww-legal-copy">© {new Date().getFullYear()} Talentleihe Berlin — Ein Angebot der Handwerkskammer Berlin</p>
+        <p className="ww-legal-copy">© {new Date().getFullYear()} VerbundPraxis Berlin — Ein Angebot der Handwerkskammer Berlin</p>
       </footer>
     </>
   );

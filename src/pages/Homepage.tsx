@@ -402,14 +402,14 @@ const Homepage: React.FC = () => {
             <span className="ww-hero-tag">Beta</span>
 
             <div className="ww-hero-content">
-              <div className="ww-hero-kicker">Talentleihe für das Berliner Handwerk</div>
+              <div className="ww-hero-kicker">VerbundPraxis für das Berliner Handwerk</div>
               <h1 className="ww-hero-headline">
                 Azubi trifft
                 <br />
                 <em>Handwerk.</em>
               </h1>
               <p className="ww-hero-sub">
-                Talentleihe Berlin verbindet Auszubildende und Betriebe in der Hauptstadtregion
+                VerbundPraxis Berlin verbindet Auszubildende und Betriebe in der Hauptstadtregion
                 — getragen von der HWK Berlin und der HWK Frankfurt (Oder). Flexibel. Fair. Zukunftssicher.
               </p>
 
@@ -441,7 +441,7 @@ const Homepage: React.FC = () => {
                     ionRouter.push("/anzeigen", "root", "replace");
                   }}
                 >
-                  Talentleihe entdecken
+                  VerbundPraxis entdecken
                 </a>
               </div>
 
@@ -503,7 +503,7 @@ const Homepage: React.FC = () => {
                 Effektiv.
               </h2>
               <p>
-                Talentleihe Berlin macht den Austausch im Handwerk einfach: Auszubildende
+                VerbundPraxis Berlin macht den Austausch im Handwerk einfach: Auszubildende
                 können zeitweise in anderen Betrieben arbeiten — beide Seiten
                 gewinnen.
               </p>
@@ -578,7 +578,7 @@ const Homepage: React.FC = () => {
               </h2>
               <p className="ww-outro-sub">
                 Egal ob du als Azubi neue Erfahrungen sammeln oder als Betrieb
-                passende Talente entdecken willst — Talentleihe Berlin bringt euch zusammen.
+                passende Talente entdecken willst — VerbundPraxis Berlin bringt euch zusammen.
               </p>
               <div className="ww-outro-actions">
                 <a

@@ -1,7 +1,7 @@
 {
   "name": "notifications",
   "version": "1.0.0",
-  "description": "Talentleihe Berlin – Benachrichtigungs-Mails (neue Bewerbung, Annahme, Bewertungs-Erinnerung)",
+  "description": "VerbundPraxis Berlin – Benachrichtigungs-Mails (neue Bewerbung, Annahme, Bewertungs-Erinnerung)",
   "type": "module",
   "main": "src/main.js",
   "dependencies": {

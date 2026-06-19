@@ -1,7 +1,7 @@
 {
   "name": "account-deletion",
   "version": "1.0.0",
-  "description": "Talentleihe Berlin – Konto + alle zugehörigen Daten löschen (E-Mail-bestätigt)",
+  "description": "VerbundPraxis Berlin – Konto + alle zugehörigen Daten löschen (E-Mail-bestätigt)",
   "type": "module",
   "main": "src/main.js",
   "dependencies": {

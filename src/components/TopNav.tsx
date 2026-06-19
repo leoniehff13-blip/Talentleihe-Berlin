@@ -5,7 +5,7 @@ import NotificationBell from "./NotificationBell";
 
 const NAV_ITEMS = [
   { label: "Home",        href: "/home",         owned: ["/home"] },
-  { label: "Talentleihe", href: "/anzeigen",   owned: ["/anzeigen"] },
+  { label: "VerbundPraxis", href: "/anzeigen",   owned: ["/anzeigen"] },
   { label: "Infos",       href: "/informationen", owned: ["/informationen"] },
   { label: "Konto",       href: "/konto",         owned: ["/konto", "/meine-anzeigen", "/meine-bewerbungen", "/eingegangene-anfragen", "/bewertung", "/login", "/registrieren"] },
 ];
@@ -105,7 +105,7 @@ const TopNav: React.FC = () => {
           <span
             onClick={() => navigate("/home")}
             style={{ cursor: "pointer", userSelect: "none", display: "flex", alignItems: "center" }}
-            aria-label="Talentleihe Berlin – Startseite"
+            aria-label="VerbundPraxis Berlin – Startseite"
           >
             <svg width="38" height="38" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" style={{ display: "block" }}>
               <rect x="0" y="0" width="512" height="512" rx="96" fill="#1E367A"/>

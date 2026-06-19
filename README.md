@@ -1,4 +1,4 @@
-# Win-Win Talentleihe
+# Win-Win VerbundPraxis
 
 Web- und Mobile-App (Nachfolger der Flutter-Version „Lehrstellen-Radar"), gebaut mit Ionic + React + Vite.
 Backend: Appwrite. Native iOS/Android: Capacitor.
