@@ -61,6 +61,29 @@ export default async ({ req, res, log, error }) => {
   const action = body.action;
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 0) Event-Trigger: users.*.delete → Nutzer wurde extern gelöscht
+  //    Appwrite liefert die User-Daten im Body wenn ein Event feuert.
+  // ─────────────────────────────────────────────────────────────────────────
+  const eventHeader = req.headers['x-appwrite-event'] ?? '';
+  if (eventHeader.startsWith('users.') && eventHeader.endsWith('.delete')) {
+    const userId = body.$id ?? body.userId;
+    if (!userId) {
+      error('Event ohne userId empfangen.');
+      return res.json({ ok: false, error: 'Keine userId im Event.' }, 400);
+    }
+    log(`Event-Trigger: Lösche Daten für gelöschten User ${userId}`);
+    await deleteByQuery(databases, COL_PROFILES, 'user_id', userId, error);
+    await deleteByQuery(databases, COL_APPRENTICESHIPS, 'owner_id', userId, error);
+    await deleteByQuery(databases, COL_BEWERBUNGEN, 'applicant_user_id', userId, error);
+    await deleteByQuery(databases, COL_BEWERBUNGEN, 'posting_owner_id', userId, error);
+    await deleteByQuery(databases, COL_BEWERTUNGEN, 'rater_user_id', userId, error);
+    await deleteByQuery(databases, COL_BEWERTUNGEN, 'rated_user_id', userId, error);
+    await deleteDokumente(databases, storage, userId, error);
+    log(`Event-Cleanup für ${userId} abgeschlossen.`);
+    return res.json({ ok: true });
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 1) Löschung anfordern → Token erzeugen + Mail verschicken
   // ─────────────────────────────────────────────────────────────────────────
   if (action === 'request') {
