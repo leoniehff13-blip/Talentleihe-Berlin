@@ -141,6 +141,103 @@ function BewertungSection({ userId, profileType }: { userId: string; profileType
   );
 }
 
+
+function ProfilFortschritt({ profile }: { profile: import("../../lib/appwrite").Profile }) {
+  const isTalent = profile.type === "talent";
+
+  const felder = isTalent
+    ? [
+        { label: "Anrede",            ok: Boolean(profile.anrede) },
+        { label: "Vorname",           ok: Boolean(profile.vorname) },
+        { label: "Gewerk",            ok: Boolean(profile.gewerk) },
+        { label: "Lehrjahr",          ok: profile.lehrjahr != null },
+        { label: "Ausbildungsbetrieb", ok: Boolean(profile.unternehmen) },
+        { label: "Handwerkskammer",   ok: Boolean(profile.handwerkskammer) },
+        { label: "Berufsschule",      ok: Boolean(profile.berufsschule) },
+        { label: "Wohnort",           ok: Boolean(profile.ort) },
+        { label: "Fähigkeiten",       ok: (profile.faehigkeiten ?? []).length > 0 },
+      ]
+    : [
+        { label: "Firmenname",             ok: Boolean(profile.name) },
+        { label: "Adresse",                ok: Boolean(profile.adresse) },
+        { label: "Gewerke",                ok: Boolean(profile.gewerk) },
+        { label: "Handwerkskammer",        ok: Boolean(profile.handwerkskammer) },
+        { label: "Anrede Ansprechpartner:in", ok: Boolean(profile.anrede) },
+        { label: "Ansprechpartner:in",     ok: Boolean(profile.ansprechpartner) },
+        { label: "E-Mail Ansprechpartner:in", ok: Boolean(profile.ansprechpartner_email) },
+        { label: "Spezialisierungen",      ok: (profile.spezialisierung ?? []).length > 0 },
+      ];
+
+  const ausgefuellt = felder.filter((f) => f.ok).length;
+  const prozent = Math.round((ausgefuellt / felder.length) * 100);
+  const fehlend = felder.filter((f) => !f.ok);
+
+  const farbe =
+    prozent === 100
+      ? "var(--ion-color-success)"
+      : prozent >= 70
+      ? "var(--ion-color-primary)"
+      : prozent >= 40
+      ? "var(--ion-color-warning)"
+      : "var(--ion-color-danger)";
+
+  return (
+    <IonCard>
+      <IonCardHeader style={{ paddingBottom: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <IonCardTitle style={{ fontSize: 15 }}>Profil-Vollständigkeit</IonCardTitle>
+          <span style={{ fontWeight: 700, fontSize: 18, color: farbe }}>{prozent}%</span>
+        </div>
+      </IonCardHeader>
+      <IonCardContent>
+        {/* Fortschrittsbalken */}
+        <div
+          style={{
+            background: "var(--ion-color-light-shade)",
+            borderRadius: 8,
+            height: 10,
+            overflow: "hidden",
+            marginBottom: fehlend.length > 0 ? 14 : 4,
+          }}
+        >
+          <div
+            style={{
+              width: `${prozent}%`,
+              height: "100%",
+              borderRadius: 8,
+              background: farbe,
+              transition: "width 0.5s ease",
+            }}
+          />
+        </div>
+
+        {prozent === 100 ? (
+          <IonText color="success">
+            <p style={{ margin: 0, fontSize: 13 }}>
+              ✓ Profil vollständig ausgefüllt – super!
+            </p>
+          </IonText>
+        ) : (
+          <>
+            <IonText color="medium">
+              <p style={{ margin: "0 0 8px", fontSize: 13 }}>
+                Noch {fehlend.length} Feld{fehlend.length !== 1 ? "er" : ""} ausfüllen:
+              </p>
+            </IonText>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {fehlend.map((f) => (
+                <IonChip key={f.label} outline style={{ fontSize: 12, margin: 0 }}>
+                  <IonLabel>{f.label}</IonLabel>
+                </IonChip>
+              ))}
+            </div>
+          </>
+        )}
+      </IonCardContent>
+    </IonCard>
+  );
+}
+
 const Konto: React.FC = () => {
   const { user, profile, loading, profileLoading, logout, saveProfile, refresh } = useAuth();
 
@@ -542,6 +639,9 @@ const Konto: React.FC = () => {
             </IonCardContent>
           </IonCard>
         ) : null}
+
+        {/* Profil-Vollständigkeit */}
+        {!isVerbundbuero && <ProfilFortschritt profile={profile} />}
 
         {/* Profil bearbeiten (nicht für Verbundberatung) */}
         {!isVerbundbuero && (
