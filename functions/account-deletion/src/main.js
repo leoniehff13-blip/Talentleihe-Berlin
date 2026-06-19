@@ -163,10 +163,10 @@ export default async ({ req, res, log, error }) => {
     // ---- Alle zugehörigen Daten löschen ----
     await deleteByQuery(databases, COL_PROFILES, 'user_id', userId, error);
     await deleteByQuery(databases, COL_APPRENTICESHIPS, 'owner_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERBUNGEN, 'applicant_user_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERBUNGEN, 'posting_owner_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERTUNGEN, 'rater_user_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERTUNGEN, 'rated_user_id', userId, error);
+    // Nur ausstehende Bewerbungen löschen (angenommene/abgelehnte bleiben für Nachvollziehbarkeit)
+    await deleteAusstehend(databases, 'applicant_user_id', userId, error);
+    await deleteAusstehend(databases, 'posting_owner_id', userId, error);
+    // Bewertungen bleiben erhalten (dienen als Referenz für andere Nutzer)
     await deleteDokumente(databases, storage, userId, error);
 
     // Zuletzt den Auth-User selbst (invalidiert alle Sessions)
@@ -205,6 +205,35 @@ async function deleteByQuery(databases, collection, attr, value, error) {
         await databases.deleteDocument(DB, collection, doc.$id);
       } catch (e) {
         error(`delete ${collection}/${doc.$id} fehlgeschlagen: ${e.message}`);
+      }
+    }
+    if (page.documents.length < 100) return;
+  }
+}
+
+/**
+ * Löscht nur die ausstehenden Bewerbungen, bei denen attr === value.
+ * Angenommene / abgelehnte Bewerbungen bleiben zur Nachvollziehbarkeit erhalten.
+ */
+async function deleteAusstehend(databases, attr, value, error) {
+  for (;;) {
+    let page;
+    try {
+      page = await databases.listDocuments(DB, COL_BEWERBUNGEN, [
+        Query.equal(attr, value),
+        Query.equal('status', 'ausstehend'),
+        Query.limit(100),
+      ]);
+    } catch (e) {
+      error(`list bewerbungen ausstehend (${attr}=${value}) fehlgeschlagen: ${e.message}`);
+      return;
+    }
+    if (page.documents.length === 0) return;
+    for (const doc of page.documents) {
+      try {
+        await databases.deleteDocument(DB, COL_BEWERBUNGEN, doc.$id);
+      } catch (e) {
+        error(`delete bewerbungen/${doc.$id} fehlgeschlagen: ${e.message}`);
       }
     }
     if (page.documents.length < 100) return;
