@@ -446,17 +446,7 @@ const Informationen: React.FC = () => {
                   style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.teal}60`, display: "block" }}
                 >Handwerkskammer Berlin ↗</a>
                 <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Zuständig für Betriebe mit Sitz im Stadtgebiet Berlin. Administriert das Berliner Förderungsprogramm FBB. Blücherstraße 68, 10961 Berlin.</p>
-              </div>
-              <div style={{ background: "#f0f4ff", borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.blue}` }}>
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.blue}60`, display: "block" }}
-              </div>
-            </div>
-            <div style={{ background: "#fff8e6", borderRadius: "10px", padding: "12px 14px", borderLeft: `3px solid #f0a030` }}>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>
-              </p>
+                            </div>
             </div>
           </InfoCard>
 

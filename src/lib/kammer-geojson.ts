@@ -63,62 +63,6 @@ const BERLIN_POLYGON: GeoFeature<GeoPolygon> = {
   },
 };
 
-// Landkreise: Barnim, Märkisch-Oderland, Oder-Spree, Uckermark
-// Dargestellt als vereinfachtes MultiPolygon.
-//
-// Uckermark (nördlichster Landkreis, nördlich von Barnim)
-  [13.205, 53.046], // SW
-  [13.205, 53.280], // NW
-  [13.560, 53.505], // N
-  [14.050, 53.295], // NO
-  [14.225, 53.046], // O
-  [14.050, 52.976], // SO (Barnim-Grenze)
-  [13.560, 52.938], // S
-  [13.205, 53.046], // zurück
-];
-
-// Barnim (nördlich von Berlin)
-  [13.465, 52.677], // SW (an Berlin-Grenze)
-  [13.465, 52.938], // NW
-  [13.872, 52.976], // NO
-  [14.058, 52.820], // O
-  [13.965, 52.677], // SO
-  [13.700, 52.612], // S (an Berlin-Grenze)
-  [13.465, 52.677], // zurück
-];
-
-// Märkisch-Oderland (östlich von Berlin, nördlich der Spree)
-  [13.700, 52.467], // SW (an Berlin)
-  [13.700, 52.677], // NW (Barnim-Grenze)
-  [13.965, 52.677], // N
-  [14.480, 52.680], // NO (Oder)
-  [14.580, 52.520], // O (Oder)
-  [14.380, 52.350], // SO
-  [14.050, 52.350], // S
-  [13.760, 52.467], // SW
-  [13.700, 52.467], // zurück
-];
-
-// Oder-Spree (südöstlich von Berlin)
-  [13.560, 52.338], // SW (an Berlin)
-  [13.760, 52.338], // W
-  [14.050, 52.350], // NW
-  [14.380, 52.350], // N
-  [14.700, 52.180], // NO (Oder)
-  [14.600, 52.000], // O
-  [14.100, 51.970], // SO
-  [13.680, 52.050], // S
-  [13.560, 52.200], // SW
-  [13.560, 52.338], // zurück
-];
-
-  [14.430, 52.290], // SW
-  [14.430, 52.390], // NW
-  [14.580, 52.390], // NO
-  [14.580, 52.290], // SO
-  [14.430, 52.290], // zurück
-];
-
 // ── Export ────────────────────────────────────────────────────────────────────
 export const KAMMER_AREAS: KammerArea[] = [
   {

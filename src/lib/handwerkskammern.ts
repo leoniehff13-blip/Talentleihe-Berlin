@@ -19,7 +19,7 @@ export const HANDWERKSKAMMERN: string[] = [
   "Handwerkskammer Dresden",
   "Handwerkskammer Düsseldorf",
   "Handwerkskammer Erfurt",
-  "Handwerkskammer Flensburg"
+  "Handwerkskammer Flensburg",
   "Handwerkskammer Freiburg",
   "Handwerkskammer für Mittelfranken",
   "Handwerkskammer für München und Oberbayern",
