@@ -359,11 +359,11 @@ const Einstellungen: React.FC = () => {
               expand="block"
               fill="outline"
               color="danger"
-              disabled={deleteBusy}
+              disabled={deleteBusy || deleteMsg?.ok}
               onClick={() => setDeleteAlertOpen(true)}
             >
               <IonIcon slot="start" icon={trashOutline} />
-              {deleteBusy ? "Sende Bestätigungsmail…" : "Konto löschen"}
+              {deleteBusy ? "Sende Bestätigungsmail…" : deleteMsg?.ok ? "Bestätigungsmail wurde gesendet ✓" : "Konto löschen"}
             </IonButton>
             {deleteMsg && (
               <div
