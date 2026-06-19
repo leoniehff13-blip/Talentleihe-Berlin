@@ -37,7 +37,7 @@ const AGB: React.FC = () => {
           <Section title="§ 1 Geltungsbereich">
             <Ol>
               <li>Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung der Plattform VerbundPraxis Berlin (nachfolgend „Plattform"), betrieben durch Max Mustermann, Platzhalterverein e.V., Beispielstrasse 1, 54321 Konz (nachfolgend „Betreiber").</li>
-              <li>Die Plattform richtet sich ausschließlich an Auszubildende im Handwerk (nachfolgend „Azubis") und Handwerksbetriebe (nachfolgend „Betriebe") im Zuständigkeitsbereich der Handwerkskammer Berlin sowie der Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg.</li>
+              <li>Die Plattform richtet sich ausschließlich an Auszubildende im Handwerk (nachfolgend „Azubis") und Handwerksbetriebe (nachfolgend „Betriebe") im Zuständigkeitsbereich der Handwerkskammer Berlin.</li>
               <li>Mit der Registrierung auf der Plattform erkennen Nutzer diese AGB an. Abweichende Bedingungen der Nutzer gelten nicht.</li>
             </Ol>
           </Section>

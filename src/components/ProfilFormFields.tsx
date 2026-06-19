@@ -279,10 +279,6 @@ const KAMMER_INFO: Record<string, { region: string; bezirk: string }> = {
     region: "Stadtgebiet Berlin",
     bezirk: "Alle Berliner Bezirke",
   },
-  "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg": {
-    region: "Region Ostbrandenburg",
-    bezirk: "Barnim, Märkisch-Oderland, Oder-Spree, Uckermark, Frankfurt (Oder)",
-  },
 };
 
 function HandwerkskammerField({ value, onChange }: { value: string; onChange: (v: string) => void }) {

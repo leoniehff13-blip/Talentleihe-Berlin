@@ -145,13 +145,9 @@ const AnzeigenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => {
             line-height: 1.6;
           ">
             <div style="font-weight:700;color:#1E367A;margin-bottom:4px;">Zuständigkeit</div>
-            <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px;">
+            <div style="display:flex;align-items:center;gap:6px;">
               <span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#47BCC2;opacity:0.5;border:2px solid #47BCC2;flex-shrink:0;"></span>
               <span style="color:#1E367A;">HWK Berlin</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;">
-              <span style="display:inline-block;width:14px;height:14px;border-radius:3px;background:#1E367A;opacity:0.4;border:2px solid #1E367A;flex-shrink:0;"></span>
-              <span style="color:#1E367A;">HWK Ostbrandenburg</span>
             </div>
           </div>`;
         return div;
@@ -210,13 +206,9 @@ const AnzeigenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => {
           allCoords.push(coords);
           const isTalent = item.type === "talent_angebot";
 
-          // Pinfarbe nach Kammer: teal = HWK Berlin, blau = HWK Ostbrandenburg
-          const isOstbrandenburg =
-            item.handwerkskammer?.includes("Frankfurt") ?? false;
-          const fillColor = isTalent
-            ? isOstbrandenburg ? "#96B740" : "#47BCC2"   // Talent: grün (OB) / teal (Berlin)
-            : isOstbrandenburg ? "#2a4a9a" : "#1E367A";  // Einsatz: hellblau (OB) / dunkelblau (Berlin)
-          const borderColor = isOstbrandenburg ? "#1E367A" : "#47BCC2";
+          // Pinfarbe: Azubi-Angebot = teal, Einsatz = dunkelblau
+          const fillColor = isTalent ? "#47BCC2" : "#1E367A";
+          const borderColor = isTalent ? "#1E367A" : "#47BCC2";
 
           const marker = L.circleMarker(coords, {
             radius: 9,
@@ -231,7 +223,7 @@ const AnzeigenMap: React.FC<Props> = ({ items, showKammerAreas = false }) => {
           const safeFirma  = String(item.firma  ?? "").replace(/</g, "&lt;");
           const safeOrt    = String(item.ort    ?? "").replace(/</g, "&lt;");
           const typeLabel  = isTalent ? "Talent-Angebot" : "Einsatz";
-          const kammerKurz = isOstbrandenburg ? "HWK Ostbrandenburg" : "HWK Berlin";
+          const kammerKurz = "HWK Berlin";
 
           marker.bindPopup(
             `<div style="min-width:190px;font-family:Quicksand,sans-serif">

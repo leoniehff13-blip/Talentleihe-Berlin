@@ -410,7 +410,7 @@ const Homepage: React.FC = () => {
               </h1>
               <p className="ww-hero-sub">
                 VerbundPraxis Berlin verbindet Auszubildende und Betriebe in der Hauptstadtregion
-                — getragen von der HWK Berlin und der HWK Frankfurt (Oder). Flexibel. Fair. Zukunftssicher.
+                — getragen von der Handwerkskammer Berlin. Flexibel. Fair. Zukunftssicher.
               </p>
 
               <div className="ww-hero-actions">
@@ -479,15 +479,7 @@ const Homepage: React.FC = () => {
               >
                 HWK Berlin
               </a>
-              <div className="ww-chamber-dot" />
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-ff.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Frankfurt (Oder) – Region Ostbrandenburg
-              </a>
+
             </div>
           </div>
 

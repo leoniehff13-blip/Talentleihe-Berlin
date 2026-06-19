@@ -1,9 +1,8 @@
 /**
  * Vereinfachte GeoJSON-Polygone für die Zuständigkeitsbereiche
- * der beiden für VerbundPraxis Berlin relevanten Handwerkskammern.
+ * des Zuständigkeitsbereichs der Handwerkskammer Berlin.
  *
- * HWK Berlin            → Stadtgebiet Berlin   → Farbe Teal  (#47BCC2)
- * HWK Frankfurt (Oder)  → Region Ostbrandenburg → Farbe Blau  (#1E367A)
+ * HWK Berlin → Stadtgebiet Berlin → Farbe Teal (#47BCC2)
  *
  * Die Koordinaten sind vereinfachte Näherungspolygone.
  * Für exakte Grenzen: GeoJSON der Landkreise von
@@ -151,12 +150,5 @@ export const KAMMER_AREAS: KammerArea[] = [
     color: "#47BCC2",
     fillColor: "#47BCC2",
     geojson: BERLIN_POLYGON,
-  },
-  {
-    name: "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg",
-    shortName: "HWK Ostbrandenburg",
-    color: "#1E367A",
-    fillColor: "#1E367A",
-    geojson: OSTBRANDENBURG_MULTIPOLYGON,
   },
 ];

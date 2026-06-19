@@ -252,7 +252,7 @@ const AnzeigenInner: React.FC = () => {
       // Regionale Eingrenzung über die Handwerkskammer statt über bundesland:
       // Das Anzeigen-Formular setzt bundesland immer auf null, füllt aber
       // handwerkskammer aus einem Dropdown. Wir zeigen daher genau die zwei
-      // für VerbundPraxis relevanten Kammern (Berlin + Frankfurt/Oder).
+      // für VerbundPraxis Berlin relevante Kammer (HWK Berlin).
       const queries: string[] = [
         Query.orderDesc("startdatum"),
         Query.limit(100),
@@ -632,11 +632,7 @@ const AnzeigenInner: React.FC = () => {
             {sichtbar.map((item) => {
               const itemIsTalent = item.type === "talent_angebot";
               const kammer = item.handwerkskammer ?? "";
-              const kammerKurz = kammer.includes("Frankfurt")
-                ? "HWK Ostbrandenburg"
-                : kammer.includes("Berlin")
-                  ? "HWK Berlin"
-                  : kammer;
+              const kammerKurz = "HWK Berlin";
               return (
                 <IonItem
                   key={item.$id}
