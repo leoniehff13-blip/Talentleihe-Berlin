@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ID, Permission, Role } from "appwrite";
-import { IonButton, IonIcon, IonSpinner, IonText } from "@ionic/react";
+import { IonIcon, IonSpinner, IonText } from "@ionic/react";
 import { personCircleOutline, cameraOutline, trashOutline } from "ionicons/icons";
 import { storage, BUCKET_AVATARS } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
@@ -19,12 +19,13 @@ export function getAvatarUrl(fileId: string): string {
 
 const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
   const { user } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputId = "profilbild-upload-input";
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file || !user) return;
     if (!file.type.startsWith("image/")) {
       setError("Nur Bilder erlaubt (JPEG, PNG, WebP).");
@@ -55,12 +56,11 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
       setError(translateError(err));
     } finally {
       setUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   }
 
   async function handleRemove(e: React.MouseEvent) {
-    e.stopPropagation();
+    e.preventDefault();
     if (!fileId) return;
     setUploading(true);
     try {
@@ -74,11 +74,20 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0 4px" }}>
-      {/* Avatar-Kreis */}
-      <div
-        role="button"
-        onClick={() => !uploading && fileInputRef.current?.click()}
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0 8px" }}>
+      {/* Verstecktes File-Input – wird über label gesteuert */}
+      <input
+        id={inputId}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        disabled={uploading}
+      />
+
+      {/* Avatar-Kreis als label → nativer Browser-Dateidialog */}
+      <label
+        htmlFor={inputId}
         style={{
           width: 96,
           height: 96,
@@ -91,7 +100,6 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
           marginBottom: 10,
           cursor: uploading ? "default" : "pointer",
           border: "2px solid var(--ion-color-light)",
-          position: "relative",
         }}
       >
         {uploading ? (
@@ -108,45 +116,57 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
             style={{ fontSize: 72, color: "var(--ion-color-medium)" }}
           />
         )}
-      </div>
+      </label>
 
       {/* Buttons */}
-      <div style={{ display: "flex", gap: 8 }}>
-        <IonButton
-          size="small"
-          fill="outline"
-          disabled={uploading}
-          onClick={() => fileInputRef.current?.click()}
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <label
+          htmlFor={inputId}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "6px 14px",
+            borderRadius: 8,
+            border: "1px solid var(--ion-color-primary)",
+            color: "var(--ion-color-primary)",
+            fontSize: 14,
+            cursor: uploading ? "default" : "pointer",
+            opacity: uploading ? 0.5 : 1,
+          }}
         >
-          <IonIcon slot="start" icon={cameraOutline} />
+          <IonIcon icon={cameraOutline} style={{ fontSize: 16 }} />
           {fileId ? "Bild ändern" : "Bild hochladen"}
-        </IonButton>
+        </label>
+
         {fileId && (
-          <IonButton
-            size="small"
-            fill="outline"
-            color="danger"
-            disabled={uploading}
+          <button
             onClick={handleRemove}
+            disabled={uploading}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 34,
+              height: 34,
+              borderRadius: 8,
+              border: "1px solid var(--ion-color-danger)",
+              background: "transparent",
+              color: "var(--ion-color-danger)",
+              cursor: "pointer",
+              opacity: uploading ? 0.5 : 1,
+            }}
           >
-            <IonIcon slot="icon-only" icon={trashOutline} />
-          </IonButton>
+            <IonIcon icon={trashOutline} style={{ fontSize: 16 }} />
+          </button>
         )}
       </div>
 
       {error && (
         <IonText color="danger">
-          <p style={{ margin: "6px 0 0", fontSize: 13 }}>{error}</p>
+          <p style={{ margin: "8px 0 0", fontSize: 13 }}>{error}</p>
         </IonText>
       )}
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
     </div>
   );
 };
