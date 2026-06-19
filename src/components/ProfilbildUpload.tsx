@@ -9,6 +9,8 @@ import { translateError } from "../lib/errors";
 interface Props {
   fileId: string | null;
   onChange: (fileId: string | null) => void;
+  /** Wird nur aufgerufen wenn user noch NICHT eingeloggt ist (Registrierung). */
+  onPendingFile?: (file: File | null) => void;
 }
 
 export function getAvatarUrl(fileId: string): string {
@@ -22,9 +24,10 @@ export function getAvatarUrl(fileId: string): string {
 
 const INPUT_ID = "profilbild-file-input";
 
-const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
+const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange, onPendingFile }) => {
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const [pendingPreview, setPendingPreview] = useState<string | null>(null);
   const [presentAlert] = useIonAlert();
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -32,10 +35,6 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
     e.target.value = "";
     if (!file) return;
 
-    if (!user) {
-      presentAlert({ header: "Fehler", message: "Nicht eingeloggt.", buttons: ["OK"] });
-      return;
-    }
     if (!file.type.startsWith("image/")) {
       presentAlert({ header: "Fehler", message: "Nur Bilder erlaubt (JPEG, PNG, WebP).", buttons: ["OK"] });
       return;
@@ -45,6 +44,16 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
       return;
     }
 
+    // ── Pending-Modus (noch nicht eingeloggt, z. B. Registrierung) ──────────
+    if (!user) {
+      if (pendingPreview) URL.revokeObjectURL(pendingPreview);
+      const url = URL.createObjectURL(file);
+      setPendingPreview(url);
+      onPendingFile?.(file);
+      return;
+    }
+
+    // ── Normaler Upload-Modus ────────────────────────────────────────────────
     setUploading(true);
     try {
       if (fileId) {
@@ -74,6 +83,13 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
 
   async function handleRemove(e: React.MouseEvent) {
     e.preventDefault();
+    // Pending-Vorschau entfernen
+    if (!fileId && pendingPreview) {
+      URL.revokeObjectURL(pendingPreview);
+      setPendingPreview(null);
+      onPendingFile?.(null);
+      return;
+    }
     if (!fileId) return;
     setUploading(true);
     try {
@@ -86,12 +102,11 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
     }
   }
 
+  const previewSrc = fileId ? getAvatarUrl(fileId) : pendingPreview;
+  const hasImage = Boolean(previewSrc);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0 8px" }}>
-      {/*
-       * Verstecktes file-input.
-       * label[htmlFor] öffnet den nativen Dateidialog – kein .click() nötig.
-       */}
       <input
         id={INPUT_ID}
         type="file"
@@ -101,7 +116,6 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
         onChange={handleFileChange}
       />
 
-      {/* Avatar-Kreis als label */}
       <label
         htmlFor={INPUT_ID}
         style={{
@@ -121,9 +135,9 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
       >
         {uploading ? (
           <IonSpinner name="crescent" />
-        ) : fileId ? (
+        ) : hasImage ? (
           <img
-            src={getAvatarUrl(fileId)}
+            src={previewSrc!}
             alt="Profilbild"
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
@@ -155,10 +169,10 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
           }}
         >
           <IonIcon icon={cameraOutline} style={{ fontSize: 16 }} />
-          {fileId ? "Bild ändern" : "Bild hochladen"}
+          {hasImage ? "Bild ändern" : "Bild hochladen"}
         </label>
 
-        {fileId && !uploading && (
+        {hasImage && !uploading && (
           <button
             type="button"
             onClick={handleRemove}

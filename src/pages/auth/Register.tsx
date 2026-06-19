@@ -20,6 +20,8 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
+import { ID, Permission, Role } from "appwrite";
+import { storage, BUCKET_AVATARS } from "../../lib/appwrite";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -41,6 +43,7 @@ const Register: React.FC = () => {
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
   const [success, setSuccess] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -71,8 +74,29 @@ const Register: React.FC = () => {
     try {
       await signup(accountName, email.trim(), password);
       // signup() hat bereits eine Session angelegt und refresh() aufgerufen.
+      // Avatar hochladen, falls im Formular ein Bild ausgewählt wurde.
+      let avatarFileId: string | null = null;
+      if (pendingAvatarFile) {
+        try {
+          const { account } = await import("../../lib/appwrite");
+          const currentUser = await account.get();
+          const uploaded = await storage.createFile(
+            BUCKET_AVATARS,
+            ID.unique(),
+            pendingAvatarFile,
+            [
+              Permission.read(Role.any()),
+              Permission.update(Role.user(currentUser.$id)),
+              Permission.delete(Role.user(currentUser.$id)),
+            ]
+          );
+          avatarFileId = uploaded.$id;
+        } catch {
+          // Profilbild-Upload fehlgeschlagen – weiter ohne Bild
+        }
+      }
       // Profil anlegen – danach direkt weiterleiten, keine zweite Session nötig.
-      await saveProfile(profilStateToInput(profil));
+      await saveProfile({ ...profilStateToInput(profil), avatar_file_id: avatarFileId });
       setSuccess(true);
     } catch (err: unknown) {
       setError(translateError(err));
@@ -112,7 +136,7 @@ const Register: React.FC = () => {
       </IonHeader>
       <IonContent fullscreen>
         <form onSubmit={handleSubmit}>
-          <ProfilFormFields state={profil} onChange={setProfil} />
+          <ProfilFormFields state={profil} onChange={setProfil} onPendingAvatar={setPendingAvatarFile} />
 
           <IonList>
             <IonListHeader>

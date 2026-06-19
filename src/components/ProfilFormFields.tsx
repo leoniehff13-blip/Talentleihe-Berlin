@@ -328,9 +328,11 @@ interface Props {
   state: ProfilFormState;
   onChange: (next: ProfilFormState) => void;
   hideTypeSwitch?: boolean;
+  /** Callback wenn Bild im Pending-Modus ausgewählt wurde (Registrierung). */
+  onPendingAvatar?: (file: File | null) => void;
 }
 
-export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwitch }) => {
+export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwitch, onPendingAvatar }) => {
   function set<K extends keyof ProfilFormState>(key: K, value: ProfilFormState[K]) {
     onChange({ ...state, [key]: value });
   }
@@ -340,6 +342,7 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
       <ProfilbildUpload
         fileId={state.avatar_file_id}
         onChange={(id) => set("avatar_file_id", id)}
+        onPendingFile={onPendingAvatar}
       />
       {!hideTypeSwitch && (
         <div className="ion-padding">
