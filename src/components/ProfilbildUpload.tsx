@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { ID, Permission, Role } from "appwrite";
-import { IonIcon, IonSpinner, IonText } from "@ionic/react";
+import { IonIcon, IonSpinner, IonText, useIonAlert } from "@ionic/react";
 import { personCircleOutline, cameraOutline, trashOutline } from "ionicons/icons";
 import { storage, BUCKET_AVATARS } from "../lib/appwrite";
 import { useAuth } from "../lib/AuthContext";
@@ -12,31 +12,40 @@ interface Props {
 }
 
 export function getAvatarUrl(fileId: string): string {
-  const endpoint = (import.meta.env.VITE_APPWRITE_ENDPOINT as string ?? "https://fra.cloud.appwrite.io/v1").replace(/\/+$/, "");
-  const project = import.meta.env.VITE_APPWRITE_PROJECT_ID as string ?? "";
+  const endpoint = (
+    (import.meta.env.VITE_APPWRITE_ENDPOINT as string) ??
+    "https://fra.cloud.appwrite.io/v1"
+  ).replace(/\/+$/, "");
+  const project = (import.meta.env.VITE_APPWRITE_PROJECT_ID as string) ?? "";
   return `${endpoint}/storage/buckets/avatars/files/${fileId}/view?project=${project}`;
 }
 
+const INPUT_ID = "profilbild-file-input";
+
 const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
   const { user } = useAuth();
-  const inputId = "profilbild-upload-input";
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [presentAlert] = useIonAlert();
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = "";
-    if (!file || !user) return;
+    if (!file) return;
+
+    if (!user) {
+      presentAlert({ header: "Fehler", message: "Nicht eingeloggt.", buttons: ["OK"] });
+      return;
+    }
     if (!file.type.startsWith("image/")) {
-      setError("Nur Bilder erlaubt (JPEG, PNG, WebP).");
+      presentAlert({ header: "Fehler", message: "Nur Bilder erlaubt (JPEG, PNG, WebP).", buttons: ["OK"] });
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      setError("Maximale Dateigröße: 5 MB.");
+      presentAlert({ header: "Fehler", message: "Maximale Dateigröße: 5 MB.", buttons: ["OK"] });
       return;
     }
+
     setUploading(true);
-    setError(null);
     try {
       if (fileId) {
         try { await storage.deleteFile(BUCKET_AVATARS, fileId); } catch { /* ignorieren */ }
@@ -53,7 +62,11 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
       );
       onChange(uploaded.$id);
     } catch (err) {
-      setError(translateError(err));
+      presentAlert({
+        header: "Upload fehlgeschlagen",
+        message: translateError(err),
+        buttons: ["OK"],
+      });
     } finally {
       setUploading(false);
     }
@@ -67,7 +80,7 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
       await storage.deleteFile(BUCKET_AVATARS, fileId);
       onChange(null);
     } catch (err) {
-      setError(translateError(err));
+      presentAlert({ header: "Fehler", message: translateError(err), buttons: ["OK"] });
     } finally {
       setUploading(false);
     }
@@ -75,19 +88,22 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0 8px" }}>
-      {/* Verstecktes File-Input – wird über label gesteuert */}
+      {/*
+       * Verstecktes file-input.
+       * label[htmlFor] öffnet den nativen Dateidialog – kein .click() nötig.
+       */}
       <input
-        id={inputId}
+        id={INPUT_ID}
         type="file"
         accept="image/jpeg,image/png,image/webp"
         style={{ display: "none" }}
-        onChange={handleFileChange}
         disabled={uploading}
+        onChange={handleFileChange}
       />
 
-      {/* Avatar-Kreis als label → nativer Browser-Dateidialog */}
+      {/* Avatar-Kreis als label */}
       <label
-        htmlFor={inputId}
+        htmlFor={INPUT_ID}
         style={{
           width: 96,
           height: 96,
@@ -100,6 +116,7 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
           marginBottom: 10,
           cursor: uploading ? "default" : "pointer",
           border: "2px solid var(--ion-color-light)",
+          pointerEvents: uploading ? "none" : "auto",
         }}
       >
         {uploading ? (
@@ -118,43 +135,45 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
         )}
       </label>
 
-      {/* Buttons */}
       <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
         <label
-          htmlFor={inputId}
+          htmlFor={INPUT_ID}
           style={{
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            padding: "6px 14px",
+            padding: "7px 16px",
             borderRadius: 8,
             border: "1px solid var(--ion-color-primary)",
             color: "var(--ion-color-primary)",
             fontSize: 14,
+            fontWeight: 500,
             cursor: uploading ? "default" : "pointer",
             opacity: uploading ? 0.5 : 1,
+            pointerEvents: uploading ? "none" : "auto",
+            userSelect: "none",
           }}
         >
           <IonIcon icon={cameraOutline} style={{ fontSize: 16 }} />
           {fileId ? "Bild ändern" : "Bild hochladen"}
         </label>
 
-        {fileId && (
+        {fileId && !uploading && (
           <button
+            type="button"
             onClick={handleRemove}
-            disabled={uploading}
             style={{
               display: "inline-flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 34,
-              height: 34,
+              width: 36,
+              height: 36,
               borderRadius: 8,
               border: "1px solid var(--ion-color-danger)",
               background: "transparent",
               color: "var(--ion-color-danger)",
               cursor: "pointer",
-              opacity: uploading ? 0.5 : 1,
+              padding: 0,
             }}
           >
             <IonIcon icon={trashOutline} style={{ fontSize: 16 }} />
@@ -162,11 +181,11 @@ const ProfilbildUpload: React.FC<Props> = ({ fileId, onChange }) => {
         )}
       </div>
 
-      {error && (
-        <IonText color="danger">
-          <p style={{ margin: "8px 0 0", fontSize: 13 }}>{error}</p>
-        </IonText>
-      )}
+      <IonText color="medium">
+        <p style={{ margin: "8px 0 0", fontSize: 12, textAlign: "center" }}>
+          Auf Kreis oder Button tippen zum Hochladen
+        </p>
+      </IonText>
     </div>
   );
 };
