@@ -21,6 +21,9 @@ import {
   IonItem,
   IonTextarea,
   IonAlert,
+  IonToggle,
+  IonInput,
+  IonFooter,
 } from "@ionic/react";
 import { useEffect, useState, useCallback } from "react";
 import ZurueckButton from "../components/ZurueckButton";
@@ -63,6 +66,9 @@ const AnzeigeDetailInner: React.FC = () => {
   const [sendError, setSendError] = useState<string | null>(null);
   const [erfolg, setErfolg] = useState(false);
   const [selectedDokIds, setSelectedDokIds] = useState<string[]>([]);
+  const [zeitraumBegrenzen, setZeitraumBegrenzen] = useState(false);
+  const [eigeneVon, setEigeneVon] = useState("");
+  const [eigeneBis, setEigeneBis] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const ownerId = item ? (item.owner_id ?? extractOwnerId(item.$permissions ?? [])) : null;
@@ -120,11 +126,31 @@ const AnzeigeDetailInner: React.FC = () => {
   }
 
   async function handleBewerben() {
-    if (!user || !item || !ownerId) return;
     setSendError(null);
+    if (!user || !item || !ownerId) return;
     if (!nachricht.trim()) {
       setSendError("Bitte schreib eine kurze Nachricht.");
       return;
+    }
+    if (zeitraumBegrenzen) {
+      const einsatzStart = item.startdatum?.substring(0, 10) ?? "";
+      const einsatzEnd = item.enddatum?.substring(0, 10) ?? "";
+      if (!eigeneVon || !eigeneBis) {
+        setSendError("Bitte Start- und Enddatum deines verfügbaren Zeitraums angeben.");
+        return;
+      }
+      if (eigeneVon > eigeneBis) {
+        setSendError("Das Startdatum muss vor oder gleich dem Enddatum liegen.");
+        return;
+      }
+      if (einsatzStart && eigeneVon < einsatzStart) {
+        setSendError(`Das Startdatum darf nicht vor dem ${formatDate(item.startdatum)} liegen.`);
+        return;
+      }
+      if (einsatzEnd && eigeneBis > einsatzEnd) {
+        setSendError(`Das Enddatum darf nicht nach dem ${formatDate(item.enddatum)} liegen.`);
+        return;
+      }
     }
     setSending(true);
     try {
@@ -144,7 +170,9 @@ const AnzeigeDetailInner: React.FC = () => {
           applicant_user_id: user.$id,
           applicant_name: applicantName,
           posting_owner_id: ownerId,
-          nachricht: nachricht.trim(),
+          nachricht: zeitraumBegrenzen && eigeneVon && eigeneBis
+            ? `📅 Verfügbarer Zeitraum: ${new Date(eigeneVon).toLocaleDateString("de-DE")} bis ${new Date(eigeneBis).toLocaleDateString("de-DE")}\n\n${nachricht.trim()}`
+            : nachricht.trim(),
           status: "ausstehend",
           dokument_ids: selectedDokIds,
         }
@@ -158,6 +186,9 @@ const AnzeigeDetailInner: React.FC = () => {
       setShowModal(false);
       setNachricht("");
       setSelectedDokIds([]);
+      setZeitraumBegrenzen(false);
+      setEigeneVon("");
+      setEigeneBis("");
       setErfolg(true);
       // Anzeigen-Inhaber:in per Mail über die neue Bewerbung informieren
       // (fire-and-forget – Fehler brechen die Bewerbung nicht ab).
@@ -443,23 +474,94 @@ const AnzeigeDetailInner: React.FC = () => {
           </IonHeader>
           <IonContent className="ion-padding">
             {item && (
-              <p>
+              <div style={{ marginBottom: 12 }}>
                 <IonText color="medium">
-                  An: <strong>{item.firma}</strong> · {item.gewerk}
+                  <p style={{ margin: "0 0 8px" }}>
+                    An: <strong>{item.firma}</strong> · {item.gewerk}
+                  </p>
                 </IonText>
-              </p>
+                {item.startdatum && (
+                  <div style={{
+                    background: "rgba(71,188,194,0.08)",
+                    border: "1px solid rgba(71,188,194,0.3)",
+                    borderRadius: 8,
+                    padding: "8px 12px",
+                    fontSize: "0.85rem",
+                    color: "#1E367A",
+                  }}>
+                    <strong>{isTalentAnzeige ? "Verfügbarer Zeitraum:" : "Einsatzzeitraum:"}</strong>{" "}
+                    {new Date(item.startdatum).toLocaleDateString("de-DE")}
+                    {item.enddatum
+                      ? <> – {new Date(item.enddatum).toLocaleDateString("de-DE")}</>
+                      : " (offen)"}
+                  </div>
+                )}
+              </div>
             )}
             <IonItem>
               <IonTextarea
                 label="Deine Nachricht"
                 labelPlacement="stacked"
                 autoGrow
-                rows={6}
-                placeholder="Stell dich kurz vor und sag, warum dich diese Anzeige interessiert."
+                rows={5}
+                placeholder="Stell dich kurz vor und sag, warum dich dieser Einsatz interessiert."
                 value={nachricht}
                 onIonInput={(e) => setNachricht(e.detail.value ?? "")}
               />
             </IonItem>
+
+            {/* Zeitraum anpassen – Talent bei Einsatz ODER Betrieb bei Talent-Angebot */}
+            {!istEigeneAnzeige && item?.startdatum && (
+              <div style={{ marginTop: 12 }}>
+                <IonItem lines="none">
+                  <IonLabel>
+                    <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#1E367A" }}>
+                      Zeitraum anpassen
+                    </p>
+                    <p style={{ fontSize: "0.8rem", color: "#4a6080", margin: "2px 0 0" }}>
+                      {isTalentAnzeige
+                        ? "Benötigst du das Talent nur für einen Teil des angegebenen Zeitraums?"
+                        : "Kannst du nur einen Teil des Einsatzes absolvieren?"}
+                    </p>
+                  </IonLabel>
+                  <IonToggle
+                    slot="end"
+                    checked={zeitraumBegrenzen}
+                    onIonChange={(e) => {
+                      setZeitraumBegrenzen(e.detail.checked);
+                      if (!e.detail.checked) { setEigeneVon(""); setEigeneBis(""); }
+                    }}
+                  />
+                </IonItem>
+                {zeitraumBegrenzen && (
+                  <div style={{ padding: "4px 0 0" }}>
+                    <IonItem>
+                      <IonInput
+                        label={isTalentAnzeige ? "Benötigt ab" : "Verfügbar ab"}
+                        labelPlacement="stacked"
+                        type="date"
+                        min={item?.startdatum?.substring(0, 10)}
+                        max={eigeneBis || item?.enddatum?.substring(0, 10) || undefined}
+                        value={eigeneVon}
+                        onIonInput={(e) => setEigeneVon(e.detail.value ?? "")}
+                      />
+                    </IonItem>
+                    <IonItem>
+                      <IonInput
+                        label={isTalentAnzeige ? "Benötigt bis" : "Verfügbar bis"}
+                        labelPlacement="stacked"
+                        type="date"
+                        min={eigeneVon || item?.startdatum?.substring(0, 10)}
+                        max={item?.enddatum?.substring(0, 10) || undefined}
+                        value={eigeneBis}
+                        onIonInput={(e) => setEigeneBis(e.detail.value ?? "")}
+                      />
+                    </IonItem>
+                  </div>
+                )}
+              </div>
+            )}
+
             {istTalent && (
               <DokumenteUpload
                 mode="select"
@@ -467,20 +569,17 @@ const AnzeigeDetailInner: React.FC = () => {
                 onSelectionChange={setSelectedDokIds}
               />
             )}
+          </IonContent>
+          <IonFooter className="ion-padding" style={{ background: "var(--ion-background-color)" }}>
             {sendError && (
               <IonText color="danger">
-                <p>{sendError}</p>
+                <p style={{ margin: "0 0 8px", fontSize: "0.88rem" }}>{sendError}</p>
               </IonText>
             )}
-            <IonButton
-              expand="block"
-              onClick={handleBewerben}
-              disabled={sending}
-              style={{ marginTop: 16 }}
-            >
+            <IonButton expand="block" onClick={handleBewerben} disabled={sending}>
               {sending ? "Wird gesendet…" : "Senden"}
             </IonButton>
-          </IonContent>
+          </IonFooter>
         </IonModal>
 
         {/* Erfolgs-Toast als kleines Alert */}
