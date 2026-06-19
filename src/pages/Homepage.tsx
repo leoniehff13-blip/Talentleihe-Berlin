@@ -404,9 +404,9 @@ const Homepage: React.FC = () => {
             <div className="ww-hero-content">
               <div className="ww-hero-kicker">VerbundPraxis für das Berliner Handwerk</div>
               <h1 className="ww-hero-headline">
-                Azubi trifft
+                Talent trifft
                 <br />
-                <em>Handwerk.</em>
+                <em>Betrieb.</em>
               </h1>
               <p className="ww-hero-sub">
                 VerbundPraxis Berlin verbindet Auszubildende und Betriebe in der Hauptstadtregion
