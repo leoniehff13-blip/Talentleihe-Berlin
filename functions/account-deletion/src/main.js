@@ -5,40 +5,38 @@ import nodemailer from 'nodemailer';
 /**
  * Talentleihe Berlin – Konto-Löschfunktion
  *
- * Zwei Aktionen (per JSON-Body { "action": ... }):
+ * action: "request"  → Token erzeugen + Bestätigungsmail senden
+ * action: "confirm"  → Token prüfen + alle Nutzerdaten löschen
  *
- *   action: "request"
- *     - Wird vom eingeloggten Nutzer aufgerufen (User-Session → der Header
- *       x-appwrite-user-id ist gesetzt).
- *     - Erzeugt einen einmaligen Lösch-Token, speichert dessen Hash + Ablauf
- *       in den User-Prefs und verschickt eine Bestätigungsmail mit Link.
+ * Was gelöscht wird:
+ *   ✓ Profil (profiles)
+ *   ✓ Einsätze & Talent-Angebote (apprenticeships, owner_id)
+ *   ✓ Ausstehende Bewerbungen (bewerbungen, status = "ausstehend")
+ *   ✓ Dokumente & Storage-Dateien (dokumente, dokumente-bucket)
+ *   ✓ Auth-User
  *
- *   action: "confirm" (body: { userId, secret })
- *     - Wird über den Link aus der Mail aufgerufen (ohne Session).
- *     - Prüft den Token und löscht danach ALLE Daten des Nutzers
- *       (Profil, Anzeigen, Bewerbungen, Bewertungen, Dokumente + Storage-
- *       Dateien) und zuletzt den Auth-User selbst.
+ * Was erhalten bleibt:
+ *   ✗ Bewertungen  →  bleiben für andere Nutzer sichtbar
+ *   ✗ Angenommene/Abgelehnte Bewerbungen  →  bleiben als Nachweis
  *
- * Der API-Zugriff läuft über den dynamischen Funktions-Key
- * (Header x-appwrite-key) – es muss KEIN statischer API-Key hinterlegt werden,
- * solange die Funktion die nötigen Scopes besitzt (users.*, documents.*,
- * files.*).
+ * Benötigte Funktions-Scopes in Appwrite Console:
+ *   users.read, users.write, documents.read, documents.write,
+ *   files.read, files.write
  *
- * Benötigte Funktions-Variablen (Appwrite-Konsole → Function → Settings):
- *   APP_URL     z. B. https://<deine-site-domain>   (Basis für den Link)
- *   SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM
+ * Benötigte Ausführungs-Berechtigung: "Any" (damit Link aus Mail funktioniert)
+ *
+ * Funktions-Variablen:
+ *   APP_URL, SMTP_HOST, SMTP_PORT, SMTP_SECURE, SMTP_USER, SMTP_PASS, SMTP_FROM
  */
 
 const DB = 'lehrstellen';
-const COL_PROFILES = 'profiles';
+const COL_PROFILES      = 'profiles';
 const COL_APPRENTICESHIPS = 'apprenticeships';
-const COL_BEWERBUNGEN = 'bewerbungen';
-const COL_BEWERTUNGEN = 'bewertungen';
-const COL_DOKUMENTE = 'dokumente';
-const BUCKET_DOKUMENTE = 'dokumente';
+const COL_BEWERBUNGEN   = 'bewerbungen';
+const COL_DOKUMENTE     = 'dokumente';
+const BUCKET_DOKUMENTE  = 'dokumente';
 
-const TOKEN_TTL_MS = 60 * 60 * 1000; // Link 1 Stunde gültig
-
+const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 Stunde
 const sha256 = (s) => crypto.createHash('sha256').update(s).digest('hex');
 
 export default async ({ req, res, log, error }) => {
@@ -47,68 +45,38 @@ export default async ({ req, res, log, error }) => {
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
     .setKey(req.headers['x-appwrite-key'] ?? '');
 
-  const users = new Users(client);
+  const users     = new Users(client);
   const databases = new Databases(client);
-  const storage = new Storage(client);
+  const storage   = new Storage(client);
 
-  // Body robust parsen (open-runtimes liefert je nach Version bodyJson/bodyRaw)
+  // Body robust parsen
   let body = {};
-  try {
-    body = req.bodyJson ?? JSON.parse(req.bodyRaw || req.body || '{}');
-  } catch {
-    body = {};
-  }
+  try { body = req.bodyJson ?? JSON.parse(req.bodyRaw || req.body || '{}'); }
+  catch { body = {}; }
+
   const action = body.action;
+  log(`[account-deletion] action=${action}`);
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // 0) Event-Trigger: users.*.delete → Nutzer wurde extern gelöscht
-  //    Appwrite liefert die User-Daten im Body wenn ein Event feuert.
-  // ─────────────────────────────────────────────────────────────────────────
-  const eventHeader = req.headers['x-appwrite-event'] ?? '';
-  if (eventHeader.startsWith('users.') && eventHeader.endsWith('.delete')) {
-    const userId = body.$id ?? body.userId;
-    if (!userId) {
-      error('Event ohne userId empfangen.');
-      return res.json({ ok: false, error: 'Keine userId im Event.' }, 400);
-    }
-    log(`Event-Trigger: Lösche Daten für gelöschten User ${userId}`);
-    await deleteByQuery(databases, COL_PROFILES, 'user_id', userId, error);
-    await deleteByQuery(databases, COL_APPRENTICESHIPS, 'owner_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERBUNGEN, 'applicant_user_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERBUNGEN, 'posting_owner_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERTUNGEN, 'rater_user_id', userId, error);
-    await deleteByQuery(databases, COL_BEWERTUNGEN, 'rated_user_id', userId, error);
-    await deleteDokumente(databases, storage, userId, error);
-    log(`Event-Cleanup für ${userId} abgeschlossen.`);
-    return res.json({ ok: true });
-  }
-
-  // ─────────────────────────────────────────────────────────────────────────
-  // 1) Löschung anfordern → Token erzeugen + Mail verschicken
-  // ─────────────────────────────────────────────────────────────────────────
+  // ── 1) Löschung anfordern ────────────────────────────────────────────────
   if (action === 'request') {
     const userId = req.headers['x-appwrite-user-id'];
-    if (!userId) {
-      return res.json({ ok: false, error: 'Nicht eingeloggt.' }, 401);
-    }
+    if (!userId) return res.json({ ok: false, error: 'Nicht eingeloggt.' }, 401);
 
     let user;
-    try {
-      user = await users.get(userId);
-    } catch (e) {
-      error(`users.get fehlgeschlagen: ${e.message}`);
+    try { user = await users.get(userId); }
+    catch (e) {
+      error(`users.get(${userId}) fehlgeschlagen: ${e.message}`);
       return res.json({ ok: false, error: 'Konto nicht gefunden.' }, 404);
     }
 
-    const secret = crypto.randomBytes(32).toString('hex');
+    const secret  = crypto.randomBytes(32).toString('hex');
     const expires = Date.now() + TOKEN_TTL_MS;
 
     try {
-      // Bestehende Prefs erhalten, nur Token-Felder ergänzen
       await users.updatePrefs(userId, {
         ...(user.prefs || {}),
         del_hash: sha256(secret),
-        del_exp: String(expires),
+        del_exp:  String(expires),
       });
     } catch (e) {
       error(`updatePrefs fehlgeschlagen: ${e.message}`);
@@ -116,11 +84,10 @@ export default async ({ req, res, log, error }) => {
     }
 
     const appUrl = (process.env.APP_URL || '').replace(/\/+$/, '');
-    const link = `${appUrl}/konto-loeschen?userId=${encodeURIComponent(userId)}&secret=${encodeURIComponent(secret)}`;
+    const link   = `${appUrl}/konto-loeschen?userId=${encodeURIComponent(userId)}&secret=${encodeURIComponent(secret)}`;
 
-    try {
-      await sendDeletionMail(user.email, link, log);
-    } catch (e) {
+    try { await sendDeletionMail(user.email, link, log); }
+    catch (e) {
       error(`Mailversand fehlgeschlagen: ${e.message}`);
       return res.json({ ok: false, error: 'Bestätigungsmail konnte nicht gesendet werden.' }, 502);
     }
@@ -129,65 +96,79 @@ export default async ({ req, res, log, error }) => {
     return res.json({ ok: true });
   }
 
-  // ─────────────────────────────────────────────────────────────────────────
-  // 2) Löschung bestätigen → Token prüfen + alles löschen
-  // ─────────────────────────────────────────────────────────────────────────
+  // ── 2) Löschung bestätigen ───────────────────────────────────────────────
   if (action === 'confirm') {
     const userId = body.userId;
     const secret = body.secret;
-    if (!userId || !secret) {
-      return res.json({ ok: false, error: 'Fehlende Parameter.' }, 400);
-    }
 
+    if (!userId || !secret) return res.json({ ok: false, error: 'Fehlende Parameter (userId / secret).' }, 400);
+
+    log(`Bestätige Löschung für userId=${userId}`);
+
+    // User + Prefs laden
     let user;
-    try {
-      user = await users.get(userId);
-    } catch {
+    try { user = await users.get(userId); }
+    catch (e) {
+      error(`users.get(${userId}) fehlgeschlagen: ${e.message}`);
       return res.json({ ok: false, error: 'Konto nicht gefunden (evtl. bereits gelöscht).' }, 404);
     }
 
     const prefs = user.prefs || {};
+
     if (!prefs.del_hash || !prefs.del_exp) {
-      return res.json({ ok: false, error: 'Es liegt keine offene Löschanfrage vor.' }, 400);
+      return res.json({ ok: false, error: 'Keine offene Löschanfrage gefunden. Bitte erneut anfordern.' }, 400);
     }
     if (Date.now() > Number(prefs.del_exp)) {
-      return res.json({ ok: false, error: 'Der Bestätigungslink ist abgelaufen. Bitte erneut anfordern.' }, 410);
+      return res.json({ ok: false, error: 'Bestätigungslink abgelaufen. Bitte erneut anfordern.' }, 410);
     }
-    // Konstanter Zeitvergleich gegen Timing-Angriffe
+
+    // Token prüfen (timing-safe)
     const a = Buffer.from(sha256(secret));
     const b = Buffer.from(String(prefs.del_hash));
     if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) {
       return res.json({ ok: false, error: 'Ungültiger Bestätigungslink.' }, 403);
     }
 
-    // ---- Alle zugehörigen Daten löschen ----
-    await deleteByQuery(databases, COL_PROFILES, 'user_id', userId, error);
-    await deleteByQuery(databases, COL_APPRENTICESHIPS, 'owner_id', userId, error);
-    // Nur ausstehende Bewerbungen löschen (angenommene/abgelehnte bleiben für Nachvollziehbarkeit)
-    await deleteAusstehend(databases, 'applicant_user_id', userId, error);
-    await deleteAusstehend(databases, 'posting_owner_id', userId, error);
-    // Bewertungen bleiben erhalten (dienen als Referenz für andere Nutzer)
-    await deleteDokumente(databases, storage, userId, error);
+    // ── Daten löschen ────────────────────────────────────────────────────
+    log('Lösche Profil …');
+    await deleteAll(databases, COL_PROFILES, 'user_id', userId, log, error);
 
-    // Zuletzt den Auth-User selbst (invalidiert alle Sessions)
+    log('Lösche Einsätze / Talent-Angebote …');
+    await deleteAll(databases, COL_APPRENTICESHIPS, 'owner_id', userId, log, error);
+
+    log('Lösche ausstehende Bewerbungen (als Bewerber) …');
+    await deleteAusstehend(databases, 'applicant_user_id', userId, log, error);
+
+    log('Lösche ausstehende Bewerbungen (auf eigene Anzeigen) …');
+    await deleteAusstehend(databases, 'posting_owner_id', userId, log, error);
+
+    log('Lösche Dokumente + Storage-Dateien …');
+    await deleteDokumente(databases, storage, userId, log, error);
+
+    // Zuletzt den Auth-User löschen (invalidiert alle Sessions)
+    log('Lösche Auth-User …');
     try {
       await users.delete(userId);
     } catch (e) {
-      error(`users.delete fehlgeschlagen: ${e.message}`);
-      return res.json({ ok: false, error: 'Konto-Datensatz konnte nicht gelöscht werden.' }, 500);
+      error(`users.delete(${userId}) fehlgeschlagen: ${e.message}`);
+      return res.json({
+        ok: false,
+        error: `Auth-User konnte nicht gelöscht werden: ${e.message}. Bitte wende dich an den Support.`,
+      }, 500);
     }
 
-    log(`Konto ${userId} und alle zugehörigen Daten gelöscht.`);
+    log(`✅ Konto ${userId} vollständig gelöscht.`);
     return res.json({ ok: true });
   }
 
-  return res.json({ ok: false, error: 'Unbekannte Aktion.' }, 400);
+  return res.json({ ok: false, error: `Unbekannte Aktion: ${action}` }, 400);
 };
 
-/**
- * Löscht seitenweise alle Dokumente einer Collection, bei denen attr === value.
- */
-async function deleteByQuery(databases, collection, attr, value, error) {
+// ── Hilfsfunktionen ──────────────────────────────────────────────────────────
+
+/** Löscht alle Dokumente einer Collection, bei denen attr === value. */
+async function deleteAll(databases, collection, attr, value, log, error) {
+  let total = 0;
   for (;;) {
     let page;
     try {
@@ -196,26 +177,26 @@ async function deleteByQuery(databases, collection, attr, value, error) {
         Query.limit(100),
       ]);
     } catch (e) {
-      error(`list ${collection} (${attr}=${value}) fehlgeschlagen: ${e.message}`);
+      error(`listDocuments ${collection}[${attr}=${value}] fehlgeschlagen: ${e.message}`);
       return;
     }
-    if (page.documents.length === 0) return;
+    if (page.documents.length === 0) break;
     for (const doc of page.documents) {
       try {
         await databases.deleteDocument(DB, collection, doc.$id);
+        total++;
       } catch (e) {
-        error(`delete ${collection}/${doc.$id} fehlgeschlagen: ${e.message}`);
+        error(`deleteDocument ${collection}/${doc.$id} fehlgeschlagen: ${e.message}`);
       }
     }
-    if (page.documents.length < 100) return;
+    if (page.documents.length < 100) break;
   }
+  log(`  → ${total} Dokument(e) aus ${collection} gelöscht.`);
 }
 
-/**
- * Löscht nur die ausstehenden Bewerbungen, bei denen attr === value.
- * Angenommene / abgelehnte Bewerbungen bleiben zur Nachvollziehbarkeit erhalten.
- */
-async function deleteAusstehend(databases, attr, value, error) {
+/** Löscht nur ausstehende Bewerbungen, bei denen attr === value. */
+async function deleteAusstehend(databases, attr, value, log, error) {
+  let total = 0;
   for (;;) {
     let page;
     try {
@@ -225,25 +206,26 @@ async function deleteAusstehend(databases, attr, value, error) {
         Query.limit(100),
       ]);
     } catch (e) {
-      error(`list bewerbungen ausstehend (${attr}=${value}) fehlgeschlagen: ${e.message}`);
+      error(`listDocuments bewerbungen ausstehend [${attr}=${value}] fehlgeschlagen: ${e.message}`);
       return;
     }
-    if (page.documents.length === 0) return;
+    if (page.documents.length === 0) break;
     for (const doc of page.documents) {
       try {
         await databases.deleteDocument(DB, COL_BEWERBUNGEN, doc.$id);
+        total++;
       } catch (e) {
-        error(`delete bewerbungen/${doc.$id} fehlgeschlagen: ${e.message}`);
+        error(`deleteDocument bewerbungen/${doc.$id} fehlgeschlagen: ${e.message}`);
       }
     }
-    if (page.documents.length < 100) return;
+    if (page.documents.length < 100) break;
   }
+  log(`  → ${total} ausstehende Bewerbung(en) gelöscht.`);
 }
 
-/**
- * Löscht die Dokument-Einträge des Nutzers samt zugehöriger Storage-Dateien.
- */
-async function deleteDokumente(databases, storage, userId, error) {
+/** Löscht Dokument-Einträge + zugehörige Storage-Dateien des Nutzers. */
+async function deleteDokumente(databases, storage, userId, log, error) {
+  let total = 0;
   for (;;) {
     let page;
     try {
@@ -252,75 +234,62 @@ async function deleteDokumente(databases, storage, userId, error) {
         Query.limit(100),
       ]);
     } catch (e) {
-      error(`list dokumente fehlgeschlagen: ${e.message}`);
+      error(`listDocuments dokumente fehlgeschlagen: ${e.message}`);
       return;
     }
-    if (page.documents.length === 0) return;
+    if (page.documents.length === 0) break;
     for (const doc of page.documents) {
       if (doc.file_id) {
-        try {
-          await storage.deleteFile(BUCKET_DOKUMENTE, doc.file_id);
-        } catch (e) {
-          error(`deleteFile ${doc.file_id} fehlgeschlagen: ${e.message}`);
-        }
+        try { await storage.deleteFile(BUCKET_DOKUMENTE, doc.file_id); }
+        catch (e) { error(`deleteFile ${doc.file_id} fehlgeschlagen: ${e.message}`); }
       }
       try {
         await databases.deleteDocument(DB, COL_DOKUMENTE, doc.$id);
+        total++;
       } catch (e) {
-        error(`delete dokumente/${doc.$id} fehlgeschlagen: ${e.message}`);
+        error(`deleteDocument dokumente/${doc.$id} fehlgeschlagen: ${e.message}`);
       }
     }
-    if (page.documents.length < 100) return;
+    if (page.documents.length < 100) break;
   }
+  log(`  → ${total} Dokument(e) gelöscht.`);
 }
 
-/**
- * Verschickt die Bestätigungsmail über SMTP (nodemailer).
- */
+/** Bestätigungsmail via SMTP. */
 async function sendDeletionMail(to, link, log) {
-  const host = process.env.SMTP_HOST;
-  const port = Number(process.env.SMTP_PORT || 587);
+  const host   = process.env.SMTP_HOST;
+  const port   = Number(process.env.SMTP_PORT || 587);
   const secure = String(process.env.SMTP_SECURE || 'false').toLowerCase() === 'true';
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-  const from = process.env.SMTP_FROM || user;
+  const user   = process.env.SMTP_USER;
+  const pass   = process.env.SMTP_PASS;
+  const from   = process.env.SMTP_FROM || user;
 
-  if (!host || !user || !pass) {
-    throw new Error('SMTP-Variablen (SMTP_HOST/SMTP_USER/SMTP_PASS) fehlen.');
-  }
+  if (!host || !user || !pass) throw new Error('SMTP-Variablen fehlen (SMTP_HOST/SMTP_USER/SMTP_PASS).');
 
-  const transporter = nodemailer.createTransport({
-    host,
-    port,
-    secure,
-    auth: { user, pass },
-  });
+  const transporter = nodemailer.createTransport({ host, port, secure, auth: { user, pass } });
 
   const subject = 'Kontolöschung bestätigen – Talentleihe Berlin';
   const text =
     'Du hast die Löschung deines Talentleihe-Berlin-Kontos angefordert.\n\n' +
-    'Bestätige die endgültige Löschung über diesen Link (1 Stunde gültig):\n' +
-    link +
-    '\n\nWenn du das nicht warst, ignoriere diese E-Mail – es passiert nichts.';
+    'Bestätige die endgültige Löschung über diesen Link (1 Stunde gültig):\n' + link +
+    '\n\nWenn du das nicht warst, ignoriere diese E-Mail.';
 
   const html = `
-  <div style="font-family: Arial, Helvetica, sans-serif; max-width: 480px; margin: 0 auto; color: #1E367A;">
-    <h2 style="color: #1E367A; font-size: 20px; margin: 0 0 12px;">Kontolöschung bestätigen</h2>
-    <p style="font-size: 15px; line-height: 1.6; color: #4a6080;">
+  <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;color:#1E367A">
+    <h2 style="font-size:20px;margin:0 0 12px">Kontolöschung bestätigen</h2>
+    <p style="font-size:15px;line-height:1.6;color:#4a6080">
       Du hast die Löschung deines <strong>Talentleihe-Berlin</strong>-Kontos angefordert.
-      Mit Klick auf den Button werden dein Konto und <strong>alle zugehörigen Daten</strong>
-      (Profil, Anzeigen, Bewerbungen, Bewertungen und Dokumente) <strong>endgültig gelöscht</strong>.
-      Das lässt sich nicht rückgängig machen.
+      Mit Klick auf den Button werden dein Konto und alle zugehörigen Daten
+      (Profil, Anzeigen, Bewerbungen, Dokumente) <strong>endgültig gelöscht</strong>.
     </p>
-    <p style="text-align: center; margin: 28px 0;">
-      <a href="${link}" style="background: #e05060; color: #ffffff; text-decoration: none;
-        padding: 13px 26px; border-radius: 12px; font-weight: 700; font-size: 15px; display: inline-block;">
+    <p style="text-align:center;margin:28px 0">
+      <a href="${link}" style="background:#e05060;color:#fff;text-decoration:none;
+        padding:13px 26px;border-radius:12px;font-weight:700;font-size:15px;display:inline-block">
         Konto endgültig löschen
       </a>
     </p>
-    <p style="font-size: 13px; color: #8096b8; line-height: 1.5;">
-      Der Link ist 1 Stunde gültig. Wenn du das nicht warst, ignoriere diese E-Mail –
-      dann passiert nichts.
+    <p style="font-size:13px;color:#8096b8;line-height:1.5">
+      Der Link ist 1 Stunde gültig. Wenn du das nicht warst, ignoriere diese E-Mail.
     </p>
   </div>`;
 
