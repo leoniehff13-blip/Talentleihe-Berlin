@@ -204,7 +204,7 @@ const AnzeigenInner: React.FC = () => {
   }, [profile, ortVorbefuellt]);
 
   // Welcher Anzeigentyp soll je nach Rolle gezeigt werden?
-  // Talent (Azubi) sieht Angebote der Betriebe → "einsatz"
+  // Azubi sieht Angebote der Betriebe → "einsatz"
   // Betrieb sieht Angebote der Azubis → "talent_angebot"
   // Wer noch kein Profil hat, sieht alles, mit einem Hinweis-Banner.
   const angezeigterTyp: "einsatz" | "talent_angebot" | null =
@@ -218,7 +218,7 @@ const AnzeigenInner: React.FC = () => {
     angezeigterTyp === "einsatz"
       ? "Aktuelle Einsätze von Betrieben"
       : angezeigterTyp === "talent_angebot"
-        ? "Aktuelle Talent-Angebote von Azubis"
+        ? "Aktuelle Azubi-Angebote"
         : "Alle aktuellen Angebote";
 
   // Alle Betriebe laden (nur für Talent-Ansicht)
@@ -596,7 +596,7 @@ const AnzeigenInner: React.FC = () => {
                     : angezeigterTyp === "einsatz"
                       ? "Aktuell sind keine Einsätze von Betrieben ausgeschrieben."
                       : angezeigterTyp === "talent_angebot"
-                        ? "Aktuell stehen keine Talent-Angebote von Azubis online."
+                        ? "Aktuell stehen keine Azubi-Angebote online."
                         : "Aktuell sind keine Anzeigen vorhanden."}
               </p>
             </IonText>
@@ -667,7 +667,7 @@ const AnzeigenInner: React.FC = () => {
                     )}
                   </IonLabel>
                   <IonBadge color={itemIsTalent ? "tertiary" : "primary"} slot="end">
-                    {itemIsTalent ? "Talent" : "Einsatz"}
+                    {itemIsTalent ? "Azubi" : "Einsatz"}
                   </IonBadge>
                 </IonItem>
               );

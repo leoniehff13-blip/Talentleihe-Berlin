@@ -37,7 +37,7 @@ export interface ProfilFormState {
   strasse: string;
   hausnummer: string;
   adresse: string;
-  gewerk: string;       // Talent: einzelnes Gewerk
+  gewerk: string;       // Azubi: einzelnes Gewerk
   gewerke: string[];    // Betrieb: mehrere Gewerke
   handwerkskammer: string;
   lehrjahr: string;
@@ -351,7 +351,7 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
             onIonChange={(e) => set("type", (e.detail.value as ProfileType) ?? "talent")}
           >
             <IonSegmentButton value="talent">
-              <IonLabel>Talent (Azubi)</IonLabel>
+              <IonLabel>Azubi</IonLabel>
             </IonSegmentButton>
             <IonSegmentButton value="betrieb">
               <IonLabel>Betrieb</IonLabel>
@@ -618,7 +618,7 @@ export function profilStateToInput(state: ProfilFormState) {
     vorname: isTalent ? state.vorname.trim() || null : null,
     ort: isTalent ? `${state.plz.trim()} ${state.ort.trim()}`.trim() || null : null,
     adresse: !isTalent ? adresseZusammenfuegen(state.strasse.trim(), state.hausnummer.trim(), state.plz.trim(), state.ort.trim()) || null : null,
-    // Talent: einzelnes Gewerk; Betrieb: kommagetrennte Liste im gewerk-Feld
+    // Azubi: einzelnes Gewerk; Betrieb: kommagetrennte Liste im gewerk-Feld
     gewerk: isTalent
       ? state.gewerk.trim() || null
       : state.gewerke.join(", ") || null,

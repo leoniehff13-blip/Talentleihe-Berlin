@@ -45,10 +45,10 @@ const MeineAnzeigenInner: React.FC = () => {
   const [confirmDelete, setConfirmDelete] = useState<Anzeige | null>(null);
 
   const isTalent = profile?.type === "talent";
-  const titleText = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
+  const titleText = isTalent ? "Meine Azubi-Angebote" : "Meine Einsätze";
   const newButtonText = isTalent ? "Erstes Talent-Angebot anlegen" : "Ersten Einsatz anlegen";
   const emptyText = isTalent
-    ? "Du hast noch kein Talent-Angebot angelegt."
+    ? "Du hast noch kein Azubi-Angebot angelegt."
     : "Du hast noch keinen Einsatz angelegt.";
 
   const load = useCallback(async () => {
@@ -176,7 +176,7 @@ const result = await databases.listDocuments<Anzeige>(
                       color={itemIsTalent ? "tertiary" : "primary"}
                       slot="end"
                     >
-                      {itemIsTalent ? "Talent" : "Einsatz"}
+                      {itemIsTalent ? "Azubi" : "Einsatz"}
                     </IonBadge>
                     <div slot="end" style={{ display: "flex", gap: 4, marginLeft: 8 }} onClick={(e) => e.stopPropagation()}>
                       <IonButton fill="clear" size="small" color="tertiary" onClick={() => history.push(`/meine-anzeigen/${item.$id}/bewerbungen`)}>

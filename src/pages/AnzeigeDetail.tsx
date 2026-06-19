@@ -258,7 +258,7 @@ const AnzeigeDetailInner: React.FC = () => {
                     color={isTalentAnzeige ? "tertiary" : "primary"}
                     style={{ marginLeft: 8 }}
                   >
-                    {isTalentAnzeige ? "Talent-Angebot" : "Einsatz"}
+                    {isTalentAnzeige ? "Azubi-Angebot" : "Einsatz"}
                   </IonBadge>
                 </IonCardSubtitle>
                 <IonCardTitle>{item.gewerk}</IonCardTitle>

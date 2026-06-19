@@ -118,15 +118,15 @@ const AnzeigeFormInner: React.FC = () => {
   const labels = {
     title: isEdit
       ? isTalent
-        ? "Talent-Angebot bearbeiten"
+        ? "Azubi-Angebot bearbeiten"
         : "Einsatz bearbeiten"
       : isTalent
-        ? "Neues Talent-Angebot"
+        ? "Neues Azubi-Angebot"
         : "Neuer Einsatz",
     save: isEdit
       ? "Änderungen speichern"
       : isTalent
-        ? "Talent-Angebot anlegen"
+        ? "Azubi-Angebot anlegen"
         : "Einsatz anlegen",
     backDefault: "/meine-anzeigen",
   };

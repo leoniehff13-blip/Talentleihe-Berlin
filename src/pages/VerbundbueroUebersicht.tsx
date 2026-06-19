@@ -303,7 +303,7 @@ const VerbundbueroUebersichtInner: React.FC = () => {
               <IonCardContent>
                 <IonText color="medium">
                   <p style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
-                    Übersicht aller Einsätze und Talent-Angebote, auf die sich
+                    Übersicht aller Einsätze und Azubi-Angebote, auf die sich
                     schon mindestens eine Person beworben hat. Die Einträge sind
                     nach Status gruppiert.
                   </p>

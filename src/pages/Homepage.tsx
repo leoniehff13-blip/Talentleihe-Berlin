@@ -13,7 +13,7 @@ const Homepage: React.FC = () => {
   const ctaPrimary = !istEingeloggt
     ? { label: "Profil anlegen", href: "/registrieren" }
     : istTalent
-      ? { label: "Talent-Angebot anlegen", href: "/meine-anzeigen" }
+      ? { label: "Azubi-Angebot anlegen", href: "/meine-anzeigen" }
       : istBetrieb
         ? { label: "Einsatz ausschreiben", href: "/meine-anzeigen" }
         : { label: "Profil ergänzen", href: "/konto" };
@@ -404,7 +404,7 @@ const Homepage: React.FC = () => {
             <div className="ww-hero-content">
               <div className="ww-hero-kicker">Talentleihe für das Berliner Handwerk</div>
               <h1 className="ww-hero-headline">
-                Talent trifft
+                Azubi trifft
                 <br />
                 <em>Handwerk.</em>
               </h1>

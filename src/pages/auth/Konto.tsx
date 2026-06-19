@@ -482,11 +482,11 @@ const Konto: React.FC = () => {
     : isTalent
       ? [profile.anrede, profile.vorname, profile.name].filter(Boolean).join(" ")
       : profile.name;
-  const anzeigenLabel = isTalent ? "Meine Talent-Angebote" : "Meine Einsätze";
+  const anzeigenLabel = isTalent ? "Meine Azubi-Angebote" : "Meine Einsätze";
   const rollenLabel = isVerbundbuero
     ? "Mitarbeiter Verbundberatung"
     : isTalent
-      ? "Talent (Azubi)"
+      ? "Azubi"
       : "Betrieb";
 
   return (
@@ -674,7 +674,7 @@ const Konto: React.FC = () => {
           </IonButton>
         )}
 
-        {/* Bewerbungsunterlagen (nur für Talents) */}
+        {/* Bewerbungsunterlagen (nur für Azubis) */}
         {isTalent && <DokumenteUpload mode="manage" />}
 
         {/* Bewertungen (nicht für Verbundberatung) */}

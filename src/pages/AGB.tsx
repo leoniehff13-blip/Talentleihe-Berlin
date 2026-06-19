@@ -37,15 +37,15 @@ const AGB: React.FC = () => {
           <Section title="§ 1 Geltungsbereich">
             <Ol>
               <li>Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung der Plattform Talentleihe Berlin (nachfolgend „Plattform"), betrieben durch Max Mustermann, Platzhalterverein e.V., Beispielstrasse 1, 54321 Konz (nachfolgend „Betreiber").</li>
-              <li>Die Plattform richtet sich ausschließlich an Auszubildende im Handwerk (nachfolgend „Talente") und Handwerksbetriebe (nachfolgend „Betriebe") im Zuständigkeitsbereich der Handwerkskammer Berlin sowie der Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg.</li>
+              <li>Die Plattform richtet sich ausschließlich an Auszubildende im Handwerk (nachfolgend „Azubis") und Handwerksbetriebe (nachfolgend „Betriebe") im Zuständigkeitsbereich der Handwerkskammer Berlin sowie der Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg.</li>
               <li>Mit der Registrierung auf der Plattform erkennen Nutzer diese AGB an. Abweichende Bedingungen der Nutzer gelten nicht.</li>
             </Ol>
           </Section>
 
           <Section title="§ 2 Leistungsbeschreibung">
             <Ol>
-              <li>Die Plattform ermöglicht die digitale Vermittlung im Rahmen der Verbundausbildung: Betriebe können befristete Einsätze ausschreiben, Talente können sich mit einem Profil vorstellen und auf Einsätze bewerben.</li>
-              <li>Der Betreiber ist ausschließlich Vermittler. Er wird nicht Vertragspartei der zwischen Betrieben und Talenten geschlossenen Vereinbarungen über Einsätze oder Praktika.</li>
+              <li>Die Plattform ermöglicht die digitale Vermittlung im Rahmen der Verbundausbildung: Betriebe können befristete Einsätze ausschreiben, Azubis können sich mit einem Profil vorstellen und auf Einsätze bewerben.</li>
+              <li>Der Betreiber ist ausschließlich Vermittler. Er wird nicht Vertragspartei der zwischen Betrieben und Azubis geschlossenen Vereinbarungen über Einsätze oder Praktika.</li>
               <li>Die Nutzung der Plattform ist für alle Nutzer kostenlos.</li>
               <li>Ein Anspruch auf Verfügbarkeit oder ununterbrochenen Betrieb der Plattform besteht nicht. Der Betreiber behält sich vor, die Plattform jederzeit zu ändern, einzuschränken oder einzustellen.</li>
             </Ol>
@@ -55,7 +55,7 @@ const AGB: React.FC = () => {
             <Ol>
               <li>Die Nutzung der Plattform setzt eine Registrierung mit einem Nutzerkonto voraus. Natürliche Personen müssen mindestens 16 Jahre alt sein.</li>
               <li>Nutzer sind verpflichtet, bei der Registrierung wahrheitsgemäße und vollständige Angaben zu machen und diese aktuell zu halten.</li>
-              <li>Die Nutzung von Pseudonymen ist nicht zulässig. Betriebe müssen unter ihrem tatsächlichen Firmennamen auftreten, Talente unter ihrem Klarnamen.</li>
+              <li>Die Nutzung von Pseudonymen ist nicht zulässig. Betriebe müssen unter ihrem tatsächlichen Firmennamen auftreten, Azubis unter ihrem Klarnamen.</li>
               <li>Zugangsdaten sind vertraulich zu behandeln. Der Betreiber ist unverzüglich zu informieren, wenn ein unbefugter Zugriff auf das Konto vermutet wird.</li>
               <li>Pro Person oder Betrieb ist nur ein Nutzerkonto zulässig.</li>
               <li>Der Betreiber kann Nutzerkonten ohne Vorankündigung sperren oder löschen, insbesondere bei Verstoß gegen diese AGB.</li>
@@ -81,9 +81,9 @@ const AGB: React.FC = () => {
 
           <Section title="§ 5 Anzeigen und Vermittlung">
             <Ol>
-              <li>Betriebe können Einsätze (befristete Tätigkeiten im Rahmen der Verbundausbildung) ausschreiben. Talente können Talent-Angebote (Profile zur Vorstellung) erstellen.</li>
+              <li>Betriebe können Einsätze (befristete Tätigkeiten im Rahmen der Verbundausbildung) ausschreiben. Azubis können Azubi-Angebote (Profile zur Vorstellung) erstellen.</li>
               <li>Der Betreiber übernimmt keine Garantie für die Richtigkeit, Vollständigkeit oder Aktualität der eingestellten Anzeigen und Profile.</li>
-              <li>Kommt es zu einer Vereinbarung zwischen einem Betrieb und einem Talent, sind die Parteien selbst für die rechtliche Ausgestaltung (z. B. Zusatzvereinbarung zum Ausbildungsverhältnis) verantwortlich. Hierfür wird die Einbindung der zuständigen Handwerkskammer empfohlen.</li>
+              <li>Kommt es zu einer Vereinbarung zwischen einem Betrieb und einem Azubi, sind die Parteien selbst für die rechtliche Ausgestaltung (z. B. Zusatzvereinbarung zum Ausbildungsverhältnis) verantwortlich. Hierfür wird die Einbindung der zuständigen Handwerkskammer empfohlen.</li>
               <li>Der Betreiber kann Anzeigen und Profile ohne Angabe von Gründen entfernen, insbesondere wenn diese gegen diese AGB oder geltendes Recht verstoßen.</li>
               <li>
                 Für den Betrieb der Plattform werden folgende Drittanbieter eingesetzt:

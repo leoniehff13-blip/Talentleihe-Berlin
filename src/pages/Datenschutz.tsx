@@ -225,7 +225,7 @@ const Datenschutz: React.FC = () => {
               <p>Für den Betrieb der Plattform setzen wir den Dienst Appwrite ein. Im Rahmen der Nutzung werden personenbezogene Daten wie E-Mail-Adresse, Passwort (verschlüsselt), Profilinformationen und Nutzungsmetadaten auf Appwrite-Servern gespeichert und verarbeitet.</p>
               <DataTable rows={[
                 ["Verarbeitete Datenarten", "Bestandsdaten (Name, E-Mail); Inhaltsdaten (Profile, Anzeigen); Nutzungsdaten; Protokolldaten."],
-                ["Betroffene Personen", "Registrierte Nutzer (Talente und Betriebe)."],
+                ["Betroffene Personen", "Registrierte Nutzer (Azubis und Betriebe)."],
                 ["Zwecke der Verarbeitung", "Bereitstellung der Plattformfunktionen; Authentifizierung; Datenspeicherung."],
                 ["Aufbewahrung und Löschung", "Daten werden bei Kontolöschung entfernt, soweit keine gesetzlichen Aufbewahrungspflichten entgegenstehen."],
                 ["Rechtsgrundlagen", "Vertragserfüllung (Art. 6 Abs. 1 S. 1 lit. b) DSGVO); Berechtigte Interessen (Art. 6 Abs. 1 S. 1 lit. f) DSGVO)."],
