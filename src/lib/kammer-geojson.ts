@@ -63,13 +63,10 @@ const BERLIN_POLYGON: GeoFeature<GeoPolygon> = {
   },
 };
 
-// ── Region Ostbrandenburg (HWK Frankfurt/Oder) ────────────────────────────────
 // Landkreise: Barnim, Märkisch-Oderland, Oder-Spree, Uckermark
-// + kreisfreie Stadt Frankfurt (Oder)
 // Dargestellt als vereinfachtes MultiPolygon.
 //
 // Uckermark (nördlichster Landkreis, nördlich von Barnim)
-const UCKERMARK: Position[] = [
   [13.205, 53.046], // SW
   [13.205, 53.280], // NW
   [13.560, 53.505], // N
@@ -81,7 +78,6 @@ const UCKERMARK: Position[] = [
 ];
 
 // Barnim (nördlich von Berlin)
-const BARNIM: Position[] = [
   [13.465, 52.677], // SW (an Berlin-Grenze)
   [13.465, 52.938], // NW
   [13.872, 52.976], // NO
@@ -92,7 +88,6 @@ const BARNIM: Position[] = [
 ];
 
 // Märkisch-Oderland (östlich von Berlin, nördlich der Spree)
-const MAERKISCH_ODERLAND: Position[] = [
   [13.700, 52.467], // SW (an Berlin)
   [13.700, 52.677], // NW (Barnim-Grenze)
   [13.965, 52.677], // N
@@ -105,7 +100,6 @@ const MAERKISCH_ODERLAND: Position[] = [
 ];
 
 // Oder-Spree (südöstlich von Berlin)
-const ODER_SPREE: Position[] = [
   [13.560, 52.338], // SW (an Berlin)
   [13.760, 52.338], // W
   [14.050, 52.350], // NW
@@ -118,29 +112,12 @@ const ODER_SPREE: Position[] = [
   [13.560, 52.338], // zurück
 ];
 
-// Frankfurt (Oder) – kreisfreie Stadt (kleines Polygon an der Oder)
-const FRANKFURT_ODER: Position[] = [
   [14.430, 52.290], // SW
   [14.430, 52.390], // NW
   [14.580, 52.390], // NO
   [14.580, 52.290], // SO
   [14.430, 52.290], // zurück
 ];
-
-const OSTBRANDENBURG_MULTIPOLYGON: GeoFeature<GeoMultiPolygon> = {
-  type: "Feature",
-  properties: { name: "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg" },
-  geometry: {
-    type: "MultiPolygon",
-    coordinates: [
-      [UCKERMARK],
-      [BARNIM],
-      [MAERKISCH_ODERLAND],
-      [ODER_SPREE],
-      [FRANKFURT_ODER],
-    ],
-  },
-};
 
 // ── Export ────────────────────────────────────────────────────────────────────
 export const KAMMER_AREAS: KammerArea[] = [

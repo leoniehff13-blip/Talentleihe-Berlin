@@ -11,7 +11,7 @@ import { KAMMER_AREAS } from "../lib/kammer-geojson";
  * Ergebnisse werden in sessionStorage gecached.
  *
  * showKammerAreas: zeichnet die Zuständigkeitsbereiche beider Kammern als
- * farbige Flächen (teal = HWK Berlin, blau = HWK Ostbrandenburg).
+ * farbige Flächen (teal = Azubi-Angebot, blau = Einsatz).
  */
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
