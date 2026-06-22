@@ -298,6 +298,7 @@ const Konto: React.FC = () => {
         spezialisierung: (profile.spezialisierung ?? []).join(", "),
         initiativbewerbungen: (profile as any).initiativbewerbungen ?? true,
         avatar_file_id: profile.avatar_file_id ?? null,
+        ausbildungsbeauftragter_email: profile.ausbildungsbeauftragter_email ?? "",
       });
     } else {
       setForm(EMPTY_PROFIL);

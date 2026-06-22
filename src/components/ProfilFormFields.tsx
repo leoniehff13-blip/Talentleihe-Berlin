@@ -75,6 +75,7 @@ export const EMPTY_PROFIL: ProfilFormState = {
   spezialisierung: "",
   initiativbewerbungen: true,
   avatar_file_id: null,
+  ausbildungsbeauftragter_email: "",
 };
 
 /** Hilfsfunktionen zum Kombinieren und Parsen der Adressfelder. */
