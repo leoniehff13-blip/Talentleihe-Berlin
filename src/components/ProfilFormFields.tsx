@@ -48,6 +48,7 @@ export interface ProfilFormState {
   ansprechpartner: string;
   ansprechpartner_email: string;
   spezialisierung: string;
+  ausbildungsbeauftragter_email: string;
   initiativbewerbungen: boolean;
   avatar_file_id: string | null;
 }
@@ -578,6 +579,16 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 onIonInput={(e) => set("faehigkeiten", e.detail.value ?? "")}
               />
             </IonItem>
+            <IonItem>
+              <IonInput
+                label="E-Mail Ausbildungsbeauftragte/r *"
+                labelPlacement="stacked"
+                type="email"
+                placeholder="ausbilder@betrieb.de"
+                value={state.ausbildungsbeauftragter_email}
+                onIonInput={(e) => set("ausbildungsbeauftragter_email", e.detail.value ?? "")}
+              />
+            </IonItem>
           </>
         ) : (
           <>
@@ -699,6 +710,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.ort.trim()) missing.push("Wohnort");
     if (!state.gewerk.trim()) missing.push("Gewerk");
     if (!state.lehrjahr) missing.push("Lehrjahr");
+    if (!state.ausbildungsbeauftragter_email.trim()) missing.push("E-Mail Ausbildungsbeauftragte/r");
     if (!state.unternehmen.trim()) missing.push("Ausbildungsbetrieb");
     if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
     if (!state.berufsschule.trim()) missing.push("Berufsschule");

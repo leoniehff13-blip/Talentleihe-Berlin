@@ -125,12 +125,14 @@ export const MINDESTALTER_OPTIONS = [16, 18, 21] as const;
 
 /* -------- Bewerbungen -------- */
 export type BewerbungStatus =
+  | "ausstehend_freigabe"
   | "ausstehend"
   | "angenommen"
   | "abgelehnt"
   | "zurueckgezogen";
 
 export const BEWERBUNG_STATUS_LABEL: Record<BewerbungStatus, string> = {
+  ausstehend_freigabe: "Wartet auf Ausbilder-Freigabe",
   ausstehend: "Ausstehend",
   angenommen: "Angenommen",
   abgelehnt: "Abgelehnt",
@@ -138,6 +140,7 @@ export const BEWERBUNG_STATUS_LABEL: Record<BewerbungStatus, string> = {
 };
 
 export const BEWERBUNG_STATUS_COLOR: Record<BewerbungStatus, string> = {
+  ausstehend_freigabe: "medium",
   ausstehend: "warning",
   angenommen: "success",
   abgelehnt: "danger",
@@ -153,6 +156,8 @@ export interface Bewerbung extends Models.Document {
   nachricht: string;
   status: BewerbungStatus;
   dokument_ids: string[];
+  freigabe_token: string | null;
+  freigabe_token_expires: string | null;
 }
 
 export interface Dokument extends Models.Document {
