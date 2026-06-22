@@ -25,6 +25,7 @@ import { closeCircle } from "ionicons/icons";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
 import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
+import { BERUFSSCHULEN, BERUFSSCHULEN_NACH_GEWERK } from "../lib/berufsschulen";
 import ProfilbildUpload from "./ProfilbildUpload";
 
 export interface ProfilFormState {
@@ -92,11 +93,12 @@ export function adresseAufteilen(adresse: string) {
 }
 
 export function ortAufteilen(ort: string) {
-  const firstSpace = ort.indexOf(" ");
-  if (firstSpace > 0 && /^\d{5}$/.test(ort.slice(0, firstSpace))) {
-    return { plz: ort.slice(0, firstSpace), ort: ort.slice(firstSpace + 1) };
+  const s = (ort ?? "").trim();
+  const firstSpace = s.indexOf(" ");
+  if (firstSpace > 0 && /^\d{5}$/.test(s.slice(0, firstSpace))) {
+    return { plz: s.slice(0, firstSpace), ort: s.slice(firstSpace + 1).trim() };
   }
-  return { plz: "", ort };
+  return { plz: "", ort: s };
 }
 
 // ── Suchbares Gewerk-Auswahlfeld ──────────────────────────────────────────────
@@ -264,6 +266,122 @@ function GewerkMultiPicker({ value, onChange }: { value: string[]; onChange: (v:
                 {draft.includes(g) && (
                   <span slot="end" style={{ color: "#47BCC2", fontWeight: 700, fontSize: "1.1rem" }}>✓</span>
                 )}
+              </IonItem>
+            ))}
+          </IonList>
+        </IonContent>
+      </IonModal>
+    </>
+  );
+}
+
+// ── Suchbares Berufsschule-Auswahlfeld ───────────────────────────────────────
+function BerufsschulePicker({
+  value,
+  gewerk,
+  onChange,
+}: {
+  value: string;
+  gewerk: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const empfohlen: string[] = gewerk ? (BERUFSSCHULEN_NACH_GEWERK[gewerk] ?? []) : [];
+
+  const filtered = BERUFSSCHULEN.filter((s) =>
+    s.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const empfohlenFiltered = filtered.filter((s) => empfohlen.includes(s.name));
+  const weitereFiltered = filtered.filter((s) => !empfohlen.includes(s.name));
+
+  const close = () => { setOpen(false); setSearch(""); };
+
+  return (
+    <>
+      <IonItem button detail={false} onClick={() => setOpen(true)}>
+        <IonLabel position="stacked">Berufsschule *</IonLabel>
+        <div style={{
+          padding: "10px 0 6px",
+          color: value ? "var(--ion-text-color, #1E367A)" : "#999",
+          fontSize: "1rem",
+        }}>
+          {value || "— bitte wählen —"}
+        </div>
+      </IonItem>
+
+      <IonModal isOpen={open} onDidDismiss={close}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Berufsschule wählen</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={close}>Schließen</IonButton>
+            </IonButtons>
+          </IonToolbar>
+          <IonToolbar>
+            <IonSearchbar
+              value={search}
+              onIonInput={(e) => setSearch(e.detail.value ?? "")}
+              placeholder="Schule suchen …"
+              debounce={80}
+            />
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonList>
+            {empfohlenFiltered.length > 0 && (
+              <>
+                <IonListHeader>
+                  <IonLabel style={{ fontSize: "0.78rem", color: "#47BCC2", fontWeight: 600 }}>
+                    Empfohlen für {gewerk}
+                  </IonLabel>
+                </IonListHeader>
+                {empfohlenFiltered.map((s) => (
+                  <IonItem
+                    key={s.name}
+                    button
+                    detail={false}
+                    onClick={() => { onChange(s.name); close(); }}
+                    style={s.name === value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+                  >
+                    <IonLabel>
+                      <span>{s.name}</span>
+                      <span style={{ fontSize: "0.72rem", color: "#8096b8", marginLeft: 6 }}>
+                        ({s.typ})
+                      </span>
+                    </IonLabel>
+                  </IonItem>
+                ))}
+                {weitereFiltered.length > 0 && (
+                  <IonListHeader>
+                    <IonLabel style={{ fontSize: "0.78rem", color: "#8096b8", fontWeight: 600 }}>
+                      Alle weiteren Schulen
+                    </IonLabel>
+                  </IonListHeader>
+                )}
+              </>
+            )}
+            {weitereFiltered.length === 0 && empfohlenFiltered.length === 0 && (
+              <IonItem>
+                <IonLabel color="medium" style={{ fontStyle: "italic" }}>Keine Treffer</IonLabel>
+              </IonItem>
+            )}
+            {weitereFiltered.map((s) => (
+              <IonItem
+                key={s.name}
+                button
+                detail={false}
+                onClick={() => { onChange(s.name); close(); }}
+                style={s.name === value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+              >
+                <IonLabel>
+                  <span>{s.name}</span>
+                  <span style={{ fontSize: "0.72rem", color: "#8096b8", marginLeft: 6 }}>
+                    ({s.typ})
+                  </span>
+                </IonLabel>
               </IonItem>
             ))}
           </IonList>
@@ -446,14 +564,11 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
                 onIonInput={(e) => set("unternehmen", e.detail.value ?? "")}
               />
             </IonItem>
-            <IonItem>
-              <IonInput
-                label="Berufsschule *"
-                labelPlacement="stacked"
-                value={state.berufsschule}
-                onIonInput={(e) => set("berufsschule", e.detail.value ?? "")}
-              />
-            </IonItem>
+            <BerufsschulePicker
+              value={state.berufsschule}
+              gewerk={state.gewerk}
+              onChange={(v) => set("berufsschule", v)}
+            />
             <IonItem>
               <IonInput
                 label="Fähigkeiten (Komma-getrennt, optional)"
@@ -612,7 +727,7 @@ export function profilStateToInput(state: ProfilFormState) {
     anrede: state.anrede || null,
     name: state.name.trim(),
     vorname: isTalent ? state.vorname.trim() || null : null,
-    ort: isTalent ? `${state.plz.trim()} ${state.ort.trim()}`.trim() || null : null,
+    ort: isTalent ? `${state.plz.trim()} ${state.ort.trim().replace(/^\d{5}\s+/, "")}`.trim() || null : null,
     adresse: !isTalent ? adresseZusammenfuegen(state.strasse.trim(), state.hausnummer.trim(), state.plz.trim(), state.ort.trim()) || null : null,
     // Azubi: einzelnes Gewerk; Betrieb: kommagetrennte Liste im gewerk-Feld
     gewerk: isTalent
