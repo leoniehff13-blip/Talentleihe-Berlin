@@ -25,7 +25,8 @@ import {
   chevronBackOutline,
   lockClosedOutline,
   notificationsOutline,
-  trashOutline,
+  trashOutline,,
+  helpCircleOutline
 } from "ionicons/icons";
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
@@ -405,6 +406,24 @@ const Einstellungen: React.FC = () => {
         />
 
         <div style={{ height: 32 }} />
+
+        {/* ── Hilfe ── */}
+        <IonList inset style={{ marginTop: 24 }}>
+          <IonListHeader>
+            <IonLabel style={{ fontWeight: 700, fontSize: 15 }}>Hilfe</IonLabel>
+          </IonListHeader>
+          <IonItem
+            button
+            detail
+            onClick={() => window.open("/handbuch.html", "_blank")}
+          >
+            <IonIcon slot="start" icon={helpCircleOutline} color="primary" />
+            <IonLabel>
+              <h3>Handbuch öffnen</h3>
+              <p>Dokumentation zur VerbundPraxis-Plattform</p>
+            </IonLabel>
+          </IonItem>
+        </IonList>
       </IonContent>
     </IonPage>
   );

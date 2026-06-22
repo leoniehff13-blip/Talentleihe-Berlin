@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handbuch – Talentleihe Berlin</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --navy: #1a2b5e;
+    --teal: #5bbfbf;
+    --teal-light: #8dd5d5;
+    --teal-dark: #3a9898;
+    --bg: #f0f4f8;
+    --bg-card: #ffffff;
+    --text: #1a2b5e;
+    --text-muted: #6b7a99;
+    --border: #dde6f0;
+    --code-bg: #eef2f7;
+    --sidebar-w: 260px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  /* ─── COVER PAGE ─── */
+  .cover {
+    min-height: 100vh;
+    background: linear-gradient(145deg, #e8eef6 0%, #f0f5fb 40%, #e0eef4 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px 64px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(91,191,191,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(26,43,94,0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .cover-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+  }
+
+  .website-btn {
+    background: var(--teal-dark);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  .cover-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 0 32px;
+  }
+
+  .cover-sub {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin-bottom: 20px;
+  }
+
+  .cover-title {
+    font-size: clamp(56px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--navy);
+    margin-bottom: 0;
+  }
+
+  .cover-title .accent {
+    color: var(--teal);
+  }
+
+  .cover-meta {
+    margin-top: 48px;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .cover-meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .cover-meta-item .label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+  }
+  .cover-meta-item .value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--navy);
+  }
+
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* ─── SIDEBAR ─── */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--navy);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    padding: 40px 0 24px;
+  }
+
+  .sidebar-logo {
+    padding: 0 24px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 24px;
+  }
+  .sidebar-logo .s1 { font-size: 13px; font-weight: 800; color: #fff; }
+  .sidebar-logo .s2 { font-size: 13px; font-weight: 800; color: var(--teal); }
+
+  .sidebar-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 0 24px;
+    margin: 20px 0 8px;
+  }
+
+  .sidebar a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 24px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    transition: color 0.15s, background 0.15s;
+    border-left: 3px solid transparent;
+  }
+  .sidebar a:hover,
+  .sidebar a.active {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+    border-left-color: var(--teal);
+  }
+  .sidebar a .num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--teal);
+    min-width: 18px;
+    opacity: 0.8;
+  }
+
+  /* ─── MAIN ─── */
+  .main {
+    flex: 1;
+    min-width: 0;
+    padding: 56px 64px;
+    max-width: 900px;
+  }
+
+  /* ─── SECTIONS ─── */
+  .section {
+    margin-bottom: 72px;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--teal-dark);
+    margin-bottom: 10px;
+  }
+
+  h2.section-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--navy);
+    line-height: 1.15;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--teal);
+    display: inline-block;
+  }
+
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 32px 0 12px;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--teal-dark);
+    margin: 20px 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  p { margin-bottom: 14px; color: #2d3f6b; line-height: 1.7; }
+
+  /* ─── TABLES ─── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead th {
+    background: var(--navy);
+    color: #fff;
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  thead th:first-child { border-radius: 9px 0 0 0; }
+  thead th:last-child { border-radius: 0 9px 0 0; }
+
+  tbody tr:nth-child(even) { background: #f7fafd; }
+  tbody tr:hover { background: #edf3fb; }
+
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: #2d3f6b;
+    vertical-align: top;
+  }
+  td code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #1a5a8a;
+  }
+
+  /* ─── CODE BLOCKS ─── */
+  pre {
+    background: #1a2b5e;
+    border-radius: 10px;
+    padding: 20px 24px;
+    overflow-x: auto;
+    margin: 16px 0 24px;
+    position: relative;
+  }
+
+  pre code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 13px;
+    color: #c8d8f0;
+    line-height: 1.65;
+  }
+
+  .code-lang {
+    position: absolute;
+    top: 10px; right: 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    opacity: 0.8;
+  }
+
+  /* ─── INLINE CODE ─── */
+  p code, li code, td code {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12.5px;
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #1a5a8a;
+  }
+
+  /* ─── CALLOUT / HINT ─── */
+  .callout {
+    background: #e8f4f4;
+    border-left: 4px solid var(--teal);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 16px 0;
+    font-size: 14px;
+    color: #1a4a4a;
+  }
+  .callout strong { color: var(--teal-dark); }
+
+  .callout-warn {
+    background: #fff8e6;
+    border-left-color: #e6a800;
+    color: #5a3e00;
+  }
+  .callout-warn strong { color: #b38000; }
+
+  /* ─── ROLE CARDS ─── */
+  .role-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  .role-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .role-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+  }
+  .role-card.talent::before { background: var(--teal); }
+  .role-card.betrieb::before { background: var(--navy); }
+
+  .role-card h3 { margin-top: 0; font-size: 16px; }
+  .role-card p { font-size: 13.5px; }
+  .role-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+  }
+  .tag-talent { background: #e0f5f5; color: var(--teal-dark); }
+  .tag-betrieb { background: #e4e8f5; color: var(--navy); }
+
+  /* ─── LISTS ─── */
+  ul, ol {
+    padding-left: 20px;
+    margin-bottom: 16px;
+    color: #2d3f6b;
+  }
+  li { margin-bottom: 5px; font-size: 14.5px; line-height: 1.65; }
+  li code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #1a5a8a;
+  }
+
+  /* ─── STATUS BADGES ─── */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+  .badge-warn  { background: #fff3cc; color: #8a6000; }
+  .badge-ok    { background: #d4f5e4; color: #1a6b3a; }
+  .badge-err   { background: #fde8e8; color: #8a1a1a; }
+  .badge-muted { background: #e8eaf0; color: #4a5580; }
+
+  /* ─── STEP LIST ─── */
+  .steps { list-style: none; padding: 0; counter-reset: step; }
+  .steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .steps li::before {
+    content: counter(step);
+    min-width: 32px; height: 32px;
+    background: var(--navy);
+    color: #fff;
+    font-weight: 800; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .steps li .step-content { flex: 1; }
+  .steps li .step-title { font-weight: 700; color: var(--navy); font-size: 14.5px; margin-bottom: 6px; }
+
+  /* ─── ROUTE PILL ─── */
+  .route {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    background: #e4e8f5;
+    color: var(--navy);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-weight: 600;
+  }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  /* ─── TOC on cover ─── */
+  .toc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 32px;
+    margin-top: 12px;
+  }
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 13.5px;
+    color: #2d3f6b;
+    text-decoration: none;
+  }
+  .toc-num {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--teal);
+    min-width: 20px;
+  }
+
+  /* ─── PRINT / A4 ─── */
+  @media print {
+    .sidebar { display: none; }
+    .main { padding: 24px 32px; }
+    .cover { page-break-after: always; }
+    pre { background: #f0f4f8; }
+    pre code { color: #1a2b5e; }
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { padding: 32px 24px; }
+    .role-grid { grid-template-columns: 1fr; }
+    .cover { padding: 32px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ COVER ══════════════════ -->
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-label">Talentleihe für das Berliner Handwerk</div>
+    <a href="#" class="website-btn">Website</a>
+  </div>
+
+  <div class="cover-main">
+    <div class="cover-sub">Technisches Handbuch</div>
+    <div class="cover-title">
+      Talent trifft<br><span class="accent">Handwerk.</span>
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="label">Version</span>
+        <span class="value">Juni 2026</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="label">Projekt</span>
+        <span class="value">Talentleihe Berlin – Verbundausbildung</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="label">Technologie</span>
+        <span class="value">React 18 · TypeScript · Ionic · Appwrite</span>
+      </div>
+    </div>
+
+    <hr style="border:none;border-top:1px solid #cdd8e8;margin:36px 0 28px;">
+    <div style="font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--teal-dark);margin-bottom:16px;">Inhalt</div>
+    <div class="toc-grid">
+      <a href="#s1" class="toc-item"><span class="toc-num">01</span> Über die App</a>
+      <a href="#s2" class="toc-item"><span class="toc-num">02</span> Technischer Stack</a>
+      <a href="#s3" class="toc-item"><span class="toc-num">03</span> Nutzerrollen</a>
+      <a href="#s4" class="toc-item"><span class="toc-num">04</span> Funktionen im Überblick</a>
+      <a href="#s5" class="toc-item"><span class="toc-num">05</span> Datenmodell (Appwrite)</a>
+      <a href="#s6" class="toc-item"><span class="toc-num">06</span> Filter &amp; Suche</a>
+      <a href="#s7" class="toc-item"><span class="toc-num">07</span> Entwicklungsumgebung</a>
+      <a href="#s8" class="toc-item"><span class="toc-num">08</span> Deployment</a>
+      <a href="#s9" class="toc-item"><span class="toc-num">09</span> Besonderheiten &amp; Hinweise</a>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <span>18.06.2026</span>
+    <span>Verbundberatung Berlin // HSBA</span>
+    <span>Handbuch · 1</span>
+  </div>
+</div>
+
+<!-- ══════════════════ LAYOUT ══════════════════ -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="s1">Talent trifft</div>
+      <div class="s2">Handwerk.</div>
+    </div>
+
+    <div class="sidebar-section-label">Handbuch</div>
+    <a href="#s1"><span class="num">01</span> Über die App</a>
+    <a href="#s2"><span class="num">02</span> Technischer Stack</a>
+    <a href="#s3"><span class="num">03</span> Nutzerrollen</a>
+    <a href="#s4"><span class="num">04</span> Funktionen</a>
+    <a href="#s5"><span class="num">05</span> Datenmodell</a>
+    <a href="#s6"><span class="num">06</span> Filter &amp; Suche</a>
+    <a href="#s7"><span class="num">07</span> Entwicklungsumgebung</a>
+    <a href="#s8"><span class="num">08</span> Deployment</a>
+    <a href="#s9"><span class="num">09</span> Besonderheiten</a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ── 1. ÜBER DIE APP ── -->
+    <div class="section" id="s1">
+      <div class="section-eyebrow">Kapitel 01</div>
+      <h2 class="section-title">Über die App</h2>
+
+      <p>
+        <strong>Talentleihe Berlin</strong> ist eine Web-App, die Verbundausbildung im Berliner Handwerk organisiert und vermittelt. Betriebe können Azubis vorübergehend an andere Betriebe ausleihen (Einsätze), und Azubis können sich aktiv mit eigenen Talent-Angeboten vorstellen. So entstehen flexible Lernarrangements, die über den eigenen Ausbildungsbetrieb hinausgehen.
+      </p>
+      <p>Die App ist im Rahmen des HSBA-Projekts „Talent trifft Handwerk" entstanden.</p>
+
+      <h3>Zielgruppe</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Rolle</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Talent (Azubi)</strong></td><td>Auszubildende im Handwerk, die sich für befristete Einsätze bei anderen Betrieben anbieten oder auf Einsatzangebote bewerben</td></tr>
+            <tr><td><strong>Betrieb</strong></td><td>Handwerksbetriebe, die Einsätze für Azubis ausschreiben oder Talent-Angebote von Azubis suchen</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Zweck: Verbundausbildung</h3>
+      <p>Verbundausbildung bedeutet, dass mehrere Betriebe gemeinsam ausbilden. Durch Talentleihe können Azubis Fertigkeiten erwerben, die der eigene Ausbildungsbetrieb nicht abdeckt.</p>
+      <div class="callout">
+        <strong>Regionalbeschränkung:</strong> Die App beschränkt sich bewusst auf <strong>Berlin und Ostbrandenburg</strong> – Zuständigkeitsgebiet der Handwerkskammer Berlin und der Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg.
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 2. TECHNISCHER STACK ── -->
+    <div class="section" id="s2">
+      <div class="section-eyebrow">Kapitel 02</div>
+      <h2 class="section-title">Technischer Stack</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Komponente</th><th>Technologie</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Frontend</strong></td><td>React 18 + TypeScript</td></tr>
+            <tr><td><strong>Build-Tool</strong></td><td>Vite</td></tr>
+            <tr><td><strong>UI-Framework</strong></td><td>Ionic React (Komponenten, Navigation, Layouts)</td></tr>
+            <tr><td><strong>Routing</strong></td><td>React Router DOM (via <code>@ionic/react-router</code>)</td></tr>
+            <tr><td><strong>Backend</strong></td><td>Appwrite Cloud (Self-Hosted möglich)</td></tr>
+            <tr><td><strong>Authentifizierung</strong></td><td>Appwrite Auth (E-Mail + Passwort)</td></tr>
+            <tr><td><strong>Datenbank</strong></td><td>Appwrite Databases (NoSQL)</td></tr>
+            <tr><td><strong>Dateispeicher</strong></td><td>Appwrite Storage</td></tr>
+            <tr><td><strong>Geocoding</strong></td><td>OpenStreetMap Nominatim API (kostenlos, kein API-Key)</td></tr>
+            <tr><td><strong>Hosting</strong></td><td>Appwrite Sites (automatisches Deployment via GitHub)</td></tr>
+            <tr><td><strong>Sprache (System-Mails)</strong></td><td>Deutsch (<code>setLocale("de")</code>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Projektstruktur</h3>
+      <pre><span class="code-lang">tree</span><code>src/
+  App.tsx              # Routen-Definition
+  lib/
+    appwrite.ts        # Appwrite-Client, Typen, Konstanten
+    AuthContext.tsx    # Auth-State (user, profile, saveProfile …)
+    geocode.ts         # Nominatim-Geocoding + Haversine-Distanz
+    gewerke.ts         # Liste aller Handwerksgewerke
+    handwerkskammern.ts# Berlin-Region-Kammern
+    errors.ts          # Fehlerübersetzung (DE)
+  pages/
+    Homepage.tsx
+    Anzeigen.tsx       # Talentleihe-Übersicht (Suche + Filter)
+    AnzeigeDetail.tsx  # Anzeige-Detailseite
+    AnzeigeForm.tsx    # Anzeige anlegen / bearbeiten
+    MeineAnzeigen.tsx
+    MeineBewerbungen.tsx
+    EingegangeneAnfragen.tsx
+    BewerbungenZurAnzeige.tsx
+    ProfilDetail.tsx
+    Bewertung.tsx
+    Informationen.tsx
+    auth/
+      Login.tsx / Register.tsx / Konto.tsx
+      Verifizieren.tsx / PasswortVergessen.tsx
+  components/
+    TopNav.tsx          # Eigene Navigation (fixed, zIndex 9999)
+    ProfilFormFields.tsx
+    NotificationBell.tsx
+    DokumenteUpload.tsx
+    AnzeigenMap.tsx
+    BewertungsKasten.tsx
+    ZurueckButton.tsx
+    AuthGate.tsx
+    Footer.tsx</code></pre>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 3. NUTZERROLLEN ── -->
+    <div class="section" id="s3">
+      <div class="section-eyebrow">Kapitel 03</div>
+      <h2 class="section-title">Nutzerrollen</h2>
+
+      <p>Die App kennt zwei Profiltypen. Nach der Registrierung legt jeder Nutzer <strong>einmalig</strong> ein Profil an und wählt dabei seine Rolle. Die Rolle bestimmt, was in der App sichtbar ist und was getan werden kann.</p>
+
+      <div class="role-grid">
+        <div class="role-card talent">
+          <span class="role-tag tag-talent">Talent · Azubi</span>
+          <h3>Was Talents sehen</h3>
+          <p>Auf der Talentleihe-Seite ausschließlich <strong>Einsatz-Angebote von Betrieben</strong> (Typ <code>einsatz</code>) – als Liste oder Karte.</p>
+          <h4>Aktionen</h4>
+          <ul>
+            <li>Profil anlegen und bearbeiten</li>
+            <li>Bewerbungsunterlagen hochladen</li>
+            <li>Eigene Talent-Angebote erstellen</li>
+            <li>Auf Einsatz-Anzeigen bewerben</li>
+            <li>Bewerbungen zurückziehen</li>
+            <li>Abgeschlossene Einsätze bewerten</li>
+          </ul>
+          <h4>Bewertungskategorien</h4>
+          <p>Zuverlässigkeit · Arbeitsumfeld · Wissensvermittlung</p>
+        </div>
+
+        <div class="role-card betrieb">
+          <span class="role-tag tag-betrieb">Betrieb</span>
+          <h3>Was Betriebe sehen</h3>
+          <p>Auf der Talentleihe-Seite ausschließlich <strong>Talent-Angebote von Azubis</strong> (Typ <code>talent_angebot</code>) – nur Listenansicht.</p>
+          <h4>Aktionen</h4>
+          <ul>
+            <li>Betriebsprofil anlegen und bearbeiten</li>
+            <li>Einsatz-Anzeigen erstellen und löschen</li>
+            <li>Eingehende Bewerbungen annehmen/ablehnen</li>
+            <li>Bewerbungsübersicht verwalten</li>
+            <li>Abgeschlossene Einsätze bewerten</li>
+          </ul>
+          <h4>Bewertungskategorien</h4>
+          <p>Zuverlässigkeit · Lernbereitschaft · Pünktlichkeit</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Nutzer ohne Profil:</strong> Wer eingeloggt ist, aber noch kein Profil angelegt hat, sieht alle Anzeigen beider Typen und erhält den Hinweis, das Profil zu vervollständigen.
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 4. FUNKTIONEN ── -->
+    <div class="section" id="s4">
+      <div class="section-eyebrow">Kapitel 04</div>
+      <h2 class="section-title">Funktionen im Überblick</h2>
+
+      <h3>Route-Übersicht</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Route</th><th>Seite</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><code>/home</code></td><td>Homepage</td><td>Startseite mit Projektvorstellung</td></tr>
+            <tr><td><code>/anzeigen</code></td><td>Anzeigen</td><td>Talentleihe-Übersicht (Suche, Filter, Liste/Karte)</td></tr>
+            <tr><td><code>/anzeigen/:id</code></td><td>AnzeigeDetail</td><td>Detailansicht einer Anzeige (öffentlich)</td></tr>
+            <tr><td><code>/informationen</code></td><td>Informationen</td><td>Infoseite zum Konzept Verbundausbildung</td></tr>
+            <tr><td><code>/meine-anzeigen</code></td><td>MeineAnzeigen</td><td>Eigene Anzeigen verwalten</td></tr>
+            <tr><td><code>/meine-anzeigen/neu</code></td><td>AnzeigeForm</td><td>Neue Anzeige anlegen</td></tr>
+            <tr><td><code>/meine-anzeigen/:id/bearbeiten</code></td><td>AnzeigeForm</td><td>Bestehende Anzeige bearbeiten</td></tr>
+            <tr><td><code>/meine-bewerbungen</code></td><td>MeineBewerbungen</td><td>Versendete Bewerbungen und Anfragen</td></tr>
+            <tr><td><code>/eingegangene-anfragen</code></td><td>EingegangeneAnfragen</td><td>Empfangene Bewerbungen (Annehmen/Ablehnen)</td></tr>
+            <tr><td><code>/konto</code></td><td>Konto</td><td>Profil und Kontoverwaltung (Hub)</td></tr>
+            <tr><td><code>/bewertung/:id/:userId/:type</code></td><td>Bewertung</td><td>Bewertung abgeben oder bearbeiten</td></tr>
+            <tr><td><code>/profil/:userId</code></td><td>ProfilDetail</td><td>Öffentliches Profil eines Nutzers</td></tr>
+            <tr><td><code>/datenschutz</code></td><td>Datenschutz</td><td>Datenschutzerklärung</td></tr>
+            <tr><td><code>/agb</code></td><td>AGB</td><td>Allgemeine Geschäftsbedingungen</td></tr>
+            <tr><td><code>/impressum</code></td><td>Impressum</td><td>Impressum</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Registrierung &amp; Login</h3>
+      <ul>
+        <li><strong>Registrierung</strong> (<code>/registrieren</code>): E-Mail + Passwort; anschließend Versand einer Verifizierungs-E-Mail. Passwort-Toggle vorhanden.</li>
+        <li><strong>Login</strong> (<code>/login</code>): Nach dem Login Weiterleitung auf <code>/konto</code>.</li>
+        <li><strong>E-Mail-Verifizierung</strong>: Nutzer ohne bestätigte E-Mail sehen ein Banner mit Link zum erneuten Versenden.</li>
+        <li><strong>Passwort vergessen</strong>: E-Mail-Adresse → Reset-Mail → Link führt zu <code>/passwort-neu</code>.</li>
+      </ul>
+
+      <h3>Konto (Profil &amp; Hub)</h3>
+      <p>Die Konto-Seite (<code>/konto</code>) ist der zentrale Hub nach dem Login.</p>
+      <ul>
+        <li>Beim ersten Login: Formular zur Anlage des Profils (einmalige Rollenwahl: Talent oder Betrieb)</li>
+        <li>Schaltfläche „Profil bearbeiten" öffnet das Formular mit vorausgefüllten Werten</li>
+        <li>Hub-Karten zu Meine Anzeigen, Meine Bewerbungen, Eingegangene Anfragen</li>
+        <li>Bewerbungsunterlagen-Verwaltung (nur Talents)</li>
+        <li>Eigene Bewertungsübersicht als Sternkarten</li>
+        <li>Logout sowie Konto löschen (nach E-Mail-Bestätigung)</li>
+      </ul>
+
+      <h3>Profil-Pflichtfelder</h3>
+
+      <h4>Talent</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td>Anrede</td><td>Herr / Frau / Enby / möchte ich nicht angeben</td></tr>
+            <tr><td>Vorname, Nachname</td><td>Pflichtfelder</td></tr>
+            <tr><td>PLZ + Wohnort</td><td>5-stellige PLZ + Ort</td></tr>
+            <tr><td>Gewerk</td><td>Einzelnes Handwerksgewerk (Auswahl mit Suche)</td></tr>
+            <tr><td>Lehrjahr</td><td>1 bis 4</td></tr>
+            <tr><td>Ausbildungsbetrieb</td><td>Name des Betriebs</td></tr>
+            <tr><td>Berufsschule</td><td>Name der Berufsschule</td></tr>
+            <tr><td>Handwerkskammer</td><td>HWK Berlin oder HWK Frankfurt (Oder)</td></tr>
+            <tr><td>Fähigkeiten</td><td>Optional, kommagetrennt</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Betrieb</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td>Firmenname</td><td>Pflichtfeld</td></tr>
+            <tr><td>Straße + Hausnummer</td><td>Pflichtfelder</td></tr>
+            <tr><td>PLZ + Ort</td><td>Pflichtfelder</td></tr>
+            <tr><td>Gewerke</td><td>Mind. 1 Gewerk (Mehrfachauswahl mit Chips)</td></tr>
+            <tr><td>Handwerkskammer</td><td>Pflichtfeld</td></tr>
+            <tr><td>Ansprechpartner:in</td><td>Anrede, Name, E-Mail</td></tr>
+            <tr><td>Spezialisierungen</td><td>Optional, kommagetrennt</td></tr>
+            <tr><td>Initiativbewerbungen</td><td>Toggle (annehmen / nicht annehmen)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Anzeige anlegen / bearbeiten</h3>
+
+      <h4>Basis-Felder (beide Rollen)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Pflicht</th><th>Hinweis</th></tr></thead>
+          <tbody>
+            <tr><td>Gewerk</td><td>Ja</td><td>Auswahl aus Gewerke-Liste</td></tr>
+            <tr><td>Name / Firma</td><td>Ja</td><td>Talent: „Name/Ausbildungsbetrieb"; Betrieb: „Firma"</td></tr>
+            <tr><td>Startdatum</td><td>Ja</td><td>Mindestens heutiges Datum (ISO-Format intern)</td></tr>
+            <tr><td>Enddatum</td><td>Nein</td><td>Ohne Angabe: automatisch Startdatum + 3,5 Jahre</td></tr>
+            <tr><td>Kontakt-E-Mail</td><td>Ja</td><td>Vorausgefüllt aus Profil</td></tr>
+            <tr><td>Spezialisierungen</td><td>Nein</td><td>Kommagetrennt</td></tr>
+            <tr><td>Handwerkskammer</td><td>Ja</td><td>Nur HWK Berlin oder HWK Frankfurt (Oder)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Nur Betrieb (Einsatz)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Pflicht</th><th>Hinweis</th></tr></thead>
+          <tbody>
+            <tr><td>Aufgabenbeschreibung</td><td>Ja</td><td>Freitextfeld</td></tr>
+            <tr><td>Mindestalter</td><td>Nein</td><td>16 / 18 / 21 oder kein Minimum</td></tr>
+            <tr><td>Vorerfahrung</td><td>Nein</td><td>Freitext</td></tr>
+            <tr><td>Adresse des Einsatzorts</td><td>Nein</td><td>Straße + PLZ + Ort</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>Nur Talent (Talent-Angebot)</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Pflicht</th><th>Hinweis</th></tr></thead>
+          <tbody>
+            <tr><td>Lernziele</td><td>Nein</td><td>Kommagetrennt</td></tr>
+            <tr><td>PLZ</td><td>Ja</td><td>Standort des Talents</td></tr>
+            <tr><td>Umkreis (km)</td><td>Nein</td><td>Wie weit ist das Talent bereit zu fahren</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Bewerbungen</h3>
+
+      <h4>Status-Werte</h4>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Status</th><th>Label</th><th>Farbe</th></tr></thead>
+          <tbody>
+            <tr><td><code>ausstehend</code></td><td><span class="badge badge-warn">Ausstehend</span></td><td>Gelb (warning)</td></tr>
+            <tr><td><code>angenommen</code></td><td><span class="badge badge-ok">Angenommen</span></td><td>Grün (success)</td></tr>
+            <tr><td><code>abgelehnt</code></td><td><span class="badge badge-err">Abgelehnt</span></td><td>Rot (danger)</td></tr>
+            <tr><td><code>zurueckgezogen</code></td><td><span class="badge badge-muted">Zurückgezogen</span></td><td>Grau (medium)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Bewertungen</h3>
+      <p>Nach einem angenommenen Einsatz können beide Seiten die jeweils andere Partei bewerten (1–5 Sterne je Kategorie, optionaler Kommentar, nachträglich bearbeitbar).</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Bewertet wird</th><th>Kategorien</th></tr></thead>
+          <tbody>
+            <tr><td>Talent</td><td>Zuverlässigkeit · Lernbereitschaft · Pünktlichkeit</td></tr>
+            <tr><td>Betrieb</td><td>Zuverlässigkeit · Arbeitsumfeld · Wissensvermittlung</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Benachrichtigungsglocke</h3>
+      <ul>
+        <li>Zeigt die letzten 20 eingegangenen Bewerbungen auf eigene Anzeigen</li>
+        <li>Rotes Badge mit Anzahl ungelesener Nachrichten</li>
+        <li>„Gelesen"-Stand per Zeitstempel in <code>localStorage</code></li>
+        <li>Automatische Aktualisierung alle 60 Sekunden</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 5. DATENMODELL ── -->
+    <div class="section" id="s5">
+      <div class="section-eyebrow">Kapitel 05</div>
+      <h2 class="section-title">Datenmodell (Appwrite)</h2>
+
+      <p>Datenbank-ID: <code>lehrstellen</code></p>
+
+      <h3>Collection: <code>apprenticeships</code> – Anzeigen</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><code>type</code></td><td>String</td><td><code>"einsatz"</code> oder <code>"talent_angebot"</code></td></tr>
+            <tr><td><code>gewerk</code></td><td>String</td><td>Handwerksgewerk (z. B. „Tischler/in")</td></tr>
+            <tr><td><code>firma</code></td><td>String</td><td>Betriebsname oder Name des Azubis</td></tr>
+            <tr><td><code>ort</code></td><td>String</td><td>Ortsbezeichnung (Kurzform)</td></tr>
+            <tr><td><code>startdatum</code></td><td>String (ISO)</td><td>Beginn des Einsatzes / Verfügbarkeit ab</td></tr>
+            <tr><td><code>enddatum</code></td><td>String | null</td><td>Ende; ohne Angabe: Start + 3,5 Jahre</td></tr>
+            <tr><td><code>kontakt_email</code></td><td>String</td><td>Kontaktadresse</td></tr>
+            <tr><td><code>spezialisierungen</code></td><td>String[]</td><td>Optionale Spezialisierungen</td></tr>
+            <tr><td><code>lernziele</code></td><td>String[]</td><td>Nur Talent-Angebote</td></tr>
+            <tr><td><code>mindestalter</code></td><td>Number | null</td><td>Nur Einsätze: 16 / 18 / 21 oder null</td></tr>
+            <tr><td><code>aufgabenbeschreibung</code></td><td>String</td><td>Nur Einsätze: konkrete Aufgaben</td></tr>
+            <tr><td><code>owner_id</code></td><td>String | null</td><td>Appwrite-User-ID des Erstellers</td></tr>
+            <tr><td><code>plz</code></td><td>String | null</td><td>PLZ des Standorts</td></tr>
+            <tr><td><code>plz_umkreis</code></td><td>Number | null</td><td>Nur Talent-Angebote: Umkreis in km</td></tr>
+            <tr><td><code>handwerkskammer</code></td><td>String | null</td><td>HWK Berlin oder HWK Frankfurt (Oder)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        <strong>Permissions:</strong> Lesen für alle (<code>Role.any()</code>); Bearbeiten und Löschen nur für den Ersteller.
+      </div>
+
+      <h3>Collection: <code>profiles</code> – Nutzerprofile</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><code>type</code></td><td>String</td><td><code>"talent"</code> oder <code>"betrieb"</code></td></tr>
+            <tr><td><code>user_id</code></td><td>String</td><td>Appwrite-User-ID</td></tr>
+            <tr><td><code>name</code></td><td>String</td><td>Nachname (Talent) oder Firmenname (Betrieb)</td></tr>
+            <tr><td><code>vorname</code></td><td>String | null</td><td>Nur Talent</td></tr>
+            <tr><td><code>gewerk</code></td><td>String | null</td><td>Talent: einzelnes Gewerk; Betrieb: kommagetrennte Liste</td></tr>
+            <tr><td><code>handwerkskammer</code></td><td>String | null</td><td>HWK-Zugehörigkeit</td></tr>
+            <tr><td><code>lehrjahr</code></td><td>Number | null</td><td>Nur Talent: 1–4</td></tr>
+            <tr><td><code>faehigkeiten</code></td><td>String[]</td><td>Nur Talent: kommagetrennt gespeicherte Fähigkeiten</td></tr>
+            <tr><td><code>ansprechpartner_email</code></td><td>String | null</td><td>Nur Betrieb</td></tr>
+            <tr><td><code>spezialisierung</code></td><td>String[]</td><td>Nur Betrieb</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Collection: <code>bewerbungen</code> – Bewerbungen</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><code>apprenticeship_id</code></td><td>String</td><td>ID der Anzeige</td></tr>
+            <tr><td><code>applicant_user_id</code></td><td>String</td><td>User-ID des Bewerbers</td></tr>
+            <tr><td><code>applicant_name</code></td><td>String | null</td><td>Name des Bewerbers (Kopie)</td></tr>
+            <tr><td><code>posting_owner_id</code></td><td>String</td><td>User-ID des Anzeigen-Erstellers</td></tr>
+            <tr><td><code>nachricht</code></td><td>String</td><td>Bewerbungstext</td></tr>
+            <tr><td><code>status</code></td><td>String</td><td><code>ausstehend</code> / <code>angenommen</code> / <code>abgelehnt</code> / <code>zurueckgezogen</code></td></tr>
+            <tr><td><code>dokument_ids</code></td><td>String[]</td><td>IDs der angehängten Dokumente</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout-warn">
+        <strong>Permissions-Hinweis:</strong> Bewerbungen haben collection-weite Permissions (alle eingeloggten Nutzer lesen/schreiben). Die Filterung erfolgt clientseitig über <code>applicant_user_id</code> bzw. <code>posting_owner_id</code>, da Appwrite beim Anlegen keine Permissions für fremde User-IDs erlaubt.
+      </div>
+
+      <h3>Collection: <code>bewertungen</code> – Bewertungen</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><code>bewerbung_id</code></td><td>String</td><td>ID der zugehörigen Bewerbung</td></tr>
+            <tr><td><code>rated_user_id</code></td><td>String</td><td>User-ID der bewerteten Person</td></tr>
+            <tr><td><code>rated_type</code></td><td>String</td><td><code>"talent"</code> oder <code>"betrieb"</code></td></tr>
+            <tr><td><code>kat1</code></td><td>Number</td><td>Wert 1–5 (Zuverlässigkeit)</td></tr>
+            <tr><td><code>kat2</code></td><td>Number</td><td>Wert 1–5 (Lernbereitschaft / Arbeitsumfeld)</td></tr>
+            <tr><td><code>kat3</code></td><td>Number</td><td>Wert 1–5 (Pünktlichkeit / Wissensvermittlung)</td></tr>
+            <tr><td><code>kommentar</code></td><td>String | null</td><td>Optionaler Freitext</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Collection: <code>dokumente</code> &amp; Storage Bucket</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
+          <tbody>
+            <tr><td><code>user_id</code></td><td>String</td><td>Besitzer der Datei</td></tr>
+            <tr><td><code>file_id</code></td><td>String</td><td>ID der Datei im Storage Bucket</td></tr>
+            <tr><td><code>filename</code></td><td>String</td><td>Originaler Dateiname</td></tr>
+            <tr><td><code>size</code></td><td>Number</td><td>Dateigröße in Bytes</td></tr>
+            <tr><td><code>mime_type</code></td><td>String</td><td>MIME-Typ (z. B. <code>application/pdf</code>)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Storage Bucket-ID: <code>dokumente</code> – Zugriff über kurzlebige JWT-Token (Cross-Origin-Downloads).</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 6. FILTER & SUCHE ── -->
+    <div class="section" id="s6">
+      <div class="section-eyebrow">Kapitel 06</div>
+      <h2 class="section-title">Filter &amp; Suche</h2>
+
+      <p>Die Talentleihe-Seite (<code>/anzeigen</code>) bietet einen ausklappbaren Filterbereich.</p>
+
+      <h3>Gewerk-Filter</h3>
+      <ul>
+        <li>Mehrfachauswahl (Multi-Picker mit Suche)</li>
+        <li>Vorausfüllung aus Profil: Talent → eigenes Gewerk; Betrieb → alle Gewerke vorausgewählt</li>
+        <li>Matching via <code>gewerkStamm()</code>-Funktion (toleriert Singular/Plural-Varianten)</li>
+      </ul>
+
+      <h3>Ort / Umkreis-Filter</h3>
+      <ul>
+        <li>Freitextfeld: Stadt, Stadtteil oder PLZ</li>
+        <li>Umkreis: Schieberegler 0–200 km (Schritte à 5 km), Standard: 50 km</li>
+        <li>Geocoding via OpenStreetMap Nominatim API (mit „, Deutschland"-Ergänzung)</li>
+        <li>Distanzberechnung: Haversine-Formel (Luftlinie)</li>
+        <li>Debounce: 500 ms; Ergebnisse werden gecacht (im gleichen Seitenaufruf)</li>
+      </ul>
+
+      <h3>Datum-Filter</h3>
+      <p>Zwei Felder: „Verfügbar ab" und „Verfügbar bis"</p>
+      <div class="callout">
+        <strong>Überschneidungslogik:</strong> Anzeigen <em>mit</em> Enddatum: Einsatzzeitraum muss den Filterzeitraum überschneiden. Anzeigen <em>ohne</em> Enddatum: Startdatum muss im Filterzeitraum liegen. Das „bis"-Datum wird serverseitig gefiltert; restliche Bedingungen laufen clientseitig (Appwrite unterstützt kein OR).
+      </div>
+
+      <h3>Handwerkskammer-Filter</h3>
+      <ul>
+        <li>Dropdown: „Beide Kammern" oder eine der zwei Berliner Regionalkammern</li>
+        <li>Standardmäßig werden immer nur Anzeigen aus diesen zwei Kammern geladen</li>
+      </ul>
+
+      <h3>Mindestalter-Filter</h3>
+      <ul>
+        <li>Optionen: „egal", „nur ohne Mindestalter", oder konkrete Altersstufe</li>
+        <li>Serverseitiger Filter über Appwrite-Query</li>
+      </ul>
+
+      <h3>Kartenansicht</h3>
+      <ul>
+        <li>Nur für Talents verfügbar</li>
+        <li>Anzeigen auf interaktiver Karte (<code>AnzeigenMap</code>-Komponente)</li>
+        <li>Kammer-Gebiete als Flächen eingeblendet</li>
+        <li>Klick auf Pin → Anzeige-Detailseite</li>
+        <li>Koordinaten werden einmalig geocodiert und gecacht</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 7. ENTWICKLUNGSUMGEBUNG ── -->
+    <div class="section" id="s7">
+      <div class="section-eyebrow">Kapitel 07</div>
+      <h2 class="section-title">Entwicklungsumgebung einrichten</h2>
+
+      <h3>Voraussetzungen</h3>
+      <ul>
+        <li>Node.js ab Version 18</li>
+        <li>npm (wird mit Node.js mitgeliefert)</li>
+        <li>Zugang zur Appwrite-Cloud-Instanz (oder lokale Appwrite-Instanz)</li>
+      </ul>
+
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <div class="step-title">Repository klonen</div>
+            <pre><span class="code-lang">bash</span><code>git clone &lt;repository-url&gt;
+cd Talentleihe-Berlin</code></pre>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Abhängigkeiten installieren</div>
+            <pre><span class="code-lang">bash</span><code>npm install</code></pre>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Umgebungsvariablen anlegen</div>
+            <p>Datei <code>.env.local</code> im Projektroot anlegen:</p>
+            <pre><span class="code-lang">env</span><code>VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+VITE_APPWRITE_PROJECT_ID=&lt;deine-project-id&gt;</code></pre>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Dev-Server starten</div>
+            <pre><span class="code-lang">bash</span><code># Empfohlen (alle Betriebssysteme):
+npx vite
+
+# Alternativ:
+npm run dev
+
+# Windows / PowerShell (falls npx nicht greift):
+node_modules\.bin\vite.cmd</code></pre>
+            <p>Die App ist dann unter <strong>http://localhost:5173</strong> erreichbar.</p>
+            <div class="callout callout-warn">
+              <strong>Windows-Hinweis:</strong> Der direkte <code>vite</code>-Befehl schlägt unter PowerShell manchmal fehl. Die explizite Angabe <code>node_modules\.bin\vite.cmd</code> umgeht dieses Problem zuverlässig.
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Build erstellen (optional)</div>
+            <pre><span class="code-lang">bash</span><code>npm run build</code></pre>
+            <p>Der Build wird im Ordner <code>dist/</code> abgelegt.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 8. DEPLOYMENT ── -->
+    <div class="section" id="s8">
+      <div class="section-eyebrow">Kapitel 08</div>
+      <h2 class="section-title">Deployment</h2>
+
+      <p>Die App wird über <strong>Appwrite Sites</strong> gehostet und ist mit dem GitHub-Repository verbunden.</p>
+
+      <h3>Ablauf</h3>
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <div class="step-title">Änderungen pushen</div>
+            <pre><span class="code-lang">bash</span><code>git push origin main</code></pre>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Automatischer Build</div>
+            <p>Appwrite Sites erkennt den Push via GitHub-Webhook und startet <code>npm run build</code> automatisch.</p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Live-Schaltung</div>
+            <p>Nach erfolgreichem Build ist die neue Version innerhalb von <strong>1–3 Minuten</strong> live.</p>
+          </div>
+        </li>
+      </ol>
+
+      <h3>Build-Status prüfen</h3>
+      <p>Im Appwrite Dashboard unter <strong>Sites</strong> → aktives Deployment auswählen. Dort sind Build-Logs, Status und Deployment-URL einsehbar.</p>
+
+      <h3>Umgebungsvariablen im Deployment</h3>
+      <div class="callout">
+        Die Variablen <code>VITE_APPWRITE_ENDPOINT</code> und <code>VITE_APPWRITE_PROJECT_ID</code> müssen auch in den Appwrite-Sites-Einstellungen unter <strong>Environment Variables</strong> hinterlegt werden. Sie werden beim Build eingebettet (Vite <code>import.meta.env</code>).
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ── 9. BESONDERHEITEN ── -->
+    <div class="section" id="s9">
+      <div class="section-eyebrow">Kapitel 09</div>
+      <h2 class="section-title">Bekannte Besonderheiten &amp; Hinweise</h2>
+
+      <h3>TopNav ist custom (fixed, zIndex 9999)</h3>
+      <p>Die App verwendet keine native Ionic-Navigation, sondern eine vollständig eigene <code>TopNav</code>-Komponente.</p>
+      <ul>
+        <li>Position: <code>fixed</code>, <code>z-index: 9999</code></li>
+        <li>Der <code>IonHeader</code> auf Einzelseiten liegt <em>hinter</em> der TopNav und ist nicht sichtbar – er wird für Hilfszwecke beibehalten</li>
+        <li>Seiteninhalte haben oben ausreichend Abstand, damit sie nicht hinter der TopNav verschwinden</li>
+      </ul>
+
+      <h3>Zurück-Button: eigene ZurueckButton-Komponente</h3>
+      <p>Der native Ionic <code>IonBackButton</code> wird <strong>nicht</strong> verwendet. Die eigene <code>ZurueckButton</code>-Komponente navigiert sowohl auf Mobilgeräten als auch im Browser korrekt im Routing-Stack.</p>
+
+      <h3>Mehrere Gewerke für Betriebe: kommagetrennt im <code>gewerk</code>-Feld</h3>
+      <p>Das <code>gewerk</code>-Feld der <code>profiles</code>-Collection ist ein einzelner String. Für Betriebe mit mehreren Gewerken wird er als kommagetrennte Liste genutzt:</p>
+      <pre><span class="code-lang">ts</span><code>// Lesen:
+gewerk.split(",").map(s => s.trim()).filter(Boolean)
+
+// Speichern:
+selectedGewerke.join(", ")</code></pre>
+
+      <h3>Dokument-Downloads brauchen JWT (Cross-Origin Auth)</h3>
+      <p>Download-URLs aus dem Appwrite Storage Bucket benötigen ein kurzlebiges JWT als Query-Parameter, um Cross-Origin-Authentifizierungsprobleme zu lösen.</p>
+      <ul>
+        <li>Client erstellt kurz vor dem Download ein JWT</li>
+        <li>JWT wird als Query-Parameter an die Download-URL angehängt</li>
+        <li>Appwrite akzeptiert den Request auch Cross-Origin</li>
+      </ul>
+
+      <h3>Profil-Bug-Fix: <code>saveProfile</code> prüft Appwrite direkt</h3>
+      <div class="callout callout-warn">
+        <strong>Problem:</strong> Bei schnellem Doppelklick auf „Profil speichern" könnte die App fälschlicherweise ein zweites Profil anlegen, weil der lokale Auth-State noch nicht aktualisiert ist.
+      </div>
+      <div class="callout">
+        <strong>Fix:</strong> <code>saveProfile</code> prüft <em>immer zuerst direkt in Appwrite</em> (nicht im lokalen State), ob bereits ein Profil für die User-ID existiert, bevor es ein neues anlegt.
+      </div>
+
+      <h3>Anzeigen warten auf <code>profileLoading</code> (Race Condition Fix)</h3>
+      <p>Die Talentleihe-Seite würde bei sofortigem Laden kurz alle Anzeigen beider Typen anzeigen, bevor der Profil-State fertig ist. Der Fix:</p>
+      <pre><span class="code-lang">typescript</span><code>// Aus Anzeigen.tsx
+if (profileLoading) return;</code></pre>
+
+      <h3>Anzeige-Typ ist unveränderlich nach dem Erstellen</h3>
+      <p>Der <code>type</code> einer Anzeige (<code>einsatz</code> / <code>talent_angebot</code>) richtet sich nach dem Profiltyp des Erstellers und kann nachträglich <strong>nicht</strong> geändert werden.</p>
+
+      <h3>Regionalbeschränkung auf Berlin und Ostbrandenburg</h3>
+      <p>Alle Anzeigen-Abfragen enthalten einen festen serverseitigen Filter:</p>
+      <pre><span class="code-lang">typescript</span><code>Query.equal("handwerkskammer", [...BERLIN_REGION_KAMMERN])</code></pre>
+      <p>Anzeigen anderer Kammern werden weder geladen noch können sie erstellt werden (das HWK-Dropdown im Formular enthält nur die zwei Berliner Regionalkammern).</p>
+    </div>
+
+    <!-- FOOTER -->
+    <div style="margin-top:64px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);">
+      <span>Talentleihe Berlin – Technisches Handbuch</span>
+      <span>Stand: Juni 2026 · Verbundberatung Berlin // HSBA</span>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Highlight active sidebar link on scroll
+  const sections = document.querySelectorAll('[id^="s"]');
+  const links = document.querySelectorAll('.sidebar a');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
