@@ -22,7 +22,7 @@ import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
 import { ID, Permission, Role } from "appwrite";
 import { storage, BUCKET_AVATARS, functions, FUNC_AUSBI_FREIGABE
-} from "../../lib/appwrite";
+import { storage, BUCKET_AVATARS, functions, FUNC_AUSBI_FREIGABE, account } from "../../lib/appwrite";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -79,7 +79,6 @@ const Register: React.FC = () => {
       let avatarFileId: string | null = null;
       if (pendingAvatarFile) {
         try {
-          const { account } = await import("../../lib/appwrite");
           const currentUser = await account.get();
           const uploaded = await storage.createFile(
             BUCKET_AVATARS,
