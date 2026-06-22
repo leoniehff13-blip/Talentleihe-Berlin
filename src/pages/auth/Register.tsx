@@ -21,7 +21,8 @@ import { useHistory } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
 import { ID, Permission, Role } from "appwrite";
-import { storage, BUCKET_AVATARS } from "../../lib/appwrite";
+import { storage, BUCKET_AVATARS, functions, FUNC_AUSBI_FREIGABE
+} from "../../lib/appwrite";
 import {
   ProfilFormFields,
   EMPTY_PROFIL,
@@ -97,6 +98,20 @@ const Register: React.FC = () => {
       }
       // Profil anlegen – danach direkt weiterleiten, keine zweite Session nötig.
       await saveProfile({ ...profilStateToInput(profil), avatar_file_id: avatarFileId });
+      // Ausbildungsbeauftragter-Freigabe anfordern (nur für Azubis)
+      if (profil.type === "talent") {
+        try {
+          await functions.createExecution(
+            FUNC_AUSBI_FREIGABE,
+            JSON.stringify({ action: "request", userId: newUser.$id }),
+            false
+          );
+        } catch (funcErr) {
+          console.error("Freigabe-E-Mail konnte nicht gesendet werden:", funcErr);
+          // Nicht kritisch – Konto wurde trotzdem angelegt
+        }
+      }
+
       setSuccess(true);
     } catch (err: unknown) {
       setError(translateError(err));

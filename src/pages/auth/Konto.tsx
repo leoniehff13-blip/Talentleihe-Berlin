@@ -42,7 +42,7 @@ import {
   DB_LEHRSTELLEN,
   COL_BEWERTUNGEN,
   BEWERTUNG_KATEGORIEN,
-  type Bewertung,
+  type Bewertung, functions, FUNC_AUSBI_FREIGABE
 } from "../../lib/appwrite";
 import Login from "./Login";
 import DokumenteUpload from "../../components/DokumenteUpload";
@@ -359,6 +359,41 @@ const Konto: React.FC = () => {
   // Verbundberatung-User ohne Freigabe → Warteschirm
   if (profile?.role === "verbundberatung" && !profile?.approved) {
     return <PendingApprovalScreen />;
+  }
+
+
+  // Azubi-Konto wartet auf Freigabe durch Ausbildungsbeauftragte/n
+  if (profile && profile.type === "talent" && !profile.approved) {
+    return (
+      <IonPage>
+        <IonContent className="ion-padding" style={{ "--background": "#f8fafc" }}>
+          <div style={{
+            maxWidth: 480,
+            margin: "60px auto",
+            textAlign: "center",
+            padding: "0 16px",
+          }}>
+            <div style={{ fontSize: 56, marginBottom: 16 }}>⏳</div>
+            <h2 style={{ color: "#1E367A", fontFamily: '"Quicksand", sans-serif', fontWeight: 800 }}>
+              Konto wartet auf Freigabe
+            </h2>
+            <p style={{ color: "#555", lineHeight: 1.7 }}>
+              Wir haben eine Freigabe-Anfrage an{" "}
+              <strong>{profile.ausbildungsbeauftragter_email || "deinen Ausbildungsbeauftragten"}</strong>{" "}
+              gesendet.
+            </p>
+            <p style={{ color: "#555", lineHeight: 1.7 }}>
+              Bitte bitte deine/n Ausbildungsbeauftragte/n, die E-Mail zu öffnen
+              und dein Konto freizugeben. Danach kannst du die Plattform vollständig nutzen.
+            </p>
+            <p style={{ color: "#888", fontSize: "0.85rem", marginTop: 24 }}>
+              Keine E-Mail erhalten? Prüfe den Spam-Ordner oder wende dich an{" "}
+              <a href="mailto:info@hwk-berlin.de">info@hwk-berlin.de</a>.
+            </p>
+          </div>
+        </IonContent>
+      </IonPage>
+    );
   }
 
   // Nutzer ist eingeloggt, hat aber noch kein Profil → Anlegen-Modus
