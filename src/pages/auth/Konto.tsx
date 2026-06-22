@@ -386,10 +386,7 @@ const Konto: React.FC = () => {
               Bitte bitte deine/n Ausbildungsbeauftragte/n, die E-Mail zu öffnen
               und dein Konto freizugeben. Danach kannst du die Plattform vollständig nutzen.
             </p>
-            <p style={{ color: "#888", fontSize: "0.85rem", marginTop: 24 }}>
-              Keine E-Mail erhalten? Prüfe den Spam-Ordner oder wende dich an{" "}
-              <a href="mailto:info@hwk-berlin.de">info@hwk-berlin.de</a>.
-            </p>
+
           </div>
         </IonContent>
       </IonPage>
