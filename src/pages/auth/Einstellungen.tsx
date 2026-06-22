@@ -25,7 +25,7 @@ import {
   chevronBackOutline,
   lockClosedOutline,
   notificationsOutline,
-  trashOutline,,
+  trashOutline,
   helpCircleOutline
 } from "ionicons/icons";
 import { useState, useEffect } from "react";
