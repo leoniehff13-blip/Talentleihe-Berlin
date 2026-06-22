@@ -21,7 +21,6 @@ import { useHistory } from "react-router-dom";
 import { useAuth } from "../../lib/AuthContext";
 import { translateError } from "../../lib/errors";
 import { ID, Permission, Role } from "appwrite";
-import { storage, BUCKET_AVATARS, functions, FUNC_AUSBI_FREIGABE
 import { storage, BUCKET_AVATARS, functions, FUNC_AUSBI_FREIGABE, account } from "../../lib/appwrite";
 import {
   ProfilFormFields,
