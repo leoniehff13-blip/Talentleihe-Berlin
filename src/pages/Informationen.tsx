@@ -259,13 +259,13 @@ function VerbundDiagramm() {
         <text x="651" y="194" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">(von IHK/HWK o.ä. anerkannt)</text>
         <text x="651" y="205" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">in Berlin &amp; überregional</text>
 
-        <rect x="308" y="280" width="183" height="46" rx="10" fill={C.tealLight} stroke={C.teal} strokeWidth="1.5" />
-        <text x="399" y="300" textAnchor="middle" fontFamily={Q} fontWeight="700" fontSize="9" fill={C.blue}>Begleichung der Rechnung</text>
-        <text x="399" y="313" textAnchor="middle" fontFamily={Q} fontSize="8.5" fill={C.textMid}>von Leitbetrieb an Partner</text>
+        <rect x="308" y="280" width="183" height="46" rx="10" fill={C.teal} />
+        <text x="399" y="300" textAnchor="middle" fontFamily={Q} fontWeight="700" fontSize="9" fill={C.white}>Begleichung der Rechnung</text>
+        <text x="399" y="313" textAnchor="middle" fontFamily={Q} fontSize="8.5" fill="rgba(255,255,255,0.85)">von Leitbetrieb an Partner</text>
 
-        <rect x="308" y="348" width="183" height="58" rx="10" fill={C.blueMid} />
+        <rect x="308" y="348" width="183" height="58" rx="10" fill={C.teal} />
         <text x="399" y="372" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Rechnung für Aufwand</text>
-        <text x="399" y="387" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.8)">(z.B. Ausbildungspersonal, Material)</text>
+        <text x="399" y="387" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">(z.B. Ausbildungspersonal, Material)</text>
 
         <rect x="10" y="432" width="168" height="68" rx="12" fill={red} />
         <text x="94" y="463" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="13" fill={C.white}>Fördermittel des</text>
@@ -294,17 +294,22 @@ function VerbundDiagramm() {
         <line x1="491" y1="190" x2="560" y2="190" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
         <line x1="560" y1="198" x2="491" y2="198" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
 
-        {/* E — Kooper → Begleichung (30 px Lücke) */}
-        <line x1="399" y1="250" x2="399" y2="280" stroke={C.teal} strokeWidth="1.5" markerEnd="url(#vd-t)" />
+        {/* E — Leitbetrieb → Begleichung
+             Leit-Rechts (y=225) → Spalt x=300 → Mitte Begleichung links (308,303) */}
+        <polyline points="178,225 300,225 300,303 308,303" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
 
-        {/* F — Begleichung → Partner (rechts im Spalt, dann hoch) */}
-        <polyline points="491,303 530,303 530,186 560,186" stroke={C.teal} strokeWidth="1.5" fill="none" markerEnd="url(#vd-t)" />
+        {/* F — Begleichung → Partner
+             Mitte Begleichung rechts (491,303) → Spalt x=530 → Partner links UNTERHALB
+             der D-Pfeile (y=190/198) → andocken bei y=218 */}
+        <polyline points="491,303 530,303 530,218 560,218" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
 
-        {/* G — Partner → Rechnung (runter, dann links zur rechten Kante) */}
+        {/* G — Partner → Rechnung (runter rechts neben Partner, dann links zur rechten Kante) */}
         <polyline points="651,242 651,377 491,377" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
 
-        {/* H — Rechnung → Kooper (links aus Box bei x=262, hoch, dann rechts) */}
-        <polyline points="308,377 262,377 262,210 308,210" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
+        {/* H — Rechnung → Leitbetrieb
+             Links aus Rechnung (y=377) → Spalt (x=250) → hoch →
+             Leit-Rechts (y=240, 15 px unterhalb E-Einstieg y=225).  Klar getrennt von E. */}
+        <polyline points="308,377 250,377 250,240 178,240" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
 
         {/* J — Leit ↓ Fördermittel (rot gestrichelt = Beantragung) */}
         <line x1="68" y1="252" x2="68" y2="432" stroke={red} strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#vd-r)" />
@@ -312,10 +317,10 @@ function VerbundDiagramm() {
         {/* I — Fördermittel ↑ Leit (rot gestrichelt = * Auszahlung) */}
         <line x1="120" y1="432" x2="120" y2="252" stroke={red} strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#vd-r)" />
 
-        {/* "Beantragung"-Label: rechts der roten Pfeile (ab x=130), links von H-Pfad (x=262) */}
-        <text x="130" y="305" fontFamily={Q} fontSize="8.5" fill={red} fontWeight="600">Beantragung innerhalb</text>
-        <text x="130" y="317" fontFamily={Q} fontSize="8.5" fill={red} fontWeight="600">von 6 Monaten ab</text>
-        <text x="130" y="329" fontFamily={Q} fontSize="8.5" fill={red} fontWeight="600">Verbundbeginn</text>
+        {/* "Beantragung"-Label: rechts der roten Pfeile (ab x=128), links von H-Pfad (x=250) */}
+        <text x="128" y="305" fontFamily={Q} fontSize="8" fill={red} fontWeight="600">Beantragung innerhalb</text>
+        <text x="128" y="317" fontFamily={Q} fontSize="8" fill={red} fontWeight="600">von 6 Monaten ab</text>
+        <text x="128" y="329" fontFamily={Q} fontSize="8" fill={red} fontWeight="600">Verbundbeginn</text>
 
         {/* * neben dem Rückzahlungspfeil */}
         <text x="126" y="380" fontFamily={Q} fontSize="12" fill={red} fontWeight="700">*</text>
