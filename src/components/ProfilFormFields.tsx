@@ -198,44 +198,69 @@ const BESCHULUNGSMODELL_STRUKTUR: Array<{
 ];
 
 function BeschulungsmodellFelder({
-  hauptform, unterform, freitext, onHauptform, onUnterform, onFreitext,
+  hauptform, unterform, freitext, onChange,
 }: {
   hauptform: Hauptform;
   unterform: string;
   freitext: string;
-  onHauptform: (v: Hauptform) => void;
-  onUnterform: (v: string) => void;
-  onFreitext:  (v: string) => void;
+  onChange: (hf: Hauptform, uf: string, ft: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [draftHf, setDraftHf] = useState<Hauptform>("");
+  const [draftUf, setDraftUf] = useState("");
+  const [draftFt, setDraftFt] = useState("");
 
-  const aktivStruktur = BESCHULUNGSMODELL_STRUKTUR.find((s) => s.value === hauptform);
-  const unterformen   = aktivStruktur?.unterformen ?? [];
+  function handleOpen() {
+    setDraftHf(hauptform);
+    setDraftUf(unterform);
+    setDraftFt(freitext);
+    setOpen(true);
+  }
 
-  const anzeigeText = !hauptform
-    ? null
-    : !unterform
-    ? aktivStruktur?.label
-    : unterform === "Sonstiges" && freitext.trim()
-    ? `${aktivStruktur?.label} · Sonstiges: ${freitext.trim()}`
-    : `${aktivStruktur?.label} · ${unterform}`;
+  function handleDismiss() {
+    setOpen(false);
+  }
+
+  const draftStruktur = BESCHULUNGSMODELL_STRUKTUR.find((s) => s.value === draftHf);
+  const unterformen   = draftStruktur?.unterformen ?? [];
 
   function waehlHauptform(v: Hauptform) {
-    onHauptform(v);
-    onUnterform("");
-    onFreitext("");
-    if (v === "unklar") setOpen(false);
+    setDraftHf(v);
+    setDraftUf("");
+    setDraftFt("");
+    if (v === "unklar") {
+      onChange(v, "", "");
+      setOpen(false);
+    }
   }
 
   function waehlUnterform(u: string) {
-    onUnterform(u);
-    onFreitext("");
-    if (u !== "Sonstiges") setOpen(false);
+    setDraftUf(u);
+    setDraftFt("");
+    if (u !== "Sonstiges") {
+      onChange(draftHf, u, "");
+      setOpen(false);
+    }
   }
+
+  function uebernehmen() {
+    onChange(draftHf, draftUf, draftFt);
+    setOpen(false);
+  }
+
+  // Anzeigetext aus den gespeicherten (nicht Draft-)Werten
+  const gespeichertStruktur = BESCHULUNGSMODELL_STRUKTUR.find((s) => s.value === hauptform);
+  const anzeigeText = !hauptform
+    ? ""
+    : !unterform
+    ? gespeichertStruktur?.label ?? ""
+    : unterform === "Sonstiges" && freitext.trim()
+    ? `${gespeichertStruktur?.label} · Sonstiges: ${freitext.trim()}`
+    : `${gespeichertStruktur?.label} · ${unterform}`;
 
   return (
     <>
-      <IonItem button detail={false} onClick={() => setOpen(true)}>
+      <IonItem button detail={false} onClick={handleOpen}>
         <IonLabel position="stacked">Beschulungsmodell</IonLabel>
         <div style={{
           padding: "10px 0 6px",
@@ -246,12 +271,12 @@ function BeschulungsmodellFelder({
         </div>
       </IonItem>
 
-      <IonModal isOpen={open} onDidDismiss={() => setOpen(false)}>
+      <IonModal isOpen={open} onDidDismiss={handleDismiss}>
         <IonHeader>
           <IonToolbar>
             <IonTitle>Beschulungsmodell</IonTitle>
             <IonButtons slot="end">
-              <IonButton onClick={() => setOpen(false)}>Schließen</IonButton>
+              <IonButton onClick={handleDismiss}>Schließen</IonButton>
             </IonButtons>
           </IonToolbar>
         </IonHeader>
@@ -268,10 +293,10 @@ function BeschulungsmodellFelder({
                 button
                 detail={false}
                 onClick={() => waehlHauptform(s.value)}
-                style={hauptform === s.value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+                style={draftHf === s.value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
               >
                 <IonLabel>{s.label}</IonLabel>
-                {hauptform === s.value && (
+                {draftHf === s.value && (
                   <span slot="end" style={{ color: "#47BCC2", fontWeight: 700 }}>✓</span>
                 )}
               </IonItem>
@@ -281,7 +306,7 @@ function BeschulungsmodellFelder({
               <>
                 <IonListHeader>
                   <IonLabel style={{ fontSize: "0.78rem", color: "#8096b8", fontWeight: 600 }}>
-                    Variante
+                    Variante wählen
                   </IonLabel>
                 </IonListHeader>
                 {unterformen.map((u) => (
@@ -290,10 +315,10 @@ function BeschulungsmodellFelder({
                     button
                     detail={false}
                     onClick={() => waehlUnterform(u)}
-                    style={unterform === u ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+                    style={draftUf === u ? { "--background": "rgba(71,188,194,0.12)" } : {}}
                   >
                     <IonLabel>{u}</IonLabel>
-                    {unterform === u && (
+                    {draftUf === u && (
                       <span slot="end" style={{ color: "#47BCC2", fontWeight: 700 }}>✓</span>
                     )}
                   </IonItem>
@@ -302,22 +327,18 @@ function BeschulungsmodellFelder({
             )}
           </IonList>
 
-          {unterform === "Sonstiges" && (
+          {draftUf === "Sonstiges" && (
             <div style={{ padding: "0 16px 16px" }}>
               <IonItem>
                 <IonInput
                   label="Kurze Beschreibung"
                   labelPlacement="stacked"
                   placeholder="z. B. 3-wöchige Blöcke zweimal im Jahr"
-                  value={freitext}
-                  onIonInput={(e) => onFreitext(e.detail.value ?? "")}
+                  value={draftFt}
+                  onIonInput={(e) => setDraftFt(e.detail.value ?? "")}
                 />
               </IonItem>
-              <IonButton
-                expand="block"
-                style={{ marginTop: 12 }}
-                onClick={() => setOpen(false)}
-              >
+              <IonButton expand="block" style={{ marginTop: 12 }} onClick={uebernehmen}>
                 Übernehmen
               </IonButton>
             </div>
@@ -800,9 +821,12 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               hauptform={state.beschulungsmodell_hauptform}
               unterform={state.beschulungsmodell_unterform}
               freitext={state.beschulungsmodell_freitext}
-              onHauptform={(v) => set("beschulungsmodell_hauptform", v)}
-              onUnterform={(v) => set("beschulungsmodell_unterform", v)}
-              onFreitext={(v) => set("beschulungsmodell_freitext", v)}
+              onChange={(hf, uf, ft) => onChange({
+                ...state,
+                beschulungsmodell_hauptform: hf,
+                beschulungsmodell_unterform: uf,
+                beschulungsmodell_freitext:  ft,
+              })}
             />
             <IonItem>
               <IonInput
