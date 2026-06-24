@@ -188,6 +188,146 @@ function Badge({ label, value }: { label: string; value: string }) {
   );
 }
 
+/* ─── Verbund-Ablauf-Diagramm ─────────────────────────────── */
+function VerbundDiagramm() {
+  const Q = '"Quicksand", sans-serif';
+  const red = "#e05060";
+
+  /*
+   * Koordinatensystem viewBox 0 0 780 565
+   *
+   * Boxen       x    y    w    h
+   * Azubi      305   18  150   46   → cx=380, top=18,  bot=64
+   * Leitbetr    10  160  168   92   → cx=94,  top=160, bot=252, right=178
+   * Kooper     308  170  183   80   → cx=399, top=170, bot=250, left=308, right=491
+   * Partner    560  130  183  112   → cx=651, top=130, bot=242, left=560
+   * Begleich   308  280  183   46   → cx=399, top=280, bot=326, left=308, right=491
+   * Rechnung   308  348  183   58   → cx=399, top=348, bot=406, left=308, right=491
+   * Fördermt    10  432  168   68   → cx=94,  top=432, bot=500
+   *
+   * Pfade (alle außerhalb der Boxen geroutet)
+   * A  Leit→Azubi:   (94,160)↑(94,41)→(305,41)      Label rechts der Linie x=100
+   * B  Azubi→Part:   (455,41)→(651,41)↓(651,130)     Label oberhalb y=35
+   * C  Leit↔Kooper:  y=200 →  y=208 ←  (2 Linien)
+   * D  Kooper↔Part:  y=190 →  y=198 ←
+   * E  Kooper→Begl:  (399,250)↓(399,280)
+   * F  Begl→Part:    (491,303)→(530,303)↑(530,186)→(560,186)   Spalt 491-560
+   * G  Part→Rechn:   (651,242)↓(651,377)←(491,377)
+   * H  Rechn→Kooper: (308,377)←(262,377)↑(262,210)→(308,210)   Spalt links, x=262
+   * I  Förder↑Leit:  (120,432)↑(120,252)  rot gestrichelt  *
+   * J  Leit↓Förder:  (68,252) ↓(68,432)   rot gestrichelt  "Beantragung"
+   *    Beantragung-Label: x=130 (rechts der Pfeile, links von H-Pfad x=262)
+   */
+  return (
+    <div style={{ overflowX: "auto", margin: "14px -4px 4px" }}>
+      <svg
+        viewBox="0 0 780 565"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ minWidth: 560, width: "100%", display: "block" }}
+      >
+        <defs>
+          <marker id="vd-b" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0,8 3.5,0 7" fill={C.blue} />
+          </marker>
+          <marker id="vd-t" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0,8 3.5,0 7" fill={C.teal} />
+          </marker>
+          <marker id="vd-r" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+            <polygon points="0 0,8 3.5,0 7" fill={red} />
+          </marker>
+        </defs>
+
+        {/* ══ BOXEN ══ */}
+
+        <rect x="305" y="18" width="150" height="46" rx="10" fill={C.green} />
+        <text x="380" y="47" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="15" fill={C.white}>Azubi</text>
+
+        <text x="10" y="155" fontFamily={Q} fontSize="10" fill="#7c3aed" fontWeight="800">▲ Start</text>
+        <rect x="10" y="160" width="168" height="92" rx="12" fill={C.blue} />
+        <text x="94" y="197" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="14" fill={C.white}>Leitbetrieb</text>
+        <text x="94" y="212" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">(Ausbildungsberechtigung</text>
+        <text x="94" y="223" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">von IHK/HWK o.ä. erteilt)</text>
+
+        <rect x="308" y="170" width="183" height="80" rx="12" fill={C.blueMid} />
+        <text x="399" y="198" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Kooperationsvertrag</text>
+        <text x="399" y="213" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">(Inhalte, Dauer, Kosten,</text>
+        <text x="399" y="224" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">Rechte &amp; Pflichten)</text>
+
+        <rect x="560" y="130" width="183" height="112" rx="12" fill={C.teal} />
+        <text x="651" y="161" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Partnerbetrieb oder</text>
+        <text x="651" y="176" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Dienstleister</text>
+        <text x="651" y="194" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">(von IHK/HWK o.ä. anerkannt)</text>
+        <text x="651" y="205" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">in Berlin &amp; überregional</text>
+
+        <rect x="308" y="280" width="183" height="46" rx="10" fill={C.tealLight} stroke={C.teal} strokeWidth="1.5" />
+        <text x="399" y="300" textAnchor="middle" fontFamily={Q} fontWeight="700" fontSize="9" fill={C.blue}>Begleichung der Rechnung</text>
+        <text x="399" y="313" textAnchor="middle" fontFamily={Q} fontSize="8.5" fill={C.textMid}>von Leitbetrieb an Partner</text>
+
+        <rect x="308" y="348" width="183" height="58" rx="10" fill={C.blueMid} />
+        <text x="399" y="372" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Rechnung für Aufwand</text>
+        <text x="399" y="387" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.8)">(z.B. Ausbildungspersonal, Material)</text>
+
+        <rect x="10" y="432" width="168" height="68" rx="12" fill={red} />
+        <text x="94" y="463" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="13" fill={C.white}>Fördermittel des</text>
+        <text x="94" y="480" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="13" fill={C.white}>Landes Berlin</text>
+
+        {/* ══ PFEILE ══ */}
+
+        {/* A — Leitbetrieb → Azubi */}
+        <polyline points="94,160 94,41 305,41" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
+        <text x="100" y="86" fontFamily={Q} fontWeight="700" fontSize="8.5" fill={C.blue}>Abschluss Ausbildungsvertrag</text>
+        <text x="100" y="98" fontFamily={Q} fontSize="8" fill={C.textMid}>für 2, 3 oder 3,5 Jahre je nach Beruf</text>
+
+        {/* B — Azubi → Partnerbetrieb */}
+        <polyline points="455,41 651,41 651,130" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
+        <text x="553" y="34" textAnchor="middle" fontFamily={Q} fontSize="8.5" fill={C.textMid}>einige Tage, Wochen oder Monate</text>
+
+        {/* Zweck-Text (unterhalb Azubi, oberhalb Hauptzeile, zwischen den Pfaden) */}
+        <text x="399" y="116" textAnchor="middle" fontFamily={Q} fontSize="7.5" fill={C.textMid}>für die Vermittlung notwendiger oder zusätzlicher Ausbildungsinhalte,</text>
+        <text x="399" y="127" textAnchor="middle" fontFamily={Q} fontSize="7.5" fill={C.textMid}>Qualitätssteigerung oder praktische Prüfungsvorbereitung</text>
+
+        {/* C — Leitbetrieb ↔ Kooper (zwei versetzte Pfeile im Spalt x=178–308) */}
+        <line x1="178" y1="200" x2="308" y2="200" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
+        <line x1="308" y1="208" x2="178" y2="208" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
+
+        {/* D — Kooper ↔ Partner (zwei versetzte Pfeile im Spalt x=491–560) */}
+        <line x1="491" y1="190" x2="560" y2="190" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
+        <line x1="560" y1="198" x2="491" y2="198" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
+
+        {/* E — Kooper → Begleichung (30 px Lücke) */}
+        <line x1="399" y1="250" x2="399" y2="280" stroke={C.teal} strokeWidth="1.5" markerEnd="url(#vd-t)" />
+
+        {/* F — Begleichung → Partner (rechts im Spalt, dann hoch) */}
+        <polyline points="491,303 530,303 530,186 560,186" stroke={C.teal} strokeWidth="1.5" fill="none" markerEnd="url(#vd-t)" />
+
+        {/* G — Partner → Rechnung (runter, dann links zur rechten Kante) */}
+        <polyline points="651,242 651,377 491,377" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
+
+        {/* H — Rechnung → Kooper (links aus Box bei x=262, hoch, dann rechts) */}
+        <polyline points="308,377 262,377 262,210 308,210" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
+
+        {/* J — Leit ↓ Fördermittel (rot gestrichelt = Beantragung) */}
+        <line x1="68" y1="252" x2="68" y2="432" stroke={red} strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#vd-r)" />
+
+        {/* I — Fördermittel ↑ Leit (rot gestrichelt = * Auszahlung) */}
+        <line x1="120" y1="432" x2="120" y2="252" stroke={red} strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#vd-r)" />
+
+        {/* "Beantragung"-Label: rechts der roten Pfeile (ab x=130), links von H-Pfad (x=262) */}
+        <text x="130" y="305" fontFamily={Q} fontSize="8.5" fill={red} fontWeight="600">Beantragung innerhalb</text>
+        <text x="130" y="317" fontFamily={Q} fontSize="8.5" fill={red} fontWeight="600">von 6 Monaten ab</text>
+        <text x="130" y="329" fontFamily={Q} fontSize="8.5" fill={red} fontWeight="600">Verbundbeginn</text>
+
+        {/* * neben dem Rückzahlungspfeil */}
+        <text x="126" y="380" fontFamily={Q} fontSize="12" fill={red} fontWeight="700">*</text>
+
+        {/* ══ FUßNOTE ══ */}
+        <text x="10" y="520" fontFamily={Q} fontSize="7.5" fill={C.textMid}>* Auszahlung der (anteiligen) Förderung an Leitbetrieb rückwirkend entsprechend Zeit- und Zahlungsnachweis</text>
+        <text x="10" y="532" fontFamily={Q} fontSize="7.5" fill={C.textMid}>  („durchlaufender Posten")</text>
+      </svg>
+    </div>
+  );
+}
+
 /* ─── Hauptseite ──────────────────────────────────────────── */
 const Informationen: React.FC = () => {
   return (
@@ -352,6 +492,11 @@ const Informationen: React.FC = () => {
                 Zentralverband des Deutschen Handwerks (ZDH)
               </a>.
             </p>
+          </InfoCard>
+
+          {/* ── 2b. Verbund-Diagramm ── */}
+          <InfoCard icon="🔀" title="Wie funktioniert Verbundausbildung & Förderung?" accentColor={C.teal}>
+            <VerbundDiagramm />
           </InfoCard>
 
           {/* ── 3. ZDH ── */}
