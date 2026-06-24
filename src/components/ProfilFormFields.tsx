@@ -166,66 +166,164 @@ export function parseBeschulungsmodell(stored: string): {
   return { hauptform, unterform: rest, freitext: "" };
 }
 
+type Hauptform = ProfilFormState["beschulungsmodell_hauptform"];
+
+const BESCHULUNGSMODELL_STRUKTUR: Array<{
+  value: Hauptform;
+  label: string;
+  unterformen?: string[];
+}> = [
+  {
+    value: "teilzeit",
+    label: "Teilzeitunterricht",
+    unterformen: [
+      "1 Tag/Woche",
+      "2 Tage/Woche",
+      "1 Tag/Woche + 1 Zusatztag im Monat",
+      "Sonstiges",
+    ],
+  },
+  {
+    value: "block",
+    label: "Blockunterricht",
+    unterformen: [
+      "Durchgehend mehrere Wochen am Stück",
+      "Wochenrhythmus (ca. 2-Wochen-Wechsel Schule/Betrieb)",
+      "A-B-C-Rhythmus (z. B. 2 Wochen Betrieb / 1 Woche Schule)",
+      "Auswärtige Fachklasse (Schule außerhalb Berlins)",
+      "Sonstiges",
+    ],
+  },
+  { value: "unklar", label: "Noch nicht bekannt / unklar" },
+];
+
 function BeschulungsmodellFelder({
   hauptform, unterform, freitext, onHauptform, onUnterform, onFreitext,
 }: {
-  hauptform: ProfilFormState["beschulungsmodell_hauptform"];
+  hauptform: Hauptform;
   unterform: string;
   freitext: string;
-  onHauptform: (v: ProfilFormState["beschulungsmodell_hauptform"]) => void;
+  onHauptform: (v: Hauptform) => void;
   onUnterform: (v: string) => void;
   onFreitext:  (v: string) => void;
 }) {
-  const unterformen = (hauptform === "teilzeit" || hauptform === "block")
-    ? BESCHULUNGSMODELL_UNTERFORMEN[hauptform] : [];
+  const [open, setOpen] = useState(false);
+
+  const aktivStruktur = BESCHULUNGSMODELL_STRUKTUR.find((s) => s.value === hauptform);
+  const unterformen   = aktivStruktur?.unterformen ?? [];
+
+  const anzeigeText = !hauptform
+    ? null
+    : !unterform
+    ? aktivStruktur?.label
+    : unterform === "Sonstiges" && freitext.trim()
+    ? `${aktivStruktur?.label} · Sonstiges: ${freitext.trim()}`
+    : `${aktivStruktur?.label} · ${unterform}`;
+
+  function waehlHauptform(v: Hauptform) {
+    onHauptform(v);
+    onUnterform("");
+    onFreitext("");
+    if (v === "unklar") setOpen(false);
+  }
+
+  function waehlUnterform(u: string) {
+    onUnterform(u);
+    onFreitext("");
+    if (u !== "Sonstiges") setOpen(false);
+  }
 
   return (
     <>
-      <IonItem>
+      <IonItem button detail={false} onClick={() => setOpen(true)}>
         <IonLabel position="stacked">Beschulungsmodell</IonLabel>
-        <IonSelect
-          interface="popover"
-          placeholder="— bitte wählen —"
-          value={hauptform}
-          onIonChange={(e) => {
-            onHauptform(String(e.detail.value ?? "") as ProfilFormState["beschulungsmodell_hauptform"]);
-            onUnterform("");
-            onFreitext("");
-          }}
-        >
-          <IonSelectOption value="teilzeit">Teilzeitunterricht</IonSelectOption>
-          <IonSelectOption value="block">Blockunterricht</IonSelectOption>
-          <IonSelectOption value="unklar">Noch nicht bekannt / unklar</IonSelectOption>
-        </IonSelect>
+        <div style={{
+          padding: "10px 0 6px",
+          color: anzeigeText ? "var(--ion-text-color, #1E367A)" : "#999",
+          fontSize: "1rem",
+        }}>
+          {anzeigeText || "— bitte wählen —"}
+        </div>
       </IonItem>
 
-      {unterformen.length > 0 && (
-        <IonItem>
-          <IonLabel position="stacked">Variante</IonLabel>
-          <IonSelect
-            interface="popover"
-            placeholder="— bitte wählen —"
-            value={unterform}
-            onIonChange={(e) => { onUnterform(String(e.detail.value ?? "")); onFreitext(""); }}
-          >
-            {unterformen.map((u) => (
-              <IonSelectOption key={u} value={u}>{u}</IonSelectOption>
+      <IonModal isOpen={open} onDidDismiss={() => setOpen(false)}>
+        <IonHeader>
+          <IonToolbar>
+            <IonTitle>Beschulungsmodell</IonTitle>
+            <IonButtons slot="end">
+              <IonButton onClick={() => setOpen(false)}>Schließen</IonButton>
+            </IonButtons>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent>
+          <IonList>
+            <IonListHeader>
+              <IonLabel style={{ fontSize: "0.78rem", color: "#8096b8", fontWeight: 600 }}>
+                Art des Unterrichts
+              </IonLabel>
+            </IonListHeader>
+            {BESCHULUNGSMODELL_STRUKTUR.map((s) => (
+              <IonItem
+                key={s.value}
+                button
+                detail={false}
+                onClick={() => waehlHauptform(s.value)}
+                style={hauptform === s.value ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+              >
+                <IonLabel>{s.label}</IonLabel>
+                {hauptform === s.value && (
+                  <span slot="end" style={{ color: "#47BCC2", fontWeight: 700 }}>✓</span>
+                )}
+              </IonItem>
             ))}
-          </IonSelect>
-        </IonItem>
-      )}
 
-      {unterform === "Sonstiges" && (
-        <IonItem>
-          <IonInput
-            label="Kurze Beschreibung"
-            labelPlacement="stacked"
-            placeholder="z. B. 3-wöchige Blöcke zweimal im Jahr"
-            value={freitext}
-            onIonInput={(e) => onFreitext(e.detail.value ?? "")}
-          />
-        </IonItem>
-      )}
+            {unterformen.length > 0 && (
+              <>
+                <IonListHeader>
+                  <IonLabel style={{ fontSize: "0.78rem", color: "#8096b8", fontWeight: 600 }}>
+                    Variante
+                  </IonLabel>
+                </IonListHeader>
+                {unterformen.map((u) => (
+                  <IonItem
+                    key={u}
+                    button
+                    detail={false}
+                    onClick={() => waehlUnterform(u)}
+                    style={unterform === u ? { "--background": "rgba(71,188,194,0.12)" } : {}}
+                  >
+                    <IonLabel>{u}</IonLabel>
+                    {unterform === u && (
+                      <span slot="end" style={{ color: "#47BCC2", fontWeight: 700 }}>✓</span>
+                    )}
+                  </IonItem>
+                ))}
+              </>
+            )}
+          </IonList>
+
+          {unterform === "Sonstiges" && (
+            <div style={{ padding: "0 16px 16px" }}>
+              <IonItem>
+                <IonInput
+                  label="Kurze Beschreibung"
+                  labelPlacement="stacked"
+                  placeholder="z. B. 3-wöchige Blöcke zweimal im Jahr"
+                  value={freitext}
+                  onIonInput={(e) => onFreitext(e.detail.value ?? "")}
+                />
+              </IonItem>
+              <IonButton
+                expand="block"
+                style={{ marginTop: 12 }}
+                onClick={() => setOpen(false)}
+              >
+                Übernehmen
+              </IonButton>
+            </div>
+          )}
+        </IonContent>
+      </IonModal>
     </>
   );
 }
