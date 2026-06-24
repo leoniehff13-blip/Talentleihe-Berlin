@@ -221,6 +221,7 @@ export interface Profile extends Models.Document {
   lehrjahr: Lehrjahr | null;
   unternehmen: string | null;
   berufsschule: string | null;
+  beschulungsmodell: string | null;
   faehigkeiten: string[];
   ansprechpartner: string | null;
   ansprechpartner_email: string | null;

@@ -44,6 +44,9 @@ export interface ProfilFormState {
   lehrjahr: string;
   unternehmen: string;
   berufsschule: string;
+  beschulungsmodell_hauptform: "" | "teilzeit" | "block" | "unklar";
+  beschulungsmodell_unterform: string;
+  beschulungsmodell_freitext: string;
   faehigkeiten: string;
   ansprechpartner: string;
   ansprechpartner_email: string;
@@ -69,6 +72,9 @@ export const EMPTY_PROFIL: ProfilFormState = {
   lehrjahr: "",
   unternehmen: "",
   berufsschule: "",
+  beschulungsmodell_hauptform: "",
+  beschulungsmodell_unterform: "",
+  beschulungsmodell_freitext: "",
   faehigkeiten: "",
   ansprechpartner: "",
   ansprechpartner_email: "",
@@ -101,6 +107,127 @@ export function ortAufteilen(ort: string) {
     return { plz: s.slice(0, firstSpace), ort: s.slice(firstSpace + 1).trim() };
   }
   return { plz: "", ort: s };
+}
+
+// ── Beschulungsmodell ────────────────────────────────────────────────────────
+const BESCHULUNGSMODELL_UNTERFORMEN: Record<"teilzeit" | "block", string[]> = {
+  teilzeit: [
+    "1 Tag/Woche",
+    "2 Tage/Woche",
+    "1 Tag/Woche + 1 Zusatztag im Monat",
+    "Sonstiges",
+  ],
+  block: [
+    "Durchgehend mehrere Wochen am Stück",
+    "Wochenrhythmus (ca. 2-Wochen-Wechsel Schule/Betrieb)",
+    "A-B-C-Rhythmus (z. B. 2 Wochen Betrieb / 1 Woche Schule)",
+    "Auswärtige Fachklasse (Schule außerhalb Berlins)",
+    "Sonstiges",
+  ],
+};
+
+const HAUPTFORM_LABEL: Record<"teilzeit" | "block" | "unklar", string> = {
+  teilzeit: "Teilzeitunterricht",
+  block:    "Blockunterricht",
+  unklar:   "Noch nicht bekannt / unklar",
+};
+
+export function beschulungsmodellZusammenfuegen(
+  hauptform: ProfilFormState["beschulungsmodell_hauptform"],
+  unterform: string,
+  freitext: string,
+): string {
+  if (!hauptform) return "";
+  if (hauptform === "unklar") return "Noch nicht bekannt / unklar";
+  const label = HAUPTFORM_LABEL[hauptform];
+  if (!unterform) return label;
+  if (unterform === "Sonstiges")
+    return freitext.trim() ? `${label} · Sonstiges: ${freitext.trim()}` : `${label} · Sonstiges`;
+  return `${label} · ${unterform}`;
+}
+
+export function parseBeschulungsmodell(stored: string): {
+  hauptform: ProfilFormState["beschulungsmodell_hauptform"];
+  unterform: string;
+  freitext: string;
+} {
+  if (!stored) return { hauptform: "", unterform: "", freitext: "" };
+  if (stored === "Noch nicht bekannt / unklar") return { hauptform: "unklar", unterform: "", freitext: "" };
+  const sep = stored.indexOf(" · ");
+  const hauptLabel = sep >= 0 ? stored.slice(0, sep) : stored;
+  const rest       = sep >= 0 ? stored.slice(sep + 3) : "";
+  const hauptform: ProfilFormState["beschulungsmodell_hauptform"] =
+    hauptLabel === "Teilzeitunterricht" ? "teilzeit"
+    : hauptLabel === "Blockunterricht"  ? "block"
+    : "";
+  if (!rest) return { hauptform, unterform: "", freitext: "" };
+  if (rest.startsWith("Sonstiges: ")) return { hauptform, unterform: "Sonstiges", freitext: rest.slice(11) };
+  if (rest === "Sonstiges")           return { hauptform, unterform: "Sonstiges", freitext: "" };
+  return { hauptform, unterform: rest, freitext: "" };
+}
+
+function BeschulungsmodellFelder({
+  hauptform, unterform, freitext, onHauptform, onUnterform, onFreitext,
+}: {
+  hauptform: ProfilFormState["beschulungsmodell_hauptform"];
+  unterform: string;
+  freitext: string;
+  onHauptform: (v: ProfilFormState["beschulungsmodell_hauptform"]) => void;
+  onUnterform: (v: string) => void;
+  onFreitext:  (v: string) => void;
+}) {
+  const unterformen = (hauptform === "teilzeit" || hauptform === "block")
+    ? BESCHULUNGSMODELL_UNTERFORMEN[hauptform] : [];
+
+  return (
+    <>
+      <IonItem>
+        <IonLabel position="stacked">Beschulungsmodell</IonLabel>
+        <IonSelect
+          interface="popover"
+          placeholder="— bitte wählen —"
+          value={hauptform}
+          onIonChange={(e) => {
+            onHauptform(String(e.detail.value ?? "") as ProfilFormState["beschulungsmodell_hauptform"]);
+            onUnterform("");
+            onFreitext("");
+          }}
+        >
+          <IonSelectOption value="teilzeit">Teilzeitunterricht</IonSelectOption>
+          <IonSelectOption value="block">Blockunterricht</IonSelectOption>
+          <IonSelectOption value="unklar">Noch nicht bekannt / unklar</IonSelectOption>
+        </IonSelect>
+      </IonItem>
+
+      {unterformen.length > 0 && (
+        <IonItem>
+          <IonLabel position="stacked">Variante</IonLabel>
+          <IonSelect
+            interface="popover"
+            placeholder="— bitte wählen —"
+            value={unterform}
+            onIonChange={(e) => { onUnterform(String(e.detail.value ?? "")); onFreitext(""); }}
+          >
+            {unterformen.map((u) => (
+              <IonSelectOption key={u} value={u}>{u}</IonSelectOption>
+            ))}
+          </IonSelect>
+        </IonItem>
+      )}
+
+      {unterform === "Sonstiges" && (
+        <IonItem>
+          <IonInput
+            label="Kurze Beschreibung"
+            labelPlacement="stacked"
+            placeholder="z. B. 3-wöchige Blöcke zweimal im Jahr"
+            value={freitext}
+            onIonInput={(e) => onFreitext(e.detail.value ?? "")}
+          />
+        </IonItem>
+      )}
+    </>
+  );
 }
 
 // ── Suchbares Gewerk-Auswahlfeld ──────────────────────────────────────────────
@@ -571,6 +698,14 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
               gewerk={state.gewerk}
               onChange={(v) => set("berufsschule", v)}
             />
+            <BeschulungsmodellFelder
+              hauptform={state.beschulungsmodell_hauptform}
+              unterform={state.beschulungsmodell_unterform}
+              freitext={state.beschulungsmodell_freitext}
+              onHauptform={(v) => set("beschulungsmodell_hauptform", v)}
+              onUnterform={(v) => set("beschulungsmodell_unterform", v)}
+              onFreitext={(v) => set("beschulungsmodell_freitext", v)}
+            />
             <IonItem>
               <IonInput
                 label="Fähigkeiten (Komma-getrennt, optional)"
@@ -750,6 +885,13 @@ export function profilStateToInput(state: ProfilFormState) {
     lehrjahr: isTalent && state.lehrjahr ? (Number(state.lehrjahr) as 1 | 2 | 3 | 4) : null,
     unternehmen: isTalent ? state.unternehmen.trim() || null : null,
     berufsschule: isTalent ? state.berufsschule.trim() || null : null,
+    beschulungsmodell: isTalent
+      ? beschulungsmodellZusammenfuegen(
+          state.beschulungsmodell_hauptform,
+          state.beschulungsmodell_unterform,
+          state.beschulungsmodell_freitext,
+        ) || null
+      : null,
     faehigkeiten: isTalent ? split(state.faehigkeiten) : [],
     ansprechpartner: !isTalent ? state.ansprechpartner.trim() || null : null,
     ansprechpartner_email: !isTalent ? state.ansprechpartner_email.trim() || null : null,

@@ -53,6 +53,7 @@ import {
   EMPTY_PROFIL,
   validateProfil,
   profilStateToInput,
+  parseBeschulungsmodell,
   adresseAufteilen,
   ortAufteilen,
   type ProfilFormState,
@@ -154,8 +155,9 @@ function ProfilFortschritt({ profile }: { profile: import("../../lib/appwrite").
         { label: "Lehrjahr",          ok: profile.lehrjahr != null },
         { label: "Ausbildungsbetrieb", ok: Boolean(profile.unternehmen) },
         { label: "Handwerkskammer",   ok: Boolean(profile.handwerkskammer) },
-        { label: "Berufsschule",      ok: Boolean(profile.berufsschule) },
-        { label: "Wohnort",           ok: Boolean(profile.ort) },
+        { label: "Berufsschule",        ok: Boolean(profile.berufsschule) },
+        { label: "Beschulungsmodell",   ok: Boolean(profile.beschulungsmodell) },
+        { label: "Wohnort",             ok: Boolean(profile.ort) },
         { label: "Fähigkeiten",       ok: (profile.faehigkeiten ?? []).length > 0 },
       ]
     : [
@@ -292,6 +294,14 @@ const Konto: React.FC = () => {
         lehrjahr: profile.lehrjahr != null ? String(profile.lehrjahr) : "",
         unternehmen: profile.unternehmen ?? "",
         berufsschule: profile.berufsschule ?? "",
+        ...(() => {
+          const bm = parseBeschulungsmodell(profile.beschulungsmodell ?? "");
+          return {
+            beschulungsmodell_hauptform: bm.hauptform,
+            beschulungsmodell_unterform: bm.unterform,
+            beschulungsmodell_freitext:  bm.freitext,
+          };
+        })(),
         faehigkeiten: (profile.faehigkeiten ?? []).join(", "),
         ansprechpartner: profile.ansprechpartner ?? "",
         ansprechpartner_email: profile.ansprechpartner_email ?? "",
@@ -601,6 +611,14 @@ const Konto: React.FC = () => {
                     <p>{profile.berufsschule ?? "—"}</p>
                   </IonLabel>
                 </IonItem>
+                {profile.beschulungsmodell && (
+                  <IonItem>
+                    <IonLabel>
+                      <h3>Beschulungsmodell</h3>
+                      <p>{profile.beschulungsmodell}</p>
+                    </IonLabel>
+                  </IonItem>
+                )}
                 <IonItem>
                   <IonLabel>
                     <h3>Wohnort</h3>
