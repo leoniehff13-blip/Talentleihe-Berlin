@@ -1,6 +1,5 @@
 import { Client, Databases, Query } from 'node-appwrite';
 import crypto from 'node:crypto';
-import nodemailer from 'nodemailer';
 
 const DB  = 'lehrstellen';
 const COL = 'profiles';
@@ -42,20 +41,7 @@ export default async ({ req, res, log, error }) => {
     const approveUrl = `${appUrl}/ausbi-freigabe?userId=${userId}&token=${newToken}`;
     const azubiName = [profile.vorname, profile.name].filter(Boolean).join(' ') || 'ein/e Azubi';
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
-      },
-    });
-
-    try {
-      await transporter.sendMail({
-        from: `VerbundPraxis <${process.env.GMAIL_USER}>`,
-        to: profile.ausbildungsbeauftragter_email,
-        subject: `Konto-Freigabe für ${azubiName} – VerbundPraxis`,
-        html: `<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html lang="de">
 <body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:24px">
   <h2 style="color:#1E367A">VerbundPraxis – Konto-Freigabe erforderlich</h2>
@@ -71,11 +57,26 @@ export default async ({ req, res, log, error }) => {
   <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
   <p style="color:#999;font-size:0.8em">VerbundPraxis · Handwerkskammer Berlin</p>
 </body>
-</html>`,
-      });
-    } catch (mailErr) {
-      error('Gmail Fehler: ' + mailErr.message);
-      return res.json({ error: 'E-Mail konnte nicht gesendet werden', detail: mailErr.message }, 500);
+</html>`;
+
+    const emailRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: process.env.MAIL_FROM || 'onboarding@resend.dev',
+        to: [profile.ausbildungsbeauftragter_email],
+        subject: `Konto-Freigabe für ${azubiName} – VerbundPraxis`,
+        html,
+      }),
+    });
+
+    if (!emailRes.ok) {
+      const errText = await emailRes.text();
+      error('Resend Fehler: ' + errText);
+      return res.json({ error: 'E-Mail konnte nicht gesendet werden', detail: errText }, 500);
     }
 
     log(`Freigabe-E-Mail an ${profile.ausbildungsbeauftragter_email} gesendet`);
