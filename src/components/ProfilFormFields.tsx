@@ -1019,6 +1019,7 @@ export function profilStateToInput(state: ProfilFormState) {
     ansprechpartner_email: !isTalent ? state.ansprechpartner_email.trim() || null : null,
     spezialisierung: !isTalent ? split(state.spezialisierung) : [],
     initiativbewerbungen: !isTalent ? state.initiativbewerbungen : null,
+    ausbildungsbeauftragter_email: isTalent ? state.ausbildungsbeauftragter_email?.trim() || null : null,
     user_id: "",
     avatar_file_id: state.avatar_file_id,
   };
