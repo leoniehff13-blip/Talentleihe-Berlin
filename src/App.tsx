@@ -29,6 +29,7 @@ import Einstellungen from "./pages/auth/Einstellungen";
 import Verifizieren from "./pages/auth/Verifizieren";
 import PasswortVergessen from "./pages/auth/PasswortVergessen";
 import PasswortNeu from "./pages/auth/PasswortNeu";
+import AusbiFreigabe from "./pages/auth/AusbiFreigabe";
 import Datenschutz from "./pages/Datenschutz";
 import AGB from "./pages/AGB";
 import Impressum from "./pages/Impressum";
@@ -132,7 +133,10 @@ const App: React.FC = () => (
             <Route exact path="/passwort-vergessen">
               <PasswortVergessen />
             </Route>
-            <Route exact path="/passwort-neu">
+            <Route exact path="/ausbi-freigabe">
+              <AusbiFreigabe />
+            </Route>
+<Route exact path="/passwort-neu">
               <PasswortNeu />
             </Route>
 
