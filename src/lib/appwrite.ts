@@ -45,7 +45,7 @@ export const COL_BEWERBUNGEN = "bewerbungen";
 export const COL_BEWERTUNGEN = "bewertungen";
 export const COL_DOKUMENTE = "dokumente";
 export const BUCKET_DOKUMENTE = "dokumente";
-export const FUNC_AUSBI_FREIGABE = "ausbi-freigabe";
+export const FUNC_AUSBI_FREIGABE = "6a38f564000acac7ea2f";
 export const BUCKET_AVATARS = "avatars";
 
 /* -------- Bundesländer -------- */
