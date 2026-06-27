@@ -1,28 +1,27 @@
-import { useState, useEffect } from "react";
-import {
-  IonPage,
-  IonContent,
-} from "@ionic/react";
+import React, { useEffect, useState } from "react";
+import { IonPage, IonContent } from "@ionic/react";
 import { useLocation } from "react-router-dom";
 import { functions, FUNC_AUSBI_FREIGABE } from "../../lib/appwrite";
 
-export default function AusbiFreigabe() {
-  const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const userId = params.get("userId") ?? "";
-  const token = params.get("token") ?? "";
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const AusbiFreigabe: React.FC = () => {
+  const query = useQuery();
+  const userId = query.get("userId");
+  const token  = query.get("token");
 
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  const [name, setName] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [name, setName]     = useState<string>("");
+  const [errMsg, setErrMsg] = useState<string>("");
 
   useEffect(() => {
     if (!userId || !token) {
-      setErrorMsg("Ungültiger Link – userId oder token fehlt.");
+      setErrMsg("Ungültiger Link – userId oder token fehlt.");
       setStatus("error");
       return;
     }
-
     functions
       .createExecution(
         FUNC_AUSBI_FREIGABE,
@@ -30,38 +29,38 @@ export default function AusbiFreigabe() {
         false
       )
       .then((exec) => {
-        const result = JSON.parse(exec.responseBody || "{}");
-        if (result.success) {
+        let result: any = {};
+        try { result = JSON.parse(exec.responseBody); } catch {}
+        if (exec.responseStatusCode === 200 && result.success) {
           setName(result.name || "");
           setStatus("success");
         } else {
-          setErrorMsg(result.error || "Unbekannter Fehler");
+          setErrMsg(result.error || "Unbekannter Fehler.");
           setStatus("error");
         }
       })
-      .catch((err) => {
-        setErrorMsg(err?.message || "Netzwerkfehler");
+      .catch((e) => {
+        setErrMsg(e?.message || "Verbindungsfehler.");
         setStatus("error");
       });
   }, [userId, token]);
 
   return (
     <IonPage>
-      <IonContent style={{ "--background": "#f8fafc" }}>
+      <IonContent className="ion-padding" style={{ "--background": "#f8fafc" }}>
         <div
           style={{
-            maxWidth: 480,
-            margin: "80px auto",
+            maxWidth: 520,
+            margin: "60px auto",
             textAlign: "center",
-            padding: "0 24px",
-            fontFamily: '"Quicksand", sans-serif',
+            padding: "0 16px",
           }}
         >
           {status === "loading" && (
             <>
-              <div style={{ fontSize: 56, marginBottom: 16 }}>⏳</div>
-              <h2 style={{ color: "#1E367A", fontWeight: 800 }}>
-                Freigabe wird verarbeitet…
+              <div style={{ fontSize: 48, marginBottom: 16 }}>⏳</div>
+              <h2 style={{ color: "#1E367A", fontFamily: '"Quicksand", sans-serif', fontWeight: 800 }}>
+                Freigabe wird verarbeitet …
               </h2>
             </>
           )}
@@ -69,22 +68,42 @@ export default function AusbiFreigabe() {
           {status === "success" && (
             <>
               <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
-              <h2 style={{ color: "#1E367A", fontWeight: 800 }}>
+              <h2 style={{ color: "#1E367A", fontFamily: '"Quicksand", sans-serif', fontWeight: 800 }}>
                 Konto freigegeben!
               </h2>
-              <p style={{ color: "#555", lineHeight: 1.7 }}>
+              <p style={{ color: "#555", lineHeight: 1.7, marginBottom: 8 }}>
                 {name ? (
-                  <>
-                    Das Konto von <strong>{name}</strong> wurde erfolgreich
-                    freigegeben.
-                  </>
+                  <>Das Konto von <strong>{name}</strong> wurde erfolgreich freigegeben.</>
                 ) : (
-                  "Das Konto wurde erfolgreich freigegeben."
+                  "Das Azubi-Konto wurde erfolgreich freigegeben."
                 )}
               </p>
-              <p style={{ color: "#555", lineHeight: 1.7 }}>
-                {name || "Der/die Azubi"} kann sich jetzt auf der
-                VerbundPraxis-Plattform anmelden und Einsätze suchen.
+              <p style={{ color: "#555", lineHeight: 1.7, marginBottom: 24 }}>
+                {name ? name.split(" ")[0] : "Ihr/e Azubi"} kann sich jetzt auf
+                Einsätze bewerben. Damit der Betrieb diese sehen kann, muss jede
+                Bewerbung von Ihnen genehmigt werden. Hierfür benötigen Sie
+                ebenfalls ein Konto auf VerbundPraxis.
+              </p>
+              <a
+                href="/registrieren"
+                style={{
+                  display: "inline-block",
+                  background: "#47BCC2",
+                  color: "#fff",
+                  padding: "14px 32px",
+                  borderRadius: 8,
+                  textDecoration: "none",
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                }}
+              >
+                Jetzt Konto erstellen
+              </a>
+              <p style={{ marginTop: 16, color: "#888", fontSize: "0.85rem" }}>
+                Bereits registriert?{" "}
+                <a href="/anmelden" style={{ color: "#47BCC2" }}>
+                  Anmelden
+                </a>
               </p>
             </>
           )}
@@ -92,33 +111,19 @@ export default function AusbiFreigabe() {
           {status === "error" && (
             <>
               <div style={{ fontSize: 56, marginBottom: 16 }}>❌</div>
-              <h2 style={{ color: "#c0392b", fontWeight: 800 }}>
+              <h2 style={{ color: "#c0392b", fontFamily: '"Quicksand", sans-serif', fontWeight: 800 }}>
                 Freigabe fehlgeschlagen
               </h2>
-              <p style={{ color: "#555", lineHeight: 1.7 }}>{errorMsg}</p>
-              <p style={{ color: "#888", fontSize: "0.9rem" }}>
-                Falls der Link abgelaufen ist oder nicht funktioniert,
-                wende dich bitte an{" "}
-                <a href="mailto:info@hwk-berlin.de">info@hwk-berlin.de</a>.
+              <p style={{ color: "#555", lineHeight: 1.7 }}>{errMsg}</p>
+              <p style={{ color: "#888", fontSize: "0.9rem", marginTop: 16 }}>
+                Der Link könnte abgelaufen oder bereits verwendet worden sein.
               </p>
             </>
           )}
-
-          <div
-            style={{
-              marginTop: 48,
-              padding: "16px",
-              background: "#fff",
-              borderRadius: 12,
-              boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
-            }}
-          >
-            <p style={{ margin: 0, color: "#999", fontSize: "0.8rem" }}>
-              VerbundPraxis · Handwerkskammer Berlin
-            </p>
-          </div>
         </div>
       </IonContent>
     </IonPage>
   );
-}
+};
+
+export default AusbiFreigabe;
