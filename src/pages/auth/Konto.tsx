@@ -771,7 +771,7 @@ const Konto: React.FC = () => {
                     fontSize: 14,
                   }}
                 >
-                  Alle Einsätze und Talent-Angebote mit Bewerbungen
+                  Alle Einsätze und Azubi-Angebote mit Bewerbungen
                 </p>
               </div>
               <IonIcon

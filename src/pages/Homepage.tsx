@@ -570,7 +570,7 @@ const Homepage: React.FC = () => {
               </h2>
               <p className="ww-outro-sub">
                 Egal ob du als Azubi neue Erfahrungen sammeln oder als Betrieb
-                passende Talente entdecken willst — VerbundPraxis Berlin bringt euch zusammen.
+                passende Azubis entdecken willst — VerbundPraxis Berlin bringt euch zusammen.
               </p>
               <div className="ww-outro-actions">
                 <a

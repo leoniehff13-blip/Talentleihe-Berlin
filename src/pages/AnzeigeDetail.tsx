@@ -520,7 +520,7 @@ const AnzeigeDetailInner: React.FC = () => {
                     </p>
                     <p style={{ fontSize: "0.8rem", color: "#4a6080", margin: "2px 0 0" }}>
                       {isTalentAnzeige
-                        ? "Benötigst du das Talent nur für einen Teil des angegebenen Zeitraums?"
+                        ? "Benötigst du den Azubi nur für einen Teil des angegebenen Zeitraums?"
                         : "Kannst du nur einen Teil des Einsatzes absolvieren?"}
                     </p>
                   </IonLabel>

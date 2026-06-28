@@ -319,7 +319,7 @@ const VerbundbueroAnzeigeDetailInner: React.FC = () => {
                     color={anzeige.type === "talent_angebot" ? "tertiary" : "primary"}
                     style={{ marginLeft: 8 }}
                   >
-                    {anzeige.type === "talent_angebot" ? "Talent-Angebot" : "Einsatz"}
+                    {anzeige.type === "talent_angebot" ? "Azubi-Angebot" : "Einsatz"}
                   </IonBadge>
                 </IonCardSubtitle>
                 <IonCardTitle>{anzeige.gewerk}</IonCardTitle>
@@ -373,7 +373,7 @@ const VerbundbueroAnzeigeDetailInner: React.FC = () => {
             >
               {renderProfilCard(
                 talentProfile,
-                "Talent",
+                "Azubi",
                 personOutline,
                 "var(--ion-color-tertiary-shade)"
               )}

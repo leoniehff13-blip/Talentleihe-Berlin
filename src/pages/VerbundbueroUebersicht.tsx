@@ -323,7 +323,7 @@ const VerbundbueroUebersichtInner: React.FC = () => {
                   <IonCard style={{ margin: 0, borderRadius: 12 }}>
                     <IonCardContent style={{ padding: "12px 16px" }}>
                       <IonText color="medium">
-                        <p style={{ margin: 0, fontSize: 12 }}>Registrierte Talente</p>
+                        <p style={{ margin: 0, fontSize: 12 }}>Registrierte Azubis</p>
                       </IonText>
                       <p style={{ margin: "4px 0 0", fontSize: 28, fontWeight: 700, color: "var(--ion-color-tertiary)" }}>
                         {stats.talente}

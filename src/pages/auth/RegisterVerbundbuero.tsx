@@ -267,7 +267,7 @@ const RegisterVerbundbuero: React.FC = () => {
               <p style={{ marginTop: 8 }}>* = Pflichtfeld</p>
               <p style={{ marginTop: 16 }}>
                 Bist du keine Mitarbeiter:in der Verbundberatung?{" "}
-                <Link to="/registrieren">Hier regulär als Talent oder Betrieb registrieren</Link>.
+                <Link to="/registrieren">Hier regulär als Azubi oder Betrieb registrieren</Link>.
               </p>
             </IonNote>
           </div>
