@@ -447,8 +447,8 @@ const Homepage: React.FC = () => {
 
               <div className="ww-hero-stats">
                 <div>
-                  <div className="ww-hero-stat-number">2</div>
-                  <div className="ww-hero-stat-label">Handwerkskammern</div>
+                  <div className="ww-hero-stat-number">22</div>
+                  <div className="ww-hero-stat-label">Partner</div>
                 </div>
                 <div>
                   <div className="ww-hero-stat-number">
