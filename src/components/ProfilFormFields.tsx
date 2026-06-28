@@ -662,7 +662,7 @@ function HandwerkskammerField({ value, onChange }: { value: string; onChange: (v
           value={value}
           onIonChange={(e) => onChange(String(e.detail.value ?? ""))}
         >
-          {VERBUNDBERATUNG_INSTITUTIONEN.map((h) => (
+          {VERBUNDBERATUNG_INSTITUTIONEN.map((h: string) => (
             <IonSelectOption key={h} value={h}>
               {h}
             </IonSelectOption>

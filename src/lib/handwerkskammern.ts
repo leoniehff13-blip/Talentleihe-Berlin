@@ -68,3 +68,32 @@ export const BERLIN_REGION_KAMMERN = [
 ] as const;
 
 export type BerlinRegionKammer = (typeof BERLIN_REGION_KAMMERN)[number];
+
+/**
+ * Alle Träger der Verbundberatung Berlin (Mitglieder des vfbb).
+ * Stand: Verbundberatung_Berlin_Institutionen.xlsx
+ */
+export const VERBUNDBERATUNG_INSTITUTIONEN: string[] = [
+  "Handwerkskammer Berlin (HWK)",
+  "Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg",
+  "Industrie- und Handelskammer zu Berlin (IHK Berlin)",
+  "Verband der Freien Berufe in Berlin e.V. (VfB)",
+  "Vereinigung der Unternehmensverbände Berlin-Brandenburg e.V. (UVB)",
+  "Apothekerkammer Berlin",
+  "Architektenkammer Berlin",
+  "Baukammer Berlin",
+  "Berlin-Brandenburger Verband der Steuerberater, Wirtschaftsprüfer und vereidigten Buchprüfer e.V.",
+  "Berliner Apotheker-Verein e.V.",
+  "Bund Deutscher Landschaftsarchitekt:innen, Landesverband Berlin/Brandenburg e.V.",
+  "Bund der Öffentlich bestellten Vermessungsingenieure e.V., Landesgruppe Berlin",
+  "BDÜ – Bundesverband der Dolmetscher und Übersetzer, Landesverband Berlin-Brandenburg e.V.",
+  "Hartmannbund – Verband der Ärztinnen und Ärzte Deutschlands, Landesverband Berlin",
+  "Kassenzahnärztliche Vereinigung Berlin (KZV Berlin)",
+  "Rechtsanwaltskammer Berlin",
+  "Steuerberaterkammer Berlin",
+  "Steuerberaterverband Berlin-Brandenburg e.V.",
+  "VBI – Verband Beratender Ingenieure, Landesverband Berlin-Brandenburg",
+  "Verband der Restauratoren e.V., Landesgruppe Berlin/Brandenburg",
+  "Vereinigung freischaffender Architekten e.V., Landesgruppe Berlin-Brandenburg",
+  "Wirtschaftsprüferkammer, Landesgeschäftsstelle Berlin",
+];
