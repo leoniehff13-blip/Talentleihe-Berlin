@@ -28,7 +28,7 @@ import {
   briefcaseOutline,
   sendOutline,
   mailOutline,
-  chevronForward,
+  chevronForward, peopleOutline,
   createOutline,
   checkmarkCircleOutline,
   trashOutline,

@@ -162,7 +162,7 @@ const MeineBewerbungenInner: React.FC = () => {
         {!loading && items.length > 0 && (
           <IonList>
             {items.map((b) => {
-              const aktiv = b.status === "ausstehend" || b.status === "angenommen";
+              const aktiv = b.status === "ausstehend" || b.status === "ausstehend_freigabe" || b.status === "angenommen";
               const kannBewerten = b.status === "angenommen" && !bereitsBewertet.has(b.$id);
               // Jede Seite bewertet die jeweils andere: Talente bewerten den
               // Einsatz-Betrieb (posting_owner_id), Betriebe den Bewerber

@@ -918,7 +918,7 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
             </IonItem>
             <IonItem>
               <IonInput
-                label="Name Ansprechpartner:in *"
+                label="Name Ausbildungsbeauftragte/r *"
                 labelPlacement="stacked"
                 value={state.ansprechpartner}
                 onIonInput={(e) => set("ansprechpartner", e.detail.value ?? "")}
@@ -926,12 +926,20 @@ export const ProfilFormFields: React.FC<Props> = ({ state, onChange, hideTypeSwi
             </IonItem>
             <IonItem>
               <IonInput
-                label="E-Mail Ansprechpartner:in *"
+                label="E-Mail Ausbildungsbeauftragte/r *"
                 labelPlacement="stacked"
                 type="email"
                 value={state.ansprechpartner_email}
                 onIonInput={(e) => set("ansprechpartner_email", e.detail.value ?? "")}
               />
+            </IonItem>
+            <IonItem lines="none" style={{ "--background": "#f0f8ff" }}>
+              <p style={{ fontSize: "0.82rem", color: "#555", margin: "6px 0", lineHeight: 1.5 }}>
+                ⚠️ Diese E-Mail-Adresse muss mit der E-Mail übereinstimmen,
+                die Ihr/e Azubi bei der Registrierung als Ausbildungsbeauftragte/r
+                angegeben hat – nur so können Sie Bewerbungen Ihrer Azubis einsehen
+                und freigeben.
+              </p>
             </IonItem>
             <IonItem>
               <IonInput
@@ -982,7 +990,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
     if (!state.anrede) missing.push("Anrede Ansprechpartner:in");
     if (!state.ansprechpartner.trim()) missing.push("Ansprechpartner:in");
-    if (!state.ansprechpartner_email.trim()) missing.push("E-Mail Ansprechpartner:in");
+    if (!state.ansprechpartner_email.trim()) missing.push("E-Mail Ausbildungsbeauftragte/r");
   }
   return missing;
 }
