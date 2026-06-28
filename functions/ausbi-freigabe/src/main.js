@@ -38,38 +38,31 @@ export default async ({ req, res, log, error }) => {
     await db.updateDocument(DB, COL, profile.$id, { approval_token: newToken });
 
     const appUrl = (process.env.APP_URL || 'https://verbundpraxis.de').replace(/\/$/, '');
-    const approveUrl = `${appUrl}/ausbi-freigabe?userId=${userId}&token=${newToken}`;
+    const approveUrl = appUrl + '/ausbi-freigabe?userId=' + userId + '&token=' + newToken;
     const azubiName = [profile.vorname, profile.name].filter(Boolean).join(' ') || 'ein/e Azubi';
 
-    const html = `<!DOCTYPE html>
-<html lang="de">
-<body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:24px">
-  <h2 style="color:#1E367A">VerbundPraxis – Konto-Freigabe erforderlich</h2>
-  <p>Guten Tag,</p>
-  <p><strong>${azubiName}</strong> hat sich auf der <strong>VerbundPraxis-Plattform der Handwerkskammer Berlin</strong> registriert und gibt Sie als Ausbildungsbeauftragte/n an.</p>
-  <p>Bitte klicken Sie auf den folgenden Link, um das Konto freizugeben:</p>
-  <p style="margin:32px 0">
-    <a href="${approveUrl}" style="background:#47BCC2;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">
-      Konto jetzt freigeben ↗
-    </a>
-  </p>
-  <p style="color:#666;font-size:0.9em">Falls Sie diese Anfrage nicht kennen, ignorieren Sie diese E-Mail einfach.</p>
-  <hr style="border:none;border-top:1px solid #eee;margin:24px 0">
-  <p style="color:#999;font-size:0.8em">VerbundPraxis · Handwerkskammer Berlin</p>
-</body>
-</html>`;
+    const html = '<!DOCTYPE html><html lang="de"><body style="font-family:Arial,sans-serif;color:#222;max-width:600px;margin:0 auto;padding:24px">'
+      + '<h2 style="color:#1E367A">VerbundPraxis &#x2013; Konto-Freigabe erforderlich</h2>'
+      + '<p>Guten Tag,</p>'
+      + '<p><strong>' + azubiName + '</strong> hat sich auf der <strong>VerbundPraxis-Plattform der Handwerkskammer Berlin</strong> registriert und gibt Sie als Ausbildungsbeauftragte/n an.</p>'
+      + '<p>Bitte klicken Sie auf den folgenden Link, um das Konto freizugeben:</p>'
+      + '<p style="margin:32px 0"><a href="' + approveUrl + '" style="background:#47BCC2;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;font-weight:bold;display:inline-block">Konto jetzt freigeben</a></p>'
+      + '<p style="color:#666;font-size:0.9em">Falls Sie diese Anfrage nicht kennen, ignorieren Sie diese E-Mail einfach.</p>'
+      + '<hr style="border:none;border-top:1px solid #eee;margin:24px 0">'
+      + '<p style="color:#999;font-size:0.8em">VerbundPraxis &middot; Handwerkskammer Berlin</p>'
+      + '</body></html>';
 
     const emailRes = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Authorization': 'Bearer ' + process.env.RESEND_API_KEY,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         from: process.env.MAIL_FROM || 'onboarding@resend.dev',
         to: [profile.ausbildungsbeauftragter_email],
-        subject: `Konto-Freigabe für ${azubiName} – VerbundPraxis`,
-        html,
+        subject: 'Konto-Freigabe fuer ' + azubiName + ' - VerbundPraxis',
+        html: html,
       }),
     });
 
@@ -79,7 +72,7 @@ export default async ({ req, res, log, error }) => {
       return res.json({ error: 'E-Mail konnte nicht gesendet werden', detail: errText }, 500);
     }
 
-    log(`Freigabe-E-Mail an ${profile.ausbildungsbeauftragter_email} gesendet`);
+    log('Freigabe-E-Mail an ' + profile.ausbildungsbeauftragter_email + ' gesendet');
     return res.json({ success: true });
   }
 
@@ -104,7 +97,7 @@ export default async ({ req, res, log, error }) => {
       approval_token: null,
     });
 
-    log(`Konto von ${profile.vorname || profile.name} (userId=${userId}) freigegeben`);
+    log('Konto von ' + (profile.vorname || profile.name) + ' (userId=' + userId + ') freigegeben');
     return res.json({ success: true, name: profile.vorname || profile.name });
   }
 
