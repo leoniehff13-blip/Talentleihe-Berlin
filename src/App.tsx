@@ -163,6 +163,34 @@ const App: React.FC = () => (
             </IonRouterOutlet>
       </IonReactRouter>
     </AuthProvider>
+  {/* Floating Help Button – global, auf allen Seiten */}
+    <a
+      href="https://verbundberatung-berlin.de/kontakt/"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="Hilfe & Kontakt"
+      style={{
+        position: "fixed",
+        bottom: 24,
+        right: 24,
+        zIndex: 99999,
+        width: 48,
+        height: 48,
+        borderRadius: "50%",
+        background: "#47BCC2",
+        color: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 22,
+        fontWeight: 700,
+        boxShadow: "0 4px 16px rgba(0,0,0,0.22)",
+        textDecoration: "none",
+        lineHeight: 1,
+      }}
+    >
+      ?
+    </a>
   </IonApp>
 );
 
