@@ -470,16 +470,50 @@ const Homepage: React.FC = () => {
           <div className="ww-intro-band">
             <div className="ww-intro-band-label">Partner</div>
             <div className="ww-intro-band-divider" />
-            <div className="ww-intro-band-chambers">
-              <a
-                className="ww-chamber-tag"
-                href="https://www.hwk-berlin.de"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                HWK Berlin
-              </a>
-
+                        <div className="ww-intro-band-chambers">
+              <a className="ww-chamber-tag" href="https://www.hwk-berlin.de" target="_blank" rel="noopener noreferrer">HWK Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.hwk-ff.de" target="_blank" rel="noopener noreferrer">HWK Frankfurt (Oder)</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.ihk.de/berlin" target="_blank" rel="noopener noreferrer">IHK Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.freie-berufe-berlin.de" target="_blank" rel="noopener noreferrer">Verband der Freien Berufe Berlin (VfB)</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.uvb-online.de" target="_blank" rel="noopener noreferrer">UVB Berlin-Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.akberlin.de" target="_blank" rel="noopener noreferrer">Apothekerkammer Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.ak-berlin.de" target="_blank" rel="noopener noreferrer">Architektenkammer Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.baukammerberlin.de" target="_blank" rel="noopener noreferrer">Baukammer Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.bbv-steuerberater.de" target="_blank" rel="noopener noreferrer">BBV Steuerberater</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.bav-berlin.de" target="_blank" rel="noopener noreferrer">Berliner Apotheker-Verein</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.bdla.de/berlin-brandenburg" target="_blank" rel="noopener noreferrer">BDLA Berlin/Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.bdvi-berlin.de" target="_blank" rel="noopener noreferrer">BDVI Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.bb.bdue.de" target="_blank" rel="noopener noreferrer">BDU Berlin-Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.hartmannbund.de/der-verband/landesverbande/berlin/" target="_blank" rel="noopener noreferrer">Hartmannbund Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.kzv-berlin.de" target="_blank" rel="noopener noreferrer">KZV Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.rak-berlin.de" target="_blank" rel="noopener noreferrer">Rechtsanwaltskammer Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.stbk-berlin.de" target="_blank" rel="noopener noreferrer">Steuerberaterkammer Berlin</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.stbverband.de" target="_blank" rel="noopener noreferrer">Steuerberaterverband Berlin-Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.vbi.de/landesverbaende/berlin-brandenburg/" target="_blank" rel="noopener noreferrer">VBI Berlin-Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="https://www.restauratoren.de/der-vdr/landesgruppen/landesgruppe-berlinbrandenburg/" target="_blank" rel="noopener noreferrer">Verband der Restauratoren Berlin/Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.vfa-bb.de" target="_blank" rel="noopener noreferrer">VfA Berlin-Brandenburg</a>
+              <div className="ww-chamber-dot" />
+              <a className="ww-chamber-tag" href="http://www.wpk.de/wpk/organisation/landespraesidenten/" target="_blank" rel="noopener noreferrer">Wirtschaftsprueferkammer Berlin</a>
             </div>
           </div>
 
