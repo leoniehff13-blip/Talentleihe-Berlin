@@ -103,7 +103,7 @@ const Register: React.FC = () => {
           await functions.createExecution(
             FUNC_AUSBI_FREIGABE,
             JSON.stringify({ action: "request", userId: currentUser.$id }),
-            false
+            true  // asynchron – kein 30s-Timeout
           );
         } catch (funcErr) {
           console.error("Freigabe-E-Mail konnte nicht gesendet werden:", funcErr);
