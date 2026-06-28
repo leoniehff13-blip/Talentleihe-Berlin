@@ -854,6 +854,27 @@ const Konto: React.FC = () => {
           <IonIcon slot="start" icon={settingsOutline} />
           Einstellungen
         </IonButton>
+        {!isTalent && (
+          <IonCard button onClick={() => history.push("/einsaetze-azubis")}>
+            <IonCardContent style={{ display: "flex", alignItems: "center" }}>
+              <IonIcon
+                icon={peopleOutline}
+                color="primary"
+                style={{ fontSize: 28, marginRight: 16 }}
+              />
+              <div style={{ flex: 1 }}>
+                <h3 style={{ margin: 0, color: "var(--ion-color-secondary)" }}>
+                  Einsätze meiner Azubis
+                </h3>
+                <p style={{ margin: 0, color: "var(--ion-color-medium)" }}>
+                  Bewerbungen Ihrer Azubis freigeben oder ablehnen
+                </p>
+              </div>
+              <IonIcon icon={chevronForward} color="medium" />
+            </IonCardContent>
+          </IonCard>
+        )}
+
         <IonButton expand="block" color="medium" onClick={handleLogout}>
           Logout
         </IonButton>
