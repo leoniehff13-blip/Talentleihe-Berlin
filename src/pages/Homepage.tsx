@@ -404,7 +404,7 @@ const Homepage: React.FC = () => {
             <div className="ww-hero-content">
               <div className="ww-hero-kicker">VerbundPraxis für das Berliner Handwerk</div>
               <h1 className="ww-hero-headline">
-                Talent trifft
+                Azubi trifft
                 <br />
                 <em>Betrieb.</em>
               </h1>
