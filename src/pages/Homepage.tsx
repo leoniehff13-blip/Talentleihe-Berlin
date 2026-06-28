@@ -402,7 +402,7 @@ const Homepage: React.FC = () => {
             <span className="ww-hero-tag">Beta</span>
 
             <div className="ww-hero-content">
-              <div className="ww-hero-kicker">VerbundPraxis für das Berliner Handwerk</div>
+              <div className="ww-hero-kicker">VerbundPraxis für die Berliner Ausbildung</div>
               <h1 className="ww-hero-headline">
                 Azubi trifft
                 <br />
