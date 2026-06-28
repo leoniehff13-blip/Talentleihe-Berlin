@@ -23,7 +23,7 @@ import {
 } from "@ionic/react";
 import { closeCircle } from "ionicons/icons";
 import { ANREDEN, LEHRJAHRE, type Anrede, type ProfileType } from "../lib/appwrite";
-import { BERLIN_REGION_KAMMERN } from "../lib/handwerkskammern";
+import { BERLIN_REGION_KAMMERN, VERBUNDBERATUNG_INSTITUTIONEN } from "../lib/handwerkskammern";
 import { GEWERKE } from "../lib/gewerke";
 import { BERUFSSCHULEN, BERUFSSCHULEN_NACH_GEWERK } from "../lib/berufsschulen";
 import ProfilbildUpload from "./ProfilbildUpload";
@@ -68,7 +68,7 @@ export const EMPTY_PROFIL: ProfilFormState = {
   adresse: "",
   gewerk: "",
   gewerke: [],
-  handwerkskammer: "Handwerkskammer Berlin",
+  handwerkskammer: "Handwerkskammer Berlin (HWK)",
   lehrjahr: "",
   unternehmen: "",
   berufsschule: "",
@@ -641,7 +641,7 @@ function BerufsschulePicker({
 
 // ── Handwerkskammer-Feld ──────────────────────────────────────────────────────
 const KAMMER_INFO: Record<string, { region: string; bezirk: string }> = {
-  "Handwerkskammer Berlin": {
+  "Handwerkskammer Berlin (HWK)": {
     region: "Stadtgebiet Berlin",
     bezirk: "Alle Berliner Bezirke",
   },
@@ -652,17 +652,17 @@ function HandwerkskammerField({ value, onChange }: { value: string; onChange: (v
   return (
     <>
       <IonListHeader>
-        <IonLabel>Handwerkskammer</IonLabel>
+        <IonLabel>Institution / Kammer</IonLabel>
       </IonListHeader>
       <IonItem>
-        <IonLabel position="stacked">Handwerkskammer *</IonLabel>
+        <IonLabel position="stacked">Institution / Kammer *</IonLabel>
         <IonSelect
           interface="alert"
           placeholder="— bitte wählen —"
           value={value}
           onIonChange={(e) => onChange(String(e.detail.value ?? ""))}
         >
-          {BERLIN_REGION_KAMMERN.map((h) => (
+          {VERBUNDBERATUNG_INSTITUTIONEN.map((h) => (
             <IonSelectOption key={h} value={h}>
               {h}
             </IonSelectOption>
@@ -978,7 +978,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.lehrjahr) missing.push("Lehrjahr");
     if (!state.ausbildungsbeauftragter_email.trim()) missing.push("E-Mail Ausbildungsbeauftragte/r");
     if (!state.unternehmen.trim()) missing.push("Ausbildungsbetrieb");
-    if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
+    if (!state.handwerkskammer.trim()) missing.push("Institution / Kammer");
     if (!state.berufsschule.trim()) missing.push("Berufsschule");
   } else {
     if (!state.name.trim()) missing.push("Firmenname");
@@ -987,7 +987,7 @@ export function validateProfil(state: ProfilFormState): string[] {
     if (!state.plz.trim()) missing.push("PLZ");
     if (!state.ort.trim()) missing.push("Ort");
     if (state.gewerke.length === 0) missing.push("Gewerk (mind. 1)");
-    if (!state.handwerkskammer.trim()) missing.push("Handwerkskammer");
+    if (!state.handwerkskammer.trim()) missing.push("Institution / Kammer");
     if (!state.anrede) missing.push("Anrede Ansprechpartner:in");
     if (!state.ansprechpartner.trim()) missing.push("Ansprechpartner:in");
     if (!state.ansprechpartner_email.trim()) missing.push("E-Mail Ausbildungsbeauftragte/r");
