@@ -855,7 +855,7 @@ const Konto: React.FC = () => {
           Einstellungen
         </IonButton>
         {!isTalent && (
-          <IonCard button onClick={() => history.push("/einsaetze-azubis")}>
+          <IonCard button routerLink="/einsaetze-azubis">
             <IonCardContent style={{ display: "flex", alignItems: "center" }}>
               <IonIcon
                 icon={peopleOutline}
