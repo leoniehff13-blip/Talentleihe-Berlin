@@ -1,12 +1,8 @@
 import { useState } from "react";
-import {
-  IonContent,
-  IonPage,
-} from "@ionic/react";
+import { IonContent, IonPage } from "@ionic/react";
 import Footer from "../components/Footer";
 import TopNav from "../components/TopNav";
 
-/* ─── Farbpalette ─────────────────────────────────────────── */
 const C = {
   blue:      "#1E367A",
   blueMid:   "#2a4a9a",
@@ -20,638 +16,251 @@ const C = {
   white:     "#ffffff",
 };
 
-/* ─── Accordion-Karte ─────────────────────────────────────── */
-function InfoCard({
-  icon,
-  title,
-  children,
-  accentColor = C.teal,
-  defaultOpen = false,
-}: {
-  icon: string;
-  title: string;
-  children: React.ReactNode;
-  accentColor?: string;
-  defaultOpen?: boolean;
+function InfoCard({ icon, title, children, accentColor = C.teal, defaultOpen = false }: {
+  icon: string; title: string; children: React.ReactNode; accentColor?: string; defaultOpen?: boolean;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div
-      style={{
-        background: C.white,
-        borderRadius: "16px",
-        boxShadow: "0 2px 12px rgba(30,54,122,0.08)",
-        marginBottom: "16px",
-        overflow: "hidden",
-        border: `1px solid rgba(30,54,122,0.07)`,
-      }}
-    >
-      {/* Header */}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "center",
-          gap: "14px",
-          padding: "18px 20px",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          textAlign: "left",
-        }}
-      >
-        <span
-          style={{
-            fontSize: "1.5rem",
-            width: "38px",
-            height: "38px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: accentColor + "18",
-            borderRadius: "10px",
-            flexShrink: 0,
-          }}
-        >
-          {icon}
-        </span>
-        <span
-          style={{
-            flex: 1,
-            fontFamily: '"Quicksand", sans-serif',
-            fontWeight: 700,
-            fontSize: "1.05rem",
-            color: C.blue,
-            lineHeight: 1.3,
-          }}
-        >
-          {title}
-        </span>
-        <span
-          style={{
-            color: accentColor,
-            fontSize: "1.1rem",
-            transition: "transform 0.22s",
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            flexShrink: 0,
-          }}
-        >
-          ▾
-        </span>
+    <div style={{ background: C.white, borderRadius: 16, boxShadow: "0 2px 12px rgba(30,54,122,0.08)", marginBottom: 16, overflow: "hidden", border: "1px solid rgba(30,54,122,0.07)" }}>
+      <button onClick={() => setOpen(o => !o)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 14, padding: "18px 20px", background: "transparent", border: "none", cursor: "pointer", textAlign: "left" }}>
+        <span style={{ fontSize: "1.5rem", width: 38, height: 38, display: "flex", alignItems: "center", justifyContent: "center", background: accentColor + "18", borderRadius: 10, flexShrink: 0 }}>{icon}</span>
+        <span style={{ flex: 1, fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "1.05rem", color: C.blue, lineHeight: 1.3 }}>{title}</span>
+        <span style={{ color: accentColor, fontSize: "1.1rem", transition: "transform 0.22s", transform: open ? "rotate(180deg)" : "rotate(0deg)", flexShrink: 0 }}>&#9662;</span>
       </button>
-
-      {/* Body */}
-      {open && (
-        <div
-          style={{
-            padding: "0 20px 20px 20px",
-            borderTop: `2px solid ${accentColor}22`,
-          }}
-        >
-          {children}
-        </div>
-      )}
+      {open && <div style={{ padding: "0 20px 20px 20px", borderTop: `2px solid ${accentColor}22` }}>{children}</div>}
     </div>
   );
 }
 
-/* ─── Aufzählungspunkt ────────────────────────────────────── */
 function Bullet({ color = C.teal, children }: { color?: string; children: React.ReactNode }) {
   return (
-    <div style={{ display: "flex", gap: "10px", marginBottom: "8px", alignItems: "flex-start" }}>
-      <span style={{ color, fontWeight: 800, marginTop: "1px", flexShrink: 0 }}>•</span>
-      <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.55 }}>
-        {children}
-      </span>
+    <div style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
+      <span style={{ color, fontWeight: 800, marginTop: 1, flexShrink: 0 }}>&#8226;</span>
+      <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.55 }}>{children}</span>
     </div>
   );
 }
 
-/* ─── Modell-Kachel ───────────────────────────────────────── */
 function ModelTile({ number, title, children }: { number: string; title: string; children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        background: C.tealLight,
-        borderRadius: "12px",
-        padding: "14px 16px",
-        marginBottom: "10px",
-        borderLeft: `4px solid ${C.teal}`,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px" }}>
-        <span
-          style={{
-            background: C.teal,
-            color: "#fff",
-            fontWeight: 800,
-            fontSize: "0.8rem",
-            borderRadius: "6px",
-            padding: "2px 8px",
-            fontFamily: '"Quicksand", sans-serif',
-          }}
-        >
-          {number}
-        </span>
-        <strong style={{ fontFamily: '"Quicksand", sans-serif', color: C.blue, fontSize: "0.95rem" }}>
-          {title}
-        </strong>
+    <div style={{ background: C.tealLight, borderRadius: 12, padding: "14px 16px", marginBottom: 10, borderLeft: `4px solid ${C.teal}` }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+        <span style={{ background: C.teal, color: "#fff", fontWeight: 800, fontSize: "0.8rem", borderRadius: 6, padding: "2px 8px", fontFamily: '"Quicksand", sans-serif' }}>{number}</span>
+        <strong style={{ fontFamily: '"Quicksand", sans-serif', color: C.blue, fontSize: "0.95rem" }}>{title}</strong>
       </div>
-      <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>
-        {children}
-      </p>
+      <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>{children}</p>
     </div>
   );
 }
 
-/* ─── Info-Badge ──────────────────────────────────────────── */
 function Badge({ label, value }: { label: string; value: string }) {
   return (
-    <div
-      style={{
-        background: C.tealLight,
-        borderRadius: "10px",
-        padding: "10px 14px",
-        marginBottom: "8px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        gap: "12px",
-      }}
-    >
+    <div style={{ background: C.tealLight, borderRadius: 10, padding: "10px 14px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
       <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>{label}</span>
-      <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.blue, fontWeight: 700, textAlign: "right" }}>
-        {value}
-      </span>
+      <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.blue, fontWeight: 700, textAlign: "right" }}>{value}</span>
     </div>
   );
 }
 
-/* ─── Verbund-Ablauf-Diagramm ─────────────────────────────── */
-function VerbundDiagramm() {
-  const Q = '"Quicksand", sans-serif';
-  const red = "#e05060";
+type PartnerEntry = [string, string];
+type PartnerGroup = [string, PartnerEntry[]];
 
-  /*
-   * Koordinatensystem viewBox 0 0 780 565
-   *
-   * Boxen       x    y    w    h
-   * Azubi      305   18  150   46   → cx=380, top=18,  bot=64
-   * Leitbetr    10  160  168   92   → cx=94,  top=160, bot=252, right=178
-   * Kooper     308  170  183   80   → cx=399, top=170, bot=250, left=308, right=491
-   * Partner    560  130  183  112   → cx=651, top=130, bot=242, left=560
-   * Begleich   308  280  183   46   → cx=399, top=280, bot=326, left=308, right=491
-   * Rechnung   308  348  183   58   → cx=399, top=348, bot=406, left=308, right=491
-   * Fördermt    10  432  168   68   → cx=94,  top=432, bot=500
-   *
-   * Pfade (alle außerhalb der Boxen geroutet)
-   * A  Leit→Azubi:   (94,160)↑(94,41)→(305,41)      Label rechts der Linie x=100
-   * B  Azubi→Part:   (455,41)→(651,41)↓(651,130)     Label oberhalb y=35
-   * C  Leit↔Kooper:  y=200 →  y=208 ←  (2 Linien)
-   * D  Kooper↔Part:  y=190 →  y=198 ←
-   * E  Kooper→Begl:  (399,250)↓(399,280)
-   * F  Begl→Part:    (491,303)→(530,303)↑(530,186)→(560,186)   Spalt 491-560
-   * G  Part→Rechn:   (651,242)↓(651,377)←(491,377)
-   * H  Rechn→Kooper: (308,377)←(262,377)↑(262,210)→(308,210)   Spalt links, x=262
-   * I  Förder↑Leit:  (120,432)↑(120,252)  rot gestrichelt  *
-   * J  Leit↓Förder:  (68,252) ↓(68,432)   rot gestrichelt  "Beantragung"
-   *    Beantragung-Label: x=130 (rechts der Pfeile, links von H-Pfad x=262)
-   */
-  return (
-    <div style={{ overflowX: "auto", margin: "14px -4px 4px" }}>
-      <svg
-        viewBox="0 0 780 565"
-        xmlns="http://www.w3.org/2000/svg"
-        style={{ minWidth: 560, width: "100%", display: "block" }}
-      >
-        <defs>
-          <marker id="vd-b" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
-            <polygon points="0 0,8 3.5,0 7" fill={C.blue} />
-          </marker>
-          <marker id="vd-t" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
-            <polygon points="0 0,8 3.5,0 7" fill={C.teal} />
-          </marker>
-          <marker id="vd-r" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
-            <polygon points="0 0,8 3.5,0 7" fill={red} />
-          </marker>
-        </defs>
+const PARTNER_GROUPS: PartnerGroup[] = [
+  ["Kammern & Verbände", [
+    ["Handwerkskammer Berlin (HWK)", "https://www.hwk-berlin.de"],
+    ["Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg", "https://www.hwk-ff.de"],
+    ["Industrie- und Handelskammer zu Berlin (IHK Berlin)", "https://www.ihk.de/berlin"],
+    ["Verband der Freien Berufe in Berlin e.V. (VfB)", "https://www.freie-berufe-berlin.de"],
+    ["Vereinigung der Unternehmensverbände Berlin-Brandenburg e.V. (UVB)", "https://www.uvb-online.de"],
+  ]],
+  ["Berufsgruppen-Kammern & -Verbände", [
+    ["Apothekerkammer Berlin", "http://www.akberlin.de"],
+    ["Architektenkammer Berlin", "http://www.ak-berlin.de"],
+    ["Baukammer Berlin", "http://www.baukammerberlin.de"],
+    ["Berlin-Brandenburger Verband der Steuerberater, Wirtschaftsprüfer und vereidigten Buchprüfer e.V.", "https://www.bbv-steuerberater.de"],
+    ["Berliner Apotheker-Verein e.V.", "http://www.bav-berlin.de"],
+    ["Bund Deutscher Landschaftsarchitekt:innen, Landesverband Berlin/Brandenburg e.V.", "https://www.bdla.de/berlin-brandenburg"],
+    ["Bund der Öffentlich bestellten Vermessungsingenieure e.V., Landesgruppe Berlin", "http://www.bdvi-berlin.de"],
+    ["BDÜ – Bundesverband der Dolmetscher und Übersetzer, Landesverband Berlin-Brandenburg e.V.", "http://www.bb.bdue.de"],
+    ["Hartmannbund – Verband der Ärztinnen und Ärzte Deutschlands, Landesverband Berlin", "https://www.hartmannbund.de/der-verband/landesverbande/berlin/"],
+    ["Kassenzahnärztliche Vereinigung Berlin (KZV Berlin)", "http://www.kzv-berlin.de"],
+    ["Rechtsanwaltskammer Berlin", "https://www.rak-berlin.de"],
+    ["Steuerberaterkammer Berlin", "http://www.stbk-berlin.de"],
+    ["Steuerberaterverband Berlin-Brandenburg e.V.", "https://www.stbverband.de"],
+    ["VBI – Verband Beratender Ingenieure, Landesverband Berlin-Brandenburg", "https://www.vbi.de/landesverbaende/berlin-brandenburg/"],
+    ["Verband der Restauratoren e.V., Landesgruppe Berlin/Brandenburg", "https://www.restauratoren.de/der-vdr/landesgruppen/landesgruppe-berlinbrandenburg/"],
+    ["Vereinigung freischaffender Architekten e.V., Landesgruppe Berlin-Brandenburg", "http://www.vfa-bb.de"],
+    ["Wirtschaftsprüferkammer, Landesgeschäftsstelle Berlin", "http://www.wpk.de/wpk/organisation/landespraesidenten/"],
+  ]],
+];
 
-        {/* ══ BOXEN ══ */}
+const Informationen: React.FC = () => (
+  <IonPage>
+    <TopNav />
+    <IonContent fullscreen style={{ "--background": C.bg } as React.CSSProperties}>
 
-        <rect x="305" y="18" width="150" height="46" rx="10" fill={C.green} />
-        <text x="380" y="47" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="15" fill={C.white}>Azubi</text>
+      {/* Hero */}
+      <div style={{ background: `linear-gradient(135deg, ${C.blue} 0%, ${C.blueMid} 100%)`, padding: "clamp(80px,14vw,120px) clamp(20px,5vw,60px) clamp(40px,7vw,60px)", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: -60, right: -40, width: 200, height: 200, borderRadius: "50%", background: `${C.teal}18` }} />
+        <div style={{ position: "absolute", bottom: -40, left: -30, width: 150, height: 150, borderRadius: "50%", background: `${C.green}15` }} />
+        <div style={{ display: "inline-block", background: `${C.teal}25`, borderRadius: 30, padding: "6px 18px", marginBottom: 16 }}>
+          <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.8rem", fontWeight: 700, color: C.teal, letterSpacing: "0.12em", textTransform: "uppercase" }}>Wissen &amp; Hintergründe</span>
+        </div>
+        <h1 style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, fontSize: "clamp(1.7rem,4vw,2.4rem)", color: "#fff", margin: "0 0 12px", lineHeight: 1.2 }}>
+          Verbundausbildung<br />in Berlin
+        </h1>
+        <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "1rem", color: "rgba(255,255,255,0.78)", margin: "0 auto", maxWidth: 520, lineHeight: 1.6 }}>
+          Alles Wichtige zu Verbundausbildung, Förderung und den Berliner Institutionen – branchenübergreifend und faktenbasiert.
+        </p>
+        <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 12, marginTop: 28 }}>
+          {[
+            { val: "22", label: "Träger-Institutionen" },
+            { val: "seit 2014", label: "Verbundberatung Berlin" },
+            { val: "kostenlos", label: "für Berliner Betriebe" },
+          ].map(({ val, label }) => (
+            <div key={val} style={{ background: "rgba(255,255,255,0.12)", backdropFilter: "blur(4px)", borderRadius: 12, padding: "10px 18px", textAlign: "center" }}>
+              <div style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, fontSize: "1.3rem", color: C.teal }}>{val}</div>
+              <div style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.75rem", color: "rgba(255,255,255,0.7)", marginTop: 2 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        <text x="10" y="155" fontFamily={Q} fontSize="10" fill="#7c3aed" fontWeight="800">▲ Start</text>
-        <rect x="10" y="160" width="168" height="92" rx="12" fill={C.blue} />
-        <text x="94" y="197" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="14" fill={C.white}>Leitbetrieb</text>
-        <text x="94" y="212" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">(Ausbildungsberechtigung</text>
-        <text x="94" y="223" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">von IHK/HWK o.ä. erteilt)</text>
+      <div style={{ maxWidth: 720, margin: "0 auto", padding: "28px clamp(16px,4vw,32px) 60px" }}>
 
-        <rect x="308" y="170" width="183" height="80" rx="12" fill={C.blueMid} />
-        <text x="399" y="198" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Kooperationsvertrag</text>
-        <text x="399" y="213" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">(Inhalte, Dauer, Kosten,</text>
-        <text x="399" y="224" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.75)">Rechte &amp; Pflichten)</text>
-
-        <rect x="560" y="130" width="183" height="112" rx="12" fill={C.teal} />
-        <text x="651" y="161" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Partnerbetrieb oder</text>
-        <text x="651" y="176" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Dienstleister</text>
-        <text x="651" y="194" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">(von IHK/HWK o.ä. anerkannt)</text>
-        <text x="651" y="205" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">in Berlin &amp; überregional</text>
-
-        <rect x="308" y="280" width="183" height="46" rx="10" fill={C.teal} />
-        <text x="399" y="300" textAnchor="middle" fontFamily={Q} fontWeight="700" fontSize="9" fill={C.white}>Begleichung der Rechnung</text>
-        <text x="399" y="313" textAnchor="middle" fontFamily={Q} fontSize="8.5" fill="rgba(255,255,255,0.85)">von Leitbetrieb an Partner</text>
-
-        <rect x="308" y="348" width="183" height="58" rx="10" fill={C.teal} />
-        <text x="399" y="372" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="12" fill={C.white}>Rechnung für Aufwand</text>
-        <text x="399" y="387" textAnchor="middle" fontFamily={Q} fontSize="8" fill="rgba(255,255,255,0.85)">(z.B. Ausbildungspersonal, Material)</text>
-
-        <rect x="10" y="432" width="168" height="68" rx="12" fill={red} />
-        <text x="94" y="463" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="13" fill={C.white}>Fördermittel des</text>
-        <text x="94" y="480" textAnchor="middle" fontFamily={Q} fontWeight="800" fontSize="13" fill={C.white}>Landes Berlin</text>
-
-        {/* ══ PFEILE ══ */}
-
-        {/* A — Leitbetrieb → Azubi */}
-        <polyline points="94,160 94,41 305,41" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
-        <text x="100" y="86" fontFamily={Q} fontWeight="700" fontSize="8.5" fill={C.blue}>Abschluss Ausbildungsvertrag</text>
-        <text x="100" y="98" fontFamily={Q} fontSize="8" fill={C.textMid}>für 2, 3 oder 3,5 Jahre je nach Beruf</text>
-
-        {/* B — Azubi → Partnerbetrieb */}
-        <polyline points="455,41 651,41 651,130" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
-        <text x="553" y="34" textAnchor="middle" fontFamily={Q} fontSize="8.5" fill={C.textMid}>einige Tage, Wochen oder Monate</text>
-
-        {/* Zweck-Text (unterhalb Azubi, oberhalb Hauptzeile, zwischen den Pfaden) */}
-        <text x="399" y="116" textAnchor="middle" fontFamily={Q} fontSize="7.5" fill={C.textMid}>für die Vermittlung notwendiger oder zusätzlicher Ausbildungsinhalte,</text>
-        <text x="399" y="127" textAnchor="middle" fontFamily={Q} fontSize="7.5" fill={C.textMid}>Qualitätssteigerung oder praktische Prüfungsvorbereitung</text>
-
-        {/* C — Leitbetrieb ↔ Kooper (zwei versetzte Pfeile im Spalt x=178–308) */}
-        <line x1="178" y1="200" x2="308" y2="200" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
-        <line x1="308" y1="208" x2="178" y2="208" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
-
-        {/* D — Kooper ↔ Partner (zwei versetzte Pfeile im Spalt x=491–560) */}
-        <line x1="491" y1="190" x2="560" y2="190" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
-        <line x1="560" y1="198" x2="491" y2="198" stroke={C.blue} strokeWidth="1.5" markerEnd="url(#vd-b)" />
-
-        {/* E — Leitbetrieb → Begleichung
-             Leit-Rechts (y=225) → Spalt x=300 → Mitte Begleichung links (308,303) */}
-        <polyline points="178,225 300,225 300,303 308,303" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
-
-        {/* F — Begleichung → Partner
-             Mitte Begleichung rechts (491,303) → Spalt x=530 → Partner links UNTERHALB
-             der D-Pfeile (y=190/198) → andocken bei y=218 */}
-        <polyline points="491,303 530,303 530,218 560,218" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
-
-        {/* G — Partner → Rechnung (runter rechts neben Partner, dann links zur rechten Kante) */}
-        <polyline points="651,242 651,377 491,377" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
-
-        {/* H — Rechnung → Leitbetrieb
-             Links aus Rechnung (y=377) → Spalt (x=250) → hoch →
-             Leit-Rechts (y=240, 15 px unterhalb E-Einstieg y=225).  Klar getrennt von E. */}
-        <polyline points="308,377 250,377 250,240 178,240" stroke={C.blue} strokeWidth="1.5" fill="none" markerEnd="url(#vd-b)" />
-
-        {/* J — Leit ↓ Fördermittel (rot gestrichelt = Beantragung) */}
-        <line x1="68" y1="252" x2="68" y2="432" stroke={red} strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#vd-r)" />
-
-        {/* I — Fördermittel ↑ Leit (rot gestrichelt = * Auszahlung) */}
-        <line x1="120" y1="432" x2="120" y2="252" stroke={red} strokeWidth="1.5" strokeDasharray="5 3" markerEnd="url(#vd-r)" />
-
-        {/* "Beantragung"-Label: rechts der roten Pfeile (ab x=128), links von H-Pfad (x=250) */}
-        <text x="128" y="305" fontFamily={Q} fontSize="8" fill={red} fontWeight="600">Beantragung innerhalb</text>
-        <text x="128" y="317" fontFamily={Q} fontSize="8" fill={red} fontWeight="600">von 6 Monaten ab</text>
-        <text x="128" y="329" fontFamily={Q} fontSize="8" fill={red} fontWeight="600">Verbundbeginn</text>
-
-        {/* * neben dem Rückzahlungspfeil */}
-        <text x="126" y="380" fontFamily={Q} fontSize="12" fill={red} fontWeight="700">*</text>
-
-        {/* ══ FUßNOTE ══ */}
-        <text x="10" y="520" fontFamily={Q} fontSize="7.5" fill={C.textMid}>* Auszahlung der (anteiligen) Förderung an Leitbetrieb rückwirkend entsprechend Zeit- und Zahlungsnachweis</text>
-        <text x="10" y="532" fontFamily={Q} fontSize="7.5" fill={C.textMid}>  („durchlaufender Posten")</text>
-      </svg>
-    </div>
-  );
-}
-
-/* ─── Hauptseite ──────────────────────────────────────────── */
-const Informationen: React.FC = () => {
-  return (
-    <IonPage>
-      <TopNav />
-      <IonContent fullscreen style={{ "--background": C.bg } as React.CSSProperties}>
-        {/* ── Hero ── */}
-        <div
-          style={{
-            background: `linear-gradient(135deg, ${C.blue} 0%, ${C.blueMid} 100%)`,
-            padding: "clamp(80px, 14vw, 120px) clamp(20px, 5vw, 60px) clamp(40px, 7vw, 60px)",
-            textAlign: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          {/* Dekorative Kreise */}
-          <div style={{ position: "absolute", top: "-60px", right: "-40px", width: "200px", height: "200px", borderRadius: "50%", background: `${C.teal}18` }} />
-          <div style={{ position: "absolute", bottom: "-40px", left: "-30px", width: "150px", height: "150px", borderRadius: "50%", background: `${C.green}15` }} />
-
-          <div
-            style={{
-              display: "inline-block",
-              background: `${C.teal}25`,
-              borderRadius: "30px",
-              padding: "6px 18px",
-              marginBottom: "16px",
-            }}
-          >
-            <span style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.8rem", fontWeight: 700, color: C.teal, letterSpacing: "0.12em", textTransform: "uppercase" }}>
-              Wissen &amp; Hintergründe
-            </span>
-          </div>
-
-          <h1
-            style={{
-              fontFamily: '"Quicksand", sans-serif',
-              fontWeight: 800,
-              fontSize: "clamp(1.7rem, 4vw, 2.4rem)",
-              color: "#fff",
-              margin: "0 0 12px",
-              lineHeight: 1.2,
-            }}
-          >
-            Verbundausbildung<br />im Handwerk
-          </h1>
-          <p
-            style={{
-              fontFamily: '"Quicksand", sans-serif',
-              fontSize: "1rem",
-              color: "rgba(255,255,255,0.78)",
-              margin: "0 auto",
-              maxWidth: "520px",
-              lineHeight: 1.6,
-            }}
-          >
-            Alles Wichtige zu Ausbildung, Verbundmodellen, Förderung und der Berliner Besonderheit – kompakt erklärt.
+        {/* 1. Was ist Verbundausbildung */}
+        <InfoCard icon="🔗" title="Was ist Verbundausbildung?" accentColor={C.teal} defaultOpen>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 6px" }}>
+            Bei der Verbundausbildung kooperieren mehrere Betriebe – und ggf. überbetriebliche Bildungsstätten –, um gemeinsam alle vorgeschriebenen Ausbildungsinhalte zu vermitteln, die ein einzelner Betrieb allein nicht vollständig abdecken kann oder möchte.
           </p>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, margin: "0 0 16px" }}>
+            Rechtliche Grundlage: <strong style={{ color: C.blue }}>§ 10 Abs. 5 BBiG</strong> (Ausbildungsvertrag im Verbund) und <strong style={{ color: C.blue }}>§ 27 Abs. 2 BBiG</strong> (Berufsausbildung in einer Einrichtung außerhalb des Ausbildungsbetriebs).
+          </p>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.95rem", color: C.blue, margin: "0 0 12px" }}>Die vier anerkannten Modelle:</p>
+          <ModelTile number="1" title="Leitbetrieb mit Partnerbetrieb">
+            Ein Leitbetrieb steuert die Ausbildung, schließt Kooperationsverträge mit Partnerbetrieben für fehlende Inhalte und trägt die Ausbildungsvergütung. Die Kosten externer Anteile übernimmt der Partnerbetrieb.
+          </ModelTile>
+          <ModelTile number="2" title="Auftragsausbildung">
+            Der Stammbetrieb beauftragt einen externen Bildungsdienstleister für bestimmte Ausbildungsabschnitte (tageweise bis zu einem Jahr). Flexibel und ohne neue Vertragsbeziehungen für den Azubi.
+          </ModelTile>
+          <ModelTile number="3" title="Ausbildungskonsortium">
+            Mehrere gleichberechtigte Betriebe bilden abwechselnd aus. Der Ausbildungsvertrag läuft beim Stammbetrieb, der durchgehend die Vergütung zahlt.
+          </ModelTile>
+          <ModelTile number="4" title="Ausbildungsverein">
+            Ein Verein ist formaler Vertragspartner der Azubis, die praktische Ausbildung findet in den Mitgliedsbetrieben statt. Reduziert den administrativen Aufwand erheblich.
+          </ModelTile>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.teal, margin: "14px 0 8px" }}>Vorteile für alle Beteiligten:</p>
+          <Bullet>Vollständige Ausbildung trotz spezialisierter Betriebsstruktur</Bullet>
+          <Bullet>Azubis gewinnen Einblicke in verschiedene Betriebe und Arbeitsweisen</Bullet>
+          <Bullet>Kleinbetriebe können ausbilden, die es allein nicht könnten</Bullet>
+          <Bullet>Reduziert das Risiko von Ausbildungsabbrüchen durch Betriebswechsel</Bullet>
+          <Bullet>Stärkt regionale Ausbildungskapazitäten branchenübergreifend</Bullet>
+        </InfoCard>
 
-          {/* Stat-Chips */}
-          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: "12px", marginTop: "28px" }}>
-            {[
-              { val: "20.000", label: "offene Lehrstellen" },
-              { val: "250.000", label: "Fachkräftestellen" },
-              { val: "53", label: "Handwerkskammern" },
-            ].map(({ val, label }) => (
-              <div
-                key={val}
-                style={{
-                  background: "rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(4px)",
-                  borderRadius: "12px",
-                  padding: "10px 18px",
-                  textAlign: "center",
-                }}
-              >
-                <div style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, fontSize: "1.3rem", color: C.teal }}>{val}</div>
-                <div style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.75rem", color: "rgba(255,255,255,0.7)", marginTop: "2px" }}>{label}</div>
+        {/* 2. Verbundausbildung in Berlin */}
+        <InfoCard icon="🏙️" title="Verbundausbildung in Berlin – die 22 Träger-Institutionen" accentColor={C.blue}>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
+            Berlin verfügt seit 2014 über eine vom <strong style={{ color: C.blue }}>Senat für Arbeit, Soziales, Gleichstellung, Integration, Vielfalt und Antidiskriminierung</strong> finanzierte, branchenübergreifende Verbundberatung. Sie wird vom <strong style={{ color: C.blue }}>Verein zur Förderung der beruflichen Bildung Berlin e.V. (vfbb)</strong> getragen und ist für Berliner Betriebe <strong style={{ color: C.teal }}>kostenlos</strong>.
+          </p>
+          {PARTNER_GROUPS.map(([group, items]) => (
+            <div key={group} style={{ marginBottom: 14 }}>
+              <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.82rem", fontWeight: 700, color: C.teal, textTransform: "uppercase", letterSpacing: "0.08em", margin: "0 0 6px" }}>{group}</p>
+              <div style={{ background: C.tealLight, borderRadius: 10, padding: "10px 14px" }}>
+                {items.map(([name, url]) => (
+                  <div key={name} style={{ padding: "5px 0", borderBottom: "1px solid rgba(71,188,194,0.15)" }}>
+                    <a href={url} target="_blank" rel="noopener noreferrer" style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.blue, textDecoration: "none", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span>{name}</span>
+                      <span style={{ color: C.teal, flexShrink: 0, marginLeft: 8 }}>&#8599;</span>
+                    </a>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          ))}
+        </InfoCard>
+
+        {/* 3. Verbundberatung */}
+        <InfoCard icon="🤝" title="Die Verbundberatung Berlin – kostenloses Beratungsangebot" accentColor={C.teal}>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
+            Die <strong style={{ color: C.blue }}>Verbundberatung Duale Berufsausbildung Berlin</strong> unterstützt Berliner Unternehmen aller Branchen kostenlos bei:
+          </p>
+          <Bullet>Suche nach einem geeigneten Verbundpartner</Bullet>
+          <Bullet>Gestaltung und Prüfung des Kooperationsvertrages</Bullet>
+          <Bullet>Beantragung und Abrechnung von Fördermitteln (FBB-Programm)</Bullet>
+          <Bullet>Klärung von Zuständigkeitsfragen zwischen verschiedenen Kammern</Bullet>
+          <a href="https://verbundberatung-berlin.de/kontakt/" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 14, background: C.teal, color: "#fff", borderRadius: 10, padding: "12px 16px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", textDecoration: "none" }}>
+            <span>📞</span>
+            <span>Kontakt zur Verbundberatung Berlin</span>
+            <span style={{ marginLeft: "auto", opacity: 0.8 }}>→</span>
+          </a>
+          <div style={{ background: C.tealLight, borderRadius: 10, padding: "14px 16px", marginTop: 10 }}>
+            <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.9rem" }}>📌 Marktplatz Verbundausbildung</p>
+            <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
+              Über{" "}
+              <a href="https://verbundberatung-berlin.de/marktplatz/" target="_blank" rel="noopener noreferrer" style={{ color: C.teal, fontWeight: 700 }}>verbundberatung-berlin.de/marktplatz</a>
+              {" "}können Betriebe gezielt passende Verbundpartner finden. Träger: HWK Berlin, IHK Berlin und UVB.
+            </p>
           </div>
-        </div>
-
-        {/* ── Inhalt ── */}
-        <div style={{ maxWidth: "720px", margin: "0 auto", padding: "28px clamp(16px, 4vw, 32px) 60px" }}>
-
-          {/* ── 1. Duales System ── */}
-          <InfoCard icon="🎓" title="Das duale Ausbildungssystem im Handwerk" accentColor={C.blue}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
-              Das deutsche duale System kombiniert <strong style={{ color: C.blue }}>praktische Arbeit im Betrieb</strong> (3–4 Tage/Woche) mit <strong style={{ color: C.blue }}>theoretischem Unterricht</strong> in der Berufsschule (1–2 Tage) oder im Blockunterricht. Die Ausbildung dauert <strong>2–3,5 Jahre</strong> und endet mit der Gesellenprüfung.
+          <div style={{ background: "#fff8e6", borderRadius: 10, padding: "12px 14px", marginTop: 10, borderLeft: "3px solid #f0a030" }}>
+            <p style={{ margin: "0 0 2px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Splitterberufe – Berliner Besonderheit</p>
+            <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
+              Berufe, für die in Berlin keine eigene Berufsschulklasse zustande kommt, müssen auswärtige Schulen besuchen. Förderung ab 2025: <strong>24 € pro auswärtigem Schultag</strong> (zuvor 12 €).
             </p>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "0 0 10px" }}>Vorteile auf einen Blick:</p>
-            <Bullet color={C.blue}>Direkter Einstieg in reale Arbeitsabläufe ab Tag 1</Bullet>
-            <Bullet color={C.blue}>Praxisnahe Qualifikation + gute Übernahmechancen</Bullet>
-            <Bullet color={C.blue}>Niedrige Jugendarbeitslosigkeit im internationalen Vergleich</Bullet>
-            <Bullet color={C.blue}>Vielfältige Aufstiegswege (Meister, Studium u. a.)</Bullet>
-            <Bullet color={C.blue}>Unternehmen binden Fachkräfte frühzeitig und langfristig</Bullet>
-            <Bullet color={C.blue}>Weltweit als Best Practice anerkannt (u. a. Vorbild für China, Schweiz, Österreich)</Bullet>
-
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "12px 14px", marginTop: "14px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
-              {[
-                ["DQR Niveau 3", "2-jähr. Ausbildung", true],
-                ["DQR Niveau 4", "3–3,5-jähr. Ausbildung", true],
-                ["53 Kammern", "regional zuständig", false],
-              ].map(([val, label, isDqr]) => (
-                <div key={val as string} style={{ textAlign: "center", flex: "1 1 100px" }}>
-                  {isDqr ? (
-                    <a
-                      href="https://www.zdh.de/ueber-uns/fachbereich-berufliche-bildung/ausbildung/bildungspolitische-positionen/dqr-deutscher-qualifikationsrahmen-fuer-lebenslanges-lernen/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "1rem", textDecoration: "underline", textDecorationColor: `${C.teal}60` }}
-                    >{val}</a>
-                  ) : (
-                    <div style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "1rem" }}>{val}</div>
-                  )}
-                  <div style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.75rem", color: C.textMid }}>{label}</div>
-                </div>
-              ))}
-            </div>
-          </InfoCard>
-
-          {/* ── 2. Verbundausbildung ── */}
-          <InfoCard icon="🔗" title="Was ist Verbundausbildung?" accentColor={C.teal}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 6px" }}>
-              Mehrere Betriebe (und ggf. überbetriebliche Bildungsstätten) vermitteln gemeinsam Ausbildungsinhalte, wenn ein einzelner Betrieb diese nicht vollständig abdecken kann.
-            </p>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, margin: "0 0 16px" }}>
-              Rechtliche Grundlage: <strong style={{ color: C.blue }}>§ 10 Abs. 5 &amp; § 27 Abs. 2 BBiG</strong>
-            </p>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.95rem", color: C.blue, margin: "0 0 12px" }}>Die vier Modelle:</p>
-
-            <ModelTile number="1" title="Leitbetrieb + Partnerbetriebe">
-              Der Leitbetrieb steuert die Ausbildung zentral und schließt für fehlende Inhalte Kooperationsverträge mit Partnerbetrieben. Er trägt die Vergütung, die Kosten externer Anteile übernimmt der Partner.
-            </ModelTile>
-            <ModelTile number="2" title="Auftragsausbildung">
-              Der Stammbetrieb entsendet Auszubildende für bestimmte Abschnitte (Tage bis zu einem Jahr) an einen Bildungsdienstleister. Flexible Ergänzung ohne neue Vertragsbeziehungen.
-            </ModelTile>
-            <ModelTile number="3" title="Ausbildungskonsortium (Ringausbildung)">
-              Mehrere gleichberechtigte Betriebe bilden abwechselnd aus. Der Ausbildungsvertrag läuft beim Stammbetrieb, der durchgehend die Vergütung zahlt. Minimaler Verwaltungsaufwand.
-            </ModelTile>
-            <ModelTile number="4" title="Ausbildungsverein">
-              Ein Verein ist formaler Vertragspartner der Auszubildenden, die praktische Ausbildung findet in den Mitgliedsbetrieben statt. Reduziert den administrativen Aufwand erheblich.
-            </ModelTile>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.teal, margin: "14px 0 8px" }}>Vorteile:</p>
-            <Bullet>Vollständige Ausbildungsinhalte trotz spezialisierter Betriebe</Bullet>
-            <Bullet>Klare Verantwortlichkeiten durch gesetzliche Regelung</Bullet>
-            <Bullet>Erweiterte Lernorte und Praxiserfahrung für Auszubildende</Bullet>
-            <Bullet>Reduziert Kosten bei Ausbildungsabbrüchen und Wechseln</Bullet>
-
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, margin: "16px 0 0", lineHeight: 1.55 }}>
-              Weiterführende Informationen zur Verbundausbildung im Handwerk findest du beim{" "}
-              <a
-                href="https://www.zdh.de/ueber-uns/fachbereich-berufliche-bildung/ausbildung/verbundausbildung/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: C.teal, fontWeight: 700, textDecoration: "underline", textDecorationColor: `${C.teal}60` }}
-              >
-                Zentralverband des Deutschen Handwerks (ZDH)
-              </a>.
-            </p>
-          </InfoCard>
-
-          {/* ── 2b. Verbund-Diagramm ── */}
-          <InfoCard icon="🔀" title="Wie funktioniert Verbundausbildung & Förderung?" accentColor={C.teal}>
-            <VerbundDiagramm />
-          </InfoCard>
-
-          {/* ── 3. ZDH ── */}
-          <InfoCard icon="📊" title="Fachkräftemangel im Handwerk – Die ZDH-Zahlen" accentColor={C.teal}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 12px" }}>
-              Der <strong style={{ color: C.blue }}>Zentralverband des Deutschen Handwerks (ZDH)</strong> meldet für 2023/2024 rund <strong style={{ color: C.teal }}>20.000 unbesetzte Lehrstellen</strong> bei gleichzeitig <strong style={{ color: C.teal }}>250.000 offenen Fachkräftestellen</strong> im Handwerk.
-            </p>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "0 0 12px" }}>
-              Das Handwerk wird vom ZDH als zentraler Faktor der <strong style={{ color: C.blue }}>Transformation bis 2035</strong> benannt – es trägt maßgeblich zur Umsetzung der Energiewende, zur digitalen Modernisierung sowie zur Stärkung regionaler Wertschöpfung bei.
-            </p>
-            <div style={{ background: C.greenLight, borderRadius: "10px", padding: "12px 14px", borderLeft: `3px solid ${C.green}` }}>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.88rem", color: C.textMid, lineHeight: 1.55 }}>
-                💡 Investitionen in Ausbildungsstrukturen entlasten nicht nur den Arbeitsmarkt, sondern sichern zugleich die Resilienz und Innovationsfähigkeit ganzer Regionen.
-              </p>
-            </div>
-          </InfoCard>
-
-          {/* ── Berlin ── */}
-          <div style={{ marginBottom: "8px" }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px"
-            }}>
-              <div style={{ height: "2px", flex: 1, background: `linear-gradient(to right, ${C.teal}, transparent)` }} />
-              <span style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.blue, fontSize: "0.85rem", letterSpacing: "0.1em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                🏙️ Berlin im Fokus
-              </span>
-              <div style={{ height: "2px", flex: 1, background: `linear-gradient(to left, ${C.teal}, transparent)` }} />
-            </div>
           </div>
+        </InfoCard>
 
-          <InfoCard icon="🤝" title="Die Verbundberatung Berlin" accentColor={C.teal}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
-              Die 2014 gestartete und von der Senatsverwaltung finanzierte <strong style={{ color: C.blue }}>„Verbundberatung Duale Berufsausbildung Berlin"</strong> unterstützt Berliner Unternehmen branchenübergreifend und <strong style={{ color: C.teal }}>kostenlos</strong> bei:
+        {/* 4. Förderung FBB */}
+        <InfoCard icon="💶" title="Berliner Förderung – Das FBB-Programm" accentColor={C.green}>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
+            Das Land Berlin fördert Verbundausbildung über das <strong style={{ color: C.blue }}>Programm zur Förderung der Berufsausbildung im Land Berlin (FBB)</strong>. Anträge werden über die jeweils zuständige Kammer eingereicht.
+          </p>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "0 0 10px" }}>Förderhöhe – max. 40 € pro Verbundtag:</p>
+          <Badge label="2-jährige Ausbildung" value="bis zu 2.500 €" />
+          <Badge label="3-jährige Ausbildung" value="bis zu 6.500 €" />
+          <Badge label="3,5-jährige Ausbildung" value="bis zu 7.500 €" />
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "14px 0 8px" }}>Zusatzförderung für:</p>
+          <Bullet color={C.green}>Personen ohne Schulabschluss oder mit Förderbedarf</Bullet>
+          <Bullet color={C.green}>Frauen in männertypischen / Männer in frauentypischen Berufen</Bullet>
+          <Bullet color={C.green}>Alleinerziehende und Pflegende Angehörige</Bullet>
+          <Bullet color={C.green}>Geflüchtete mit Aufenthaltstitel oder Duldung</Bullet>
+          <Bullet color={C.green}>Übernahme von Azubis aus Insolvenzbetrieben</Bullet>
+          <div style={{ background: C.greenLight, borderRadius: 10, padding: "12px 14px", marginTop: 12, borderLeft: `3px solid ${C.green}` }}>
+            <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Antragstellung</p>
+            <p style={{ margin: "0 0 10px", fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
+              Frist: <strong>6 Monate</strong> nach Beginn der Verbundausbildung. Antragsteller ist der ausbildende Betrieb. Für Handwerksbetriebe: <strong>fbb@hwk-berlin.de</strong>
             </p>
-            <Bullet>Suche nach einem geeigneten Verbundpartner</Bullet>
-            <Bullet>Gestaltung des Kooperationsvertrages</Bullet>
-            <Bullet>Beantragung und Abrechnung der Fördermittel</Bullet>
-
-            <a
-              href="https://verbundberatung-berlin.de/kontakt/"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                marginTop: "14px",
-                background: C.teal,
-                color: "#fff",
-                borderRadius: "10px",
-                padding: "12px 16px",
-                fontFamily: '"Quicksand", sans-serif',
-                fontWeight: 700,
-                fontSize: "0.9rem",
-                textDecoration: "none",
-              }}
-            >
-              <span>📞</span>
-              <span>Kontakt zur Verbundberatung Berlin</span>
-              <span style={{ marginLeft: "auto", opacity: 0.8 }}>→</span>
+            <a href="https://service.berlin.de/dienstleistung/354529/" target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.green, color: "#fff", borderRadius: 8, padding: "9px 14px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+              Direkt zum Antrag →
             </a>
-
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", marginTop: "10px" }}>
-              <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.9rem" }}>📌 Marktplatz Verbundausbildung</p>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
-                <a
-                  href="https://verbundberatung-berlin.de/marktplatz/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: C.teal, fontWeight: 700, textDecoration: "underline", textDecorationColor: `${C.teal}60` }}
-                >verbundberatung-berlin.de/marktplatz</a> – hier finden Betriebe passende Verbundpartner. Partner: HWK Berlin, IHK Berlin, UVB.
-              </p>
-            </div>
-
-            <div style={{ background: "#fff8e6", borderRadius: "10px", padding: "12px 14px", marginTop: "10px", borderLeft: `3px solid #f0a030` }}>
-              <p style={{ margin: "0 0 2px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Splitterberufe – Berliner Sonderfall</p>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
-                Ausbildungsberufe, für die in Berlin keine eigene Berufsschulklasse zustande kommt, müssen auswärtige Schulen besuchen. Förderung ab 2025: <strong>24 € pro auswärtigem Schultag</strong> (zuvor 12 €).
-              </p>
-            </div>
-          </InfoCard>
-
-          <InfoCard icon="🏛️" title="Zuständige Handwerkskammer" accentColor={C.teal}>
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "14px 16px", borderLeft: `4px solid ${C.teal}`, margin: "14px 0" }}>
-              <a
-                href="https://www.hwk-berlin.de/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 800, color: C.teal, fontSize: "0.95rem", textDecoration: "underline", textDecorationColor: `${C.teal}60`, display: "block" }}
-              >Handwerkskammer Berlin ↗</a>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>Zuständig für Betriebe mit Sitz im Stadtgebiet Berlin. Administriert das Berliner Förderungsprogramm FBB. Blücherstraße 68, 10961 Berlin.</p>
-            </div>
-          </InfoCard>
-
-          <InfoCard icon="💶" title="Berliner Förderung – Das FBB-Programm" accentColor={C.green}>
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
-              Das Land Berlin fördert Verbundausbildung aktiv über das <strong style={{ color: C.blue }}>Programm zur Förderung der Berufsausbildung im Land Berlin (FBB)</strong>, administriert durch die Handwerkskammer Berlin.
+          </div>
+          <div style={{ background: C.tealLight, borderRadius: 10, padding: "12px 14px", marginTop: 10 }}>
+            <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
+              <strong style={{ color: C.blue }}>Neu ab 2025/26:</strong> Digitale Verbundformate sind förderfähig. Zuschuss zur Prüfungsvorbereitung steigt auf <strong>440 €</strong>. Berliner Betriebe können jetzt auch Partner außerhalb Berlins einbeziehen.
             </p>
+          </div>
+        </InfoCard>
 
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "0 0 10px" }}>Förderhöhe – max. 40 € pro Verbundtag:</p>
-            <Badge label="2-jährige Ausbildung" value="bis zu 2.500 €" />
-            <Badge label="3-jährige Ausbildung" value="bis zu 6.500 €" />
-            <Badge label="3,5-jährige Ausbildung" value="bis zu 7.500 €" />
+        {/* 5. Rechtliches */}
+        <InfoCard icon="⚖️" title="Rechtlicher Rahmen &amp; Zuständigkeiten" accentColor={C.blue}>
+          <p style={{ fontFamily: '"Quicksand", sans-serif', fontSize: "0.93rem", color: C.textMid, lineHeight: 1.65, margin: "14px 0 14px" }}>
+            Die Zuständigkeit für Ausbildungsberufe liegt in Deutschland bei den jeweiligen Kammern. In Berlin sind – je nach Branche – verschiedene Institutionen zuständig:
+          </p>
+          <Bullet color={C.blue}><strong>Handwerk</strong> – Handwerkskammer Berlin oder HWK Frankfurt (Oder)</Bullet>
+          <Bullet color={C.blue}><strong>Industrie &amp; Handel</strong> – IHK Berlin</Bullet>
+          <Bullet color={C.blue}><strong>Freie Berufe</strong> (Ärzte, Anwälte, Architekten u. a.) – jeweilige Berufskammer</Bullet>
+          <Bullet color={C.blue}><strong>Landwirtschaft</strong> – Landwirtschaftskammer</Bullet>
+          <div style={{ background: "#fff8e6", borderRadius: 10, padding: "12px 14px", marginTop: 10, borderLeft: "3px solid #f0a030" }}>
+            <p style={{ margin: "0 0 2px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Kammerübergreifende Verbünde</p>
+            <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
+              Kooperieren Betriebe aus verschiedenen Zuständigkeitsbereichen (z. B. Handwerk + Industrie), sind ggf. mehrere Kammern beteiligt. Verträge, Prüfungsanmeldungen und Förderanträge müssen jeweils bei der zuständigen Stelle eingereicht werden. Die Verbundberatung Berlin unterstützt bei der Klärung.
+            </p>
+          </div>
+        </InfoCard>
 
-            <p style={{ fontFamily: '"Quicksand", sans-serif', fontWeight: 700, fontSize: "0.9rem", color: C.blue, margin: "14px 0 8px" }}>Zusatzförderung für:</p>
-            <Bullet color={C.green}>Personen ohne Schulabschluss oder mit Förderbedarf</Bullet>
-            <Bullet color={C.green}>Frauen in männertypischen / Männer in frauentypischen Berufen</Bullet>
-            <Bullet color={C.green}>Alleinerziehende und Pflegende</Bullet>
-            <Bullet color={C.green}>Geflüchtete mit Aufenthaltstitel oder Duldung</Bullet>
-            <Bullet color={C.green}>Übernahme von Azubis aus Insolvenzbetrieben</Bullet>
-
-            <div style={{ background: C.greenLight, borderRadius: "10px", padding: "12px 14px", marginTop: "12px", borderLeft: `3px solid ${C.green}` }}>
-              <p style={{ margin: "0 0 4px", fontFamily: '"Quicksand", sans-serif', fontWeight: 700, color: C.blue, fontSize: "0.88rem" }}>Antragstellung</p>
-              <p style={{ margin: "0 0 10px", fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid, lineHeight: 1.5 }}>
-                Frist: <strong>6 Monate</strong> nach Beginn der Verbundausbildung. Antragsteller ist der ausbildende Betrieb. Anträge an: <strong>fbb@hwk-berlin.de</strong>
-              </p>
-              <a
-                href="https://service.berlin.de/dienstleistung/354529/"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "6px",
-                  background: C.green,
-                  color: "#fff",
-                  borderRadius: "8px",
-                  padding: "9px 14px",
-                  fontFamily: '"Quicksand", sans-serif',
-                  fontWeight: 700,
-                  fontSize: "0.85rem",
-                  textDecoration: "none",
-                }}
-              >
-                Direkt zum Antrag →
-              </a>
-            </div>
-
-            <div style={{ background: C.tealLight, borderRadius: "10px", padding: "12px 14px", marginTop: "10px" }}>
-              <p style={{ margin: 0, fontFamily: '"Quicksand", sans-serif', fontSize: "0.85rem", color: C.textMid }}>
-                🆕 <strong style={{ color: C.blue }}>Ab 2025/26:</strong> Digitale Verbundformate sind förderfähig. Zuschuss zur Prüfungsvorbereitung steigt von 400 auf <strong>440 €</strong>. Berliner Betriebe können jetzt auch Partner außerhalb Berlins einbeziehen.
-              </p>
-            </div>
-          </InfoCard>
-
-        </div>
-        <Footer />
-      </IonContent>
-    </IonPage>
-  );
-};
+      </div>
+      <Footer />
+    </IonContent>
+  </IonPage>
+);
 
 export default Informationen;
