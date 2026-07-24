@@ -162,7 +162,7 @@ const AnzeigeDetailInner: React.FC = () => {
           : profile.name
         : user.name || user.email;
 
-      const erstellteBewerbung = const newBew = await databases.createDocument<Bewerbung>(
+      const newBew = await databases.createDocument<Bewerbung>(
         DB_LEHRSTELLEN,
         COL_BEWERBUNGEN,
         ID.unique(),
