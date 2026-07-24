@@ -30,6 +30,7 @@ import Verifizieren from "./pages/auth/Verifizieren";
 import PasswortVergessen from "./pages/auth/PasswortVergessen";
 import PasswortNeu from "./pages/auth/PasswortNeu";
 import AusbiFreigabe from "./pages/auth/AusbiFreigabe";
+import AusbiBewerbung from "./pages/auth/AusbiBewerbung";
 import EinsaetzeAzubis from "./pages/EinsaetzeAzubis";
 import Datenschutz from "./pages/Datenschutz";
 import AGB from "./pages/AGB";
@@ -135,6 +136,7 @@ const App: React.FC = () => (
               <PasswortVergessen />
             </Route>
             <Route exact path="/einsaetze-azubis"><EinsaetzeAzubis /></Route>
+              <Route exact path="/ausbi-bewerbung"><AusbiBewerbung /></Route>
               <Route exact path="/ausbi-freigabe">
               <AusbiFreigabe />
             </Route>

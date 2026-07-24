@@ -30,9 +30,11 @@ import ZurueckButton from "../components/ZurueckButton";
 import { useParams } from "react-router";
 import { useHistory } from "react-router-dom";
 import { mailOutline, sendOutline, checkmarkCircleOutline, create, trash, peopleOutline } from "ionicons/icons";
-import { ID, Query } from "appwrite";
+import { ID, Query, ExecutionMethod } from "appwrite";
 import {
   databases,
+  functions,
+  FUNC_AUSBI_FREIGABE,
   DB_LEHRSTELLEN,
   COL_APPRENTICESHIPS,
   COL_BEWERBUNGEN,
@@ -194,6 +196,18 @@ const AnzeigeDetailInner: React.FC = () => {
       // (fire-and-forget – Fehler brechen die Bewerbung nicht ab).
       void notifyNeueBewerbung(erstellteBewerbung.$id);
       await loadEigeneBewerbung();
+      // E-Mail-Benachrichtigung an Ausbildungsbeauftragte/n (nur fuer Azubis, non-blocking)
+      if (istTalent) {
+        try {
+          await functions.createExecution(
+            FUNC_AUSBI_FREIGABE,
+            JSON.stringify({ action: "bewerbung_request", bewerbungId: newBew.$id }),
+            false, "/", ExecutionMethod.POST
+          );
+        } catch {
+          // E-Mail-Fehler blockiert nicht die Bewerbung
+        }
+      }
     } catch (err: unknown) {
       setSendError(translateError(err));
     } finally {

@@ -209,7 +209,7 @@ const BewerbungenZurAnzeigeInner: React.FC = () => {
 
         {!loading && bewerbungen.length > 0 && (
           <IonList>
-            {bewerbungen.map((b) => {
+            {bewerbungen.filter((b) => b.status !== "ausstehend_freigabe").map((b) => {
               const offen = b.status === "ausstehend";
               // Posting owner rates the applicant (opposite type)
               const ratedType = profile?.type === "betrieb" ? "talent" : "betrieb";
