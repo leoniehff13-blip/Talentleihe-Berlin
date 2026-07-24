@@ -194,7 +194,7 @@ const AnzeigeDetailInner: React.FC = () => {
       setErfolg(true);
       // Anzeigen-Inhaber:in per Mail über die neue Bewerbung informieren
       // (fire-and-forget – Fehler brechen die Bewerbung nicht ab).
-      void notifyNeueBewerbung(erstellteBewerbung.$id);
+      void notifyNeueBewerbung(newBew.$id);
       await loadEigeneBewerbung();
       // E-Mail-Benachrichtigung an Ausbildungsbeauftragte/n (nur fuer Azubis, non-blocking)
       if (istTalent) {
