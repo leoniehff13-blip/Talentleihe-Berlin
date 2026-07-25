@@ -203,8 +203,8 @@ const AnzeigeDetailInner: React.FC = () => {
           JSON.stringify({ action: "bewerbung_request", bewerbungId: newBew.$id }),
           false, "/", ExecutionMethod.POST
         );
-      } catch {
-        // E-Mail-Fehler blockiert nicht die Bewerbung
+      } catch (fnErr) {
+        console.error("[ausbi-freigabe] Fehler:", fnErr);
       }
     } catch (err: unknown) {
       setSendError(translateError(err));
