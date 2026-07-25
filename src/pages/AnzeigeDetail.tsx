@@ -175,7 +175,7 @@ const AnzeigeDetailInner: React.FC = () => {
           nachricht: zeitraumBegrenzen && eigeneVon && eigeneBis
             ? `📅 Verfügbarer Zeitraum: ${new Date(eigeneVon).toLocaleDateString("de-DE")} bis ${new Date(eigeneBis).toLocaleDateString("de-DE")}\n\n${nachricht.trim()}`
             : nachricht.trim(),
-          status: "ausstehend_freigabe",  // wartet auf Freigabe durch Ausbildungsbeauftragte/n
+          status: istTalent ? "ausstehend_freigabe" : "ausstehend",  // Freigabe nur fuer Azubi-Bewerbungen
           dokument_ids: selectedDokIds,
         }
         // Keine Per-Row-Permissions: die Bewerbungen-Tabelle nutzt
