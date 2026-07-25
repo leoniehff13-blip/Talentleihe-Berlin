@@ -196,17 +196,15 @@ const AnzeigeDetailInner: React.FC = () => {
       // (fire-and-forget – Fehler brechen die Bewerbung nicht ab).
       void notifyNeueBewerbung(newBew.$id);
       await loadEigeneBewerbung();
-      // E-Mail-Benachrichtigung an Ausbildungsbeauftragte/n (nur fuer Azubis, non-blocking)
-      if (istTalent) {
-        try {
-          await functions.createExecution(
-            FUNC_AUSBI_FREIGABE,
-            JSON.stringify({ action: "bewerbung_request", bewerbungId: newBew.$id }),
-            false, "/", ExecutionMethod.POST
-          );
-        } catch {
-          // E-Mail-Fehler blockiert nicht die Bewerbung
-        }
+      // Ausbildungsbeauftragte/n per E-Mail benachrichtigen (non-blocking)
+      try {
+        await functions.createExecution(
+          FUNC_AUSBI_FREIGABE,
+          JSON.stringify({ action: "bewerbung_request", bewerbungId: newBew.$id }),
+          false, "/", ExecutionMethod.POST
+        );
+      } catch {
+        // E-Mail-Fehler blockiert nicht die Bewerbung
       }
     } catch (err: unknown) {
       setSendError(translateError(err));
