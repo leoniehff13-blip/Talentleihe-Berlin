@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Handbuch – Talentleihe Berlin</title>
+<title>Handbuch – VerbundPraxis Berlin</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -517,27 +517,27 @@
 <!-- ══════════════════ COVER ══════════════════ -->
 <div class="cover">
   <div class="cover-top">
-    <div class="cover-label">Talentleihe für das Berliner Handwerk</div>
+    <div class="cover-label">VerbundPraxis für die Berliner Ausbildung</div>
     <a href="#" class="website-btn">Website</a>
   </div>
 
   <div class="cover-main">
     <div class="cover-sub">Technisches Handbuch</div>
     <div class="cover-title">
-      Talent trifft<br><span class="accent">Handwerk.</span>
+      Azubi trifft<br><span class="accent">Betrieb.</span>
     </div>
     <div class="cover-meta">
       <div class="cover-meta-item">
         <span class="label">Version</span>
-        <span class="value">Juni 2026</span>
+        <span class="value">Juli 2026</span>
       </div>
       <div class="cover-meta-item">
         <span class="label">Projekt</span>
-        <span class="value">Talentleihe Berlin – Verbundausbildung</span>
+        <span class="value">VerbundPraxis Berlin – Verbundausbildung</span>
       </div>
       <div class="cover-meta-item">
         <span class="label">Technologie</span>
-        <span class="value">React 18 · TypeScript · Ionic · Appwrite</span>
+        <span class="value">React 18 · TypeScript · Ionic · Capacitor · Appwrite</span>
       </div>
     </div>
 
@@ -557,9 +557,9 @@
   </div>
 
   <div class="cover-bottom">
-    <span>18.06.2026</span>
+    <span>25.07.2026</span>
     <span>Verbundberatung Berlin // HSBA</span>
-    <span>Handbuch · 1</span>
+    <span>Handbuch · 2</span>
   </div>
 </div>
 
@@ -569,8 +569,8 @@
   <!-- SIDEBAR -->
   <nav class="sidebar">
     <div class="sidebar-logo">
-      <div class="s1">Talent trifft</div>
-      <div class="s2">Handwerk.</div>
+      <div class="s1">Azubi trifft</div>
+      <div class="s2">Betrieb.</div>
     </div>
 
     <div class="sidebar-section-label">Handbuch</div>
@@ -594,25 +594,26 @@
       <h2 class="section-title">Über die App</h2>
 
       <p>
-        <strong>Talentleihe Berlin</strong> ist eine Web-App, die Verbundausbildung im Berliner Handwerk organisiert und vermittelt. Betriebe können Azubis vorübergehend an andere Betriebe ausleihen (Einsätze), und Azubis können sich aktiv mit eigenen Talent-Angeboten vorstellen. So entstehen flexible Lernarrangements, die über den eigenen Ausbildungsbetrieb hinausgehen.
+        <strong>VerbundPraxis Berlin</strong> ist eine Web-App, die Verbundausbildung im Berliner Handwerk organisiert und vermittelt. Betriebe können Azubis vorübergehend an andere Betriebe ausleihen (Einsätze), und Azubis können sich aktiv mit eigenen Azubi-Angeboten vorstellen. So entstehen flexible Lernarrangements, die über den eigenen Ausbildungsbetrieb hinausgehen.
       </p>
-      <p>Die App ist im Rahmen des HSBA-Projekts „Talent trifft Handwerk" entstanden.</p>
+      <p>Die App ist im Rahmen eines HSBA-Projekts entstanden, unter dem Slogan <strong>„Azubi trifft Betrieb."</strong> Interner Projektname laut Repository: <code>Win-Win VerbundPraxis</code>.</p>
 
       <h3>Zielgruppe</h3>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Rolle</th><th>Beschreibung</th></tr></thead>
           <tbody>
-            <tr><td><strong>Talent (Azubi)</strong></td><td>Auszubildende im Handwerk, die sich für befristete Einsätze bei anderen Betrieben anbieten oder auf Einsatzangebote bewerben</td></tr>
-            <tr><td><strong>Betrieb</strong></td><td>Handwerksbetriebe, die Einsätze für Azubis ausschreiben oder Talent-Angebote von Azubis suchen</td></tr>
+            <tr><td><strong>Azubi</strong></td><td>Auszubildende im Handwerk, die sich für befristete Einsätze bei anderen Betrieben anbieten oder auf Einsatzangebote bewerben</td></tr>
+            <tr><td><strong>Betrieb</strong></td><td>Handwerksbetriebe, die Einsätze für Azubis ausschreiben oder Azubi-Angebote suchen</td></tr>
+            <tr><td><strong>Verbundberatung</strong></td><td>Moderierende Instanz, die plattformweit alle Einsätze und Azubi-Angebote einsehen und prüfen kann (Details in Kapitel 03)</td></tr>
           </tbody>
         </table>
       </div>
 
       <h3>Zweck: Verbundausbildung</h3>
-      <p>Verbundausbildung bedeutet, dass mehrere Betriebe gemeinsam ausbilden. Durch Talentleihe können Azubis Fertigkeiten erwerben, die der eigene Ausbildungsbetrieb nicht abdeckt.</p>
+      <p>Verbundausbildung bedeutet, dass mehrere Betriebe gemeinsam ausbilden. Durch die Ausleihe können Azubis Fertigkeiten erwerben, die der eigene Ausbildungsbetrieb nicht abdeckt.</p>
       <div class="callout">
-        <strong>Regionalbeschränkung:</strong> Die App beschränkt sich bewusst auf <strong>Berlin und Ostbrandenburg</strong> – Zuständigkeitsgebiet der Handwerkskammer Berlin und der Handwerkskammer Frankfurt (Oder), Region Ostbrandenburg.
+        <strong>Regionalbeschränkung:</strong> Die App beschränkt sich auf den Zuständigkeitsbereich der <strong>Handwerkskammer Berlin</strong>.
       </div>
     </div>
 
@@ -631,15 +632,35 @@
             <tr><td><strong>Build-Tool</strong></td><td>Vite</td></tr>
             <tr><td><strong>UI-Framework</strong></td><td>Ionic React (Komponenten, Navigation, Layouts)</td></tr>
             <tr><td><strong>Routing</strong></td><td>React Router DOM (via <code>@ionic/react-router</code>)</td></tr>
+            <tr><td><strong>Native Apps</strong></td><td>Capacitor (iOS &amp; Android, aus demselben Web-Build gebaut)</td></tr>
             <tr><td><strong>Backend</strong></td><td>Appwrite Cloud (Self-Hosted möglich)</td></tr>
             <tr><td><strong>Authentifizierung</strong></td><td>Appwrite Auth (E-Mail + Passwort)</td></tr>
             <tr><td><strong>Datenbank</strong></td><td>Appwrite Databases (NoSQL)</td></tr>
-            <tr><td><strong>Dateispeicher</strong></td><td>Appwrite Storage</td></tr>
+            <tr><td><strong>Dateispeicher</strong></td><td>Appwrite Storage (Dokumente und Profilbilder)</td></tr>
+            <tr><td><strong>Serverless Functions</strong></td><td>Appwrite Functions – Freigabe-Mails, Benachrichtigungen, Kontolöschung (siehe unten)</td></tr>
             <tr><td><strong>Geocoding</strong></td><td>OpenStreetMap Nominatim API (kostenlos, kein API-Key)</td></tr>
             <tr><td><strong>Hosting</strong></td><td>Appwrite Sites (automatisches Deployment via GitHub)</td></tr>
             <tr><td><strong>Sprache (System-Mails)</strong></td><td>Deutsch (<code>setLocale("de")</code>)</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <h3>Appwrite Functions</h3>
+      <p>Fünf Cloud Functions ergänzen die App serverseitig:</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Function</th><th>Zweck</th></tr></thead>
+          <tbody>
+            <tr><td><code>ausbi-freigabe</code></td><td>Versendet die Bestätigungsmail an den/die Ausbildungsbeauftragte/n mit Freigabe-Link</td></tr>
+            <tr><td><code>verbundbuero-approval</code></td><td>Freigabe-Workflow für neu registrierte Verbundberatung-Konten</td></tr>
+            <tr><td><code>notify-verbundbuero-admin</code></td><td>Benachrichtigt den Verbundberatung-Admin-Account über neue Registrierungen/Vorgänge</td></tr>
+            <tr><td><code>notifications</code></td><td>Allgemeine Benachrichtigungslogik, u. a. Grundlage der Benachrichtigungsglocke</td></tr>
+            <tr><td><code>account-deletion</code></td><td>Serverseitige, endgültige Löschung von Konto und zugehörigen Daten</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout">
+        Diese Functions sind nicht Teil des Vite-Frontend-Builds und werden separat über die Appwrite-Konsole bzw. Appwrite CLI deployt (siehe Kapitel 08).
       </div>
 
       <h3>Projektstruktur</h3>
@@ -650,33 +671,51 @@
     AuthContext.tsx    # Auth-State (user, profile, saveProfile …)
     geocode.ts         # Nominatim-Geocoding + Haversine-Distanz
     gewerke.ts         # Liste aller Handwerksgewerke
-    handwerkskammern.ts# Berlin-Region-Kammern
+    handwerkskammern.ts# Handwerkskammer-Liste + aktive Regionsfilterung
     errors.ts          # Fehlerübersetzung (DE)
   pages/
     Homepage.tsx
-    Anzeigen.tsx       # Talentleihe-Übersicht (Suche + Filter)
+    Anzeigen.tsx       # Anzeigen-Übersicht (Suche + Filter)
     AnzeigeDetail.tsx  # Anzeige-Detailseite
     AnzeigeForm.tsx    # Anzeige anlegen / bearbeiten
     MeineAnzeigen.tsx
     MeineBewerbungen.tsx
     EingegangeneAnfragen.tsx
     BewerbungenZurAnzeige.tsx
+    EinsaetzeAzubis.tsx        # Betrieb: Einsätze der eigenen Azubis
+    VerbundbueroUebersicht.tsx # Moderationsübersicht Verbundberatung
+    VerbundbueroFreigabe.tsx   # Freigabe neuer Verbundberatung-Konten
+    VerbundbueroAnzeigeDetail.tsx # Anzeige-Detail aus Moderationssicht
     ProfilDetail.tsx
     Bewertung.tsx
     Informationen.tsx
     auth/
       Login.tsx / Register.tsx / Konto.tsx
-      Verifizieren.tsx / PasswortVergessen.tsx
+      RegisterVerbundbuero.tsx
+      Einstellungen.tsx
+      KontoLoeschen.tsx
+      AusbiFreigabe.tsx
+      AusbiBewerbung.tsx
+      Verifizieren.tsx / PasswortVergessen.tsx / PasswortNeu.tsx
   components/
     TopNav.tsx          # Eigene Navigation (fixed, zIndex 9999)
     ProfilFormFields.tsx
+    ProfilbildUpload.tsx
+    PendingApprovalScreen.tsx
+    VerifizierungsWand.tsx
     NotificationBell.tsx
     DokumenteUpload.tsx
     AnzeigenMap.tsx
     BewertungsKasten.tsx
     ZurueckButton.tsx
     AuthGate.tsx
-    Footer.tsx</code></pre>
+    Footer.tsx
+functions/
+  account-deletion/
+  ausbi-freigabe/
+  notifications/
+  notify-verbundbuero-admin/
+  verbundbuero-approval/</code></pre>
     </div>
 
     <hr class="divider">
@@ -686,18 +725,18 @@
       <div class="section-eyebrow">Kapitel 03</div>
       <h2 class="section-title">Nutzerrollen</h2>
 
-      <p>Die App kennt zwei Profiltypen. Nach der Registrierung legt jeder Nutzer <strong>einmalig</strong> ein Profil an und wählt dabei seine Rolle. Die Rolle bestimmt, was in der App sichtbar ist und was getan werden kann.</p>
+      <p>Die App kennt drei Profiltypen: Azubi, Betrieb und Verbundberatung. Nach der Registrierung legt jeder Nutzer <strong>einmalig</strong> ein Profil an und wählt dabei seine Rolle. Die Rolle bestimmt, was in der App sichtbar ist und was getan werden kann. Zusätzlich gibt es die Ausbildungsbeauftragte/n als Ansprechperson, die ohne eigenes Konto in den Ablauf eingebunden wird.</p>
 
       <div class="role-grid">
         <div class="role-card talent">
-          <span class="role-tag tag-talent">Talent · Azubi</span>
-          <h3>Was Talents sehen</h3>
-          <p>Auf der Talentleihe-Seite ausschließlich <strong>Einsatz-Angebote von Betrieben</strong> (Typ <code>einsatz</code>) – als Liste oder Karte.</p>
+          <span class="role-tag tag-talent">Azubi</span>
+          <h3>Was Azubis sehen</h3>
+          <p>Auf der Anzeigen-Seite ausschließlich <strong>Einsatz-Angebote von Betrieben</strong> (Typ <code>einsatz</code>) – als Liste oder Karte.</p>
           <h4>Aktionen</h4>
           <ul>
-            <li>Profil anlegen und bearbeiten</li>
+            <li>Profil anlegen und bearbeiten, inkl. Profilbild</li>
             <li>Bewerbungsunterlagen hochladen</li>
-            <li>Eigene Talent-Angebote erstellen</li>
+            <li>Eigene Azubi-Angebote erstellen</li>
             <li>Auf Einsatz-Anzeigen bewerben</li>
             <li>Bewerbungen zurückziehen</li>
             <li>Abgeschlossene Einsätze bewerten</li>
@@ -709,17 +748,42 @@
         <div class="role-card betrieb">
           <span class="role-tag tag-betrieb">Betrieb</span>
           <h3>Was Betriebe sehen</h3>
-          <p>Auf der Talentleihe-Seite ausschließlich <strong>Talent-Angebote von Azubis</strong> (Typ <code>talent_angebot</code>) – nur Listenansicht.</p>
+          <p>Auf der Anzeigen-Seite ausschließlich <strong>Azubi-Angebote von Azubis</strong> (Typ <code>talent_angebot</code>) – nur Listenansicht.</p>
           <h4>Aktionen</h4>
           <ul>
-            <li>Betriebsprofil anlegen und bearbeiten</li>
+            <li>Betriebsprofil anlegen und bearbeiten, inkl. Profilbild</li>
             <li>Einsatz-Anzeigen erstellen und löschen</li>
             <li>Eingehende Bewerbungen annehmen/ablehnen</li>
             <li>Bewerbungsübersicht verwalten</li>
+            <li>Einsätze der eigenen Azubis einsehen</li>
             <li>Abgeschlossene Einsätze bewerten</li>
           </ul>
           <h4>Bewertungskategorien</h4>
           <p>Zuverlässigkeit · Lernbereitschaft · Pünktlichkeit</p>
+        </div>
+
+        <div class="role-card" style="border-top:4px solid var(--navy);">
+          <span class="role-tag" style="background:#e4e8f5;color:var(--navy);">Verbundberatung</span>
+          <h3>Was die Verbundberatung sieht</h3>
+          <p>Plattformweit <strong>alle Bewerbungen und die zugehörigen Anzeigen</strong>, unabhängig vom Anzeigetyp – als Moderationsübersicht.</p>
+          <h4>Aktionen</h4>
+          <ul>
+            <li>Übersicht aller Bewerbungen und Anzeigen einsehen</li>
+            <li>Einzelne Anzeigen im Detail prüfen</li>
+            <li>Neu registrierte Verbundberatung-Konten annehmen oder ablehnen</li>
+          </ul>
+          <p>Registrierungen als Verbundberatung werden nicht automatisch freigeschaltet – mit Ausnahme eines fest hinterlegten Admin-Accounts. Alle übrigen Registrierungen prüft und bestätigt eine bereits freigeschaltete Verbundberatung. Bis zur Freigabe sehen neu registrierte Nutzer:innen einen Wartescreen.</p>
+        </div>
+
+        <div class="role-card" style="border-top:4px solid var(--teal-dark);">
+          <span class="role-tag" style="background:#e0f5f5;color:var(--teal-dark);">Ausbildungsbeauftragte/r · Ausbi</span>
+          <h3>Was die/der Ausbildungsbeauftragte macht</h3>
+          <p>Hat kein eigenes Nutzerkonto in der App, sondern wird per E-Mail-Link in den Ablauf eingebunden.</p>
+          <h4>Aktionen</h4>
+          <ul>
+            <li>Erhält per E-Mail einen Bestätigungslink, sobald ein Azubi sich auf eine Anzeige bewirbt</li>
+            <li>Bestätigt über diesen Link die Bewerbung des Azubis (Freigabefunktion)</li>
+          </ul>
         </div>
       </div>
 
@@ -741,16 +805,32 @@
           <thead><tr><th>Route</th><th>Seite</th><th>Beschreibung</th></tr></thead>
           <tbody>
             <tr><td><code>/home</code></td><td>Homepage</td><td>Startseite mit Projektvorstellung</td></tr>
-            <tr><td><code>/anzeigen</code></td><td>Anzeigen</td><td>Talentleihe-Übersicht (Suche, Filter, Liste/Karte)</td></tr>
+            <tr><td><code>/anzeigen</code></td><td>Anzeigen</td><td>Anzeigen-Übersicht (Suche, Filter, Liste/Karte)</td></tr>
             <tr><td><code>/anzeigen/:id</code></td><td>AnzeigeDetail</td><td>Detailansicht einer Anzeige (öffentlich)</td></tr>
             <tr><td><code>/informationen</code></td><td>Informationen</td><td>Infoseite zum Konzept Verbundausbildung</td></tr>
             <tr><td><code>/meine-anzeigen</code></td><td>MeineAnzeigen</td><td>Eigene Anzeigen verwalten</td></tr>
             <tr><td><code>/meine-anzeigen/neu</code></td><td>AnzeigeForm</td><td>Neue Anzeige anlegen</td></tr>
             <tr><td><code>/meine-anzeigen/:id/bearbeiten</code></td><td>AnzeigeForm</td><td>Bestehende Anzeige bearbeiten</td></tr>
+            <tr><td><code>/meine-anzeigen/:id</code></td><td>AnzeigeDetail</td><td>Eigene Anzeige, Detailansicht</td></tr>
+            <tr><td><code>/meine-anzeigen/:id/bewerbungen</code></td><td>BewerbungenZurAnzeige</td><td>Bewerbungen zu einer eigenen Anzeige</td></tr>
             <tr><td><code>/meine-bewerbungen</code></td><td>MeineBewerbungen</td><td>Versendete Bewerbungen und Anfragen</td></tr>
             <tr><td><code>/eingegangene-anfragen</code></td><td>EingegangeneAnfragen</td><td>Empfangene Bewerbungen (Annehmen/Ablehnen)</td></tr>
+            <tr><td><code>/einsaetze-azubis</code></td><td>EinsaetzeAzubis</td><td>Betrieb: Einsätze der eigenen Azubis</td></tr>
             <tr><td><code>/konto</code></td><td>Konto</td><td>Profil und Kontoverwaltung (Hub)</td></tr>
-            <tr><td><code>/bewertung/:id/:userId/:type</code></td><td>Bewertung</td><td>Bewertung abgeben oder bearbeiten</td></tr>
+            <tr><td><code>/konto-loeschen</code></td><td>KontoLoeschen</td><td>Endgültige Kontolöschung</td></tr>
+            <tr><td><code>/einstellungen</code></td><td>Einstellungen</td><td>Kontoeinstellungen, u. a. Link zur Handbuch-Dokumentation</td></tr>
+            <tr><td><code>/login</code></td><td>Login</td><td>Login</td></tr>
+            <tr><td><code>/registrieren</code></td><td>Register</td><td>Registrierung Azubi/Betrieb</td></tr>
+            <tr><td><code>/registrieren/verbundberatung</code></td><td>RegisterVerbundbuero</td><td>Registrierung als Verbundberatung</td></tr>
+            <tr><td><code>/verbundberatung-freigabe</code></td><td>VerbundbueroFreigabe</td><td>Freigabe neuer Verbundberatung-Konten</td></tr>
+            <tr><td><code>/verbundberatung-uebersicht</code></td><td>VerbundbueroUebersicht</td><td>Moderationsübersicht aller Anzeigen</td></tr>
+            <tr><td><code>/verbundberatung-anzeige/:id</code></td><td>VerbundbueroAnzeigeDetail</td><td>Anzeige-Detail aus Moderationssicht</td></tr>
+            <tr><td><code>/ausbi-bewerbung</code></td><td>AusbiBewerbung</td><td>Kontext-Seite rund um die Ausbi-Freigabe einer Bewerbung</td></tr>
+            <tr><td><code>/ausbi-freigabe</code></td><td>AusbiFreigabe</td><td>Landingpage für den Freigabe-Link des Ausbildungsbeauftragten</td></tr>
+            <tr><td><code>/verifizieren</code></td><td>Verifizieren</td><td>E-Mail-Verifizierung</td></tr>
+            <tr><td><code>/passwort-vergessen</code></td><td>PasswortVergessen</td><td>Passwort-Reset anfordern</td></tr>
+            <tr><td><code>/passwort-neu</code></td><td>PasswortNeu</td><td>Neues Passwort setzen</td></tr>
+            <tr><td><code>/bewertung/:bewerbungId/:ratedUserId/:ratedType</code></td><td>Bewertung</td><td>Bewertung abgeben oder bearbeiten</td></tr>
             <tr><td><code>/profil/:userId</code></td><td>ProfilDetail</td><td>Öffentliches Profil eines Nutzers</td></tr>
             <tr><td><code>/datenschutz</code></td><td>Datenschutz</td><td>Datenschutzerklärung</td></tr>
             <tr><td><code>/agb</code></td><td>AGB</td><td>Allgemeine Geschäftsbedingungen</td></tr>
@@ -761,26 +841,26 @@
 
       <h3>Registrierung &amp; Login</h3>
       <ul>
-        <li><strong>Registrierung</strong> (<code>/registrieren</code>): E-Mail + Passwort; anschließend Versand einer Verifizierungs-E-Mail. Passwort-Toggle vorhanden.</li>
+        <li><strong>Betrieb</strong> (<code>/registrieren</code>): E-Mail, Passwort und alle Profildaten (inkl. Rollenwahl) werden in einem Formular erfasst. Beim Absenden werden Account und Profil in einem Schritt angelegt; zusätzlich wird eine Verifizierungs-E-Mail verschickt. Das Konto ist sofort nutzbar.</li>
+        <li><strong>Azubi</strong> (<code>/registrieren</code>): gleicher Ablauf wie beim Betrieb, zusätzlich wird direkt beim Absenden eine Freigabe-Mail an die im Formular angegebene/n Ausbildungsbeauftragte/n verschickt. Bis zur Bestätigung dieser Mail ist das Konto vollständig gesperrt (Warteschirm statt Inhalt). Jede weitere Bewerbung braucht danach zusätzlich eine eigene Freigabe derselben Person per separatem Link (Gültigkeit 7 Tage).</li>
+        <li><strong>Verbundberatung</strong> (<code>/registrieren/verbundberatung</code>): eigenes Registrierungsformular; das Konto bleibt bis zur Bestätigung durch eine bereits freigeschaltete Verbundberatung oder den Admin-Account gesperrt.</li>
         <li><strong>Login</strong> (<code>/login</code>): Nach dem Login Weiterleitung auf <code>/konto</code>.</li>
-        <li><strong>E-Mail-Verifizierung</strong>: Nutzer ohne bestätigte E-Mail sehen ein Banner mit Link zum erneuten Versenden.</li>
         <li><strong>Passwort vergessen</strong>: E-Mail-Adresse → Reset-Mail → Link führt zu <code>/passwort-neu</code>.</li>
       </ul>
 
       <h3>Konto (Profil &amp; Hub)</h3>
       <p>Die Konto-Seite (<code>/konto</code>) ist der zentrale Hub nach dem Login.</p>
       <ul>
-        <li>Beim ersten Login: Formular zur Anlage des Profils (einmalige Rollenwahl: Talent oder Betrieb)</li>
-        <li>Schaltfläche „Profil bearbeiten" öffnet das Formular mit vorausgefüllten Werten</li>
-        <li>Hub-Karten zu Meine Anzeigen, Meine Bewerbungen, Eingegangene Anfragen</li>
-        <li>Bewerbungsunterlagen-Verwaltung (nur Talents)</li>
+        <li>Profil und Rolle werden bereits bei der Registrierung angelegt; auf der Konto-Seite lassen sie sich einsehen und über „Profil bearbeiten" mit vorausgefüllten Werten ändern, inkl. Profilbild-Upload</li>
+        <li>Hub-Karten zu Meine Anzeigen, Meine Bewerbungen, Eingegangene Anfragen (Betrieb zusätzlich: Einsätze eigener Azubis)</li>
+        <li>Bewerbungsunterlagen-Verwaltung (nur Azubis)</li>
         <li>Eigene Bewertungsübersicht als Sternkarten</li>
-        <li>Logout sowie Konto löschen (nach E-Mail-Bestätigung)</li>
+        <li>Logout; Kontoeinstellungen und Kontolöschung sind eigene Unterseiten (<code>/einstellungen</code>, <code>/konto-loeschen</code>)</li>
       </ul>
 
       <h3>Profil-Pflichtfelder</h3>
 
-      <h4>Talent</h4>
+      <h4>Azubi</h4>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Feld</th><th>Beschreibung</th></tr></thead>
@@ -792,8 +872,11 @@
             <tr><td>Lehrjahr</td><td>1 bis 4</td></tr>
             <tr><td>Ausbildungsbetrieb</td><td>Name des Betriebs</td></tr>
             <tr><td>Berufsschule</td><td>Name der Berufsschule</td></tr>
-            <tr><td>Handwerkskammer</td><td>HWK Berlin oder HWK Frankfurt (Oder)</td></tr>
+            <tr><td>Beschulungsmodell</td><td>Teilzeit / Blockunterricht / unklar, mit optionaler Unterform und Freitext</td></tr>
+            <tr><td>Ausbildungsbeauftragte/r – E-Mail</td><td>Pflichtfeld; löst den Freigabe-Mailversand bei Bewerbungen aus</td></tr>
+            <tr><td>Handwerkskammer</td><td>Handwerkskammer Berlin</td></tr>
             <tr><td>Fähigkeiten</td><td>Optional, kommagetrennt</td></tr>
+            <tr><td>Profilbild</td><td>Optional</td></tr>
           </tbody>
         </table>
       </div>
@@ -807,10 +890,11 @@
             <tr><td>Straße + Hausnummer</td><td>Pflichtfelder</td></tr>
             <tr><td>PLZ + Ort</td><td>Pflichtfelder</td></tr>
             <tr><td>Gewerke</td><td>Mind. 1 Gewerk (Mehrfachauswahl mit Chips)</td></tr>
-            <tr><td>Handwerkskammer</td><td>Pflichtfeld</td></tr>
+            <tr><td>Handwerkskammer</td><td>Pflichtfeld, Handwerkskammer Berlin</td></tr>
             <tr><td>Ansprechpartner:in</td><td>Anrede, Name, E-Mail</td></tr>
             <tr><td>Spezialisierungen</td><td>Optional, kommagetrennt</td></tr>
             <tr><td>Initiativbewerbungen</td><td>Toggle (annehmen / nicht annehmen)</td></tr>
+            <tr><td>Profilbild</td><td>Optional</td></tr>
           </tbody>
         </table>
       </div>
@@ -823,12 +907,12 @@
           <thead><tr><th>Feld</th><th>Pflicht</th><th>Hinweis</th></tr></thead>
           <tbody>
             <tr><td>Gewerk</td><td>Ja</td><td>Auswahl aus Gewerke-Liste</td></tr>
-            <tr><td>Name / Firma</td><td>Ja</td><td>Talent: „Name/Ausbildungsbetrieb"; Betrieb: „Firma"</td></tr>
+            <tr><td>Name / Firma</td><td>Ja</td><td>Azubi: „Name/Ausbildungsbetrieb"; Betrieb: „Firma"</td></tr>
             <tr><td>Startdatum</td><td>Ja</td><td>Mindestens heutiges Datum (ISO-Format intern)</td></tr>
             <tr><td>Enddatum</td><td>Nein</td><td>Ohne Angabe: automatisch Startdatum + 3,5 Jahre</td></tr>
             <tr><td>Kontakt-E-Mail</td><td>Ja</td><td>Vorausgefüllt aus Profil</td></tr>
             <tr><td>Spezialisierungen</td><td>Nein</td><td>Kommagetrennt</td></tr>
-            <tr><td>Handwerkskammer</td><td>Ja</td><td>Nur HWK Berlin oder HWK Frankfurt (Oder)</td></tr>
+            <tr><td>Handwerkskammer</td><td>Ja</td><td>Handwerkskammer Berlin</td></tr>
           </tbody>
         </table>
       </div>
@@ -841,19 +925,20 @@
             <tr><td>Aufgabenbeschreibung</td><td>Ja</td><td>Freitextfeld</td></tr>
             <tr><td>Mindestalter</td><td>Nein</td><td>16 / 18 / 21 oder kein Minimum</td></tr>
             <tr><td>Vorerfahrung</td><td>Nein</td><td>Freitext</td></tr>
-            <tr><td>Adresse des Einsatzorts</td><td>Nein</td><td>Straße + PLZ + Ort</td></tr>
+            <tr><td>Adresse des Einsatzorts</td><td>Nein</td><td>Straße + PLZ + Ort, inkl. Stadt</td></tr>
           </tbody>
         </table>
       </div>
 
-      <h4>Nur Talent (Talent-Angebot)</h4>
+      <h4>Nur Azubi (Azubi-Angebot)</h4>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Feld</th><th>Pflicht</th><th>Hinweis</th></tr></thead>
           <tbody>
             <tr><td>Lernziele</td><td>Nein</td><td>Kommagetrennt</td></tr>
-            <tr><td>PLZ</td><td>Ja</td><td>Standort des Talents</td></tr>
-            <tr><td>Umkreis (km)</td><td>Nein</td><td>Wie weit ist das Talent bereit zu fahren</td></tr>
+            <tr><td>PLZ</td><td>Ja</td><td>Standort des Azubis</td></tr>
+            <tr><td>Umkreis (km)</td><td>Nein</td><td>Wie weit der Azubi bereit ist zu fahren</td></tr>
+            <tr><td>Name der/des Azubis</td><td>Nein</td><td>Anzeigename für das Azubi-Angebot</td></tr>
           </tbody>
         </table>
       </div>
@@ -865,6 +950,7 @@
         <table>
           <thead><tr><th>Status</th><th>Label</th><th>Farbe</th></tr></thead>
           <tbody>
+            <tr><td><code>ausstehend_freigabe</code></td><td><span class="badge badge-muted">Wartet auf Ausbilder-Freigabe</span></td><td>Grau (medium)</td></tr>
             <tr><td><code>ausstehend</code></td><td><span class="badge badge-warn">Ausstehend</span></td><td>Gelb (warning)</td></tr>
             <tr><td><code>angenommen</code></td><td><span class="badge badge-ok">Angenommen</span></td><td>Grün (success)</td></tr>
             <tr><td><code>abgelehnt</code></td><td><span class="badge badge-err">Abgelehnt</span></td><td>Rot (danger)</td></tr>
@@ -872,6 +958,7 @@
           </tbody>
         </table>
       </div>
+      <p>Bewirbt sich ein Azubi auf eine Anzeige, erhält die Bewerbung zunächst den Status <code>ausstehend_freigabe</code> und wartet auf die Bestätigung durch die/den Ausbildungsbeauftragte/n per Freigabe-Link. Erst danach wechselt sie in den Status <code>ausstehend</code> und ist für den Betrieb sichtbar.</p>
 
       <h3>Bewertungen</h3>
       <p>Nach einem angenommenen Einsatz können beide Seiten die jeweils andere Partei bewerten (1–5 Sterne je Kategorie, optionaler Kommentar, nachträglich bearbeitbar).</p>
@@ -879,7 +966,7 @@
         <table>
           <thead><tr><th>Bewertet wird</th><th>Kategorien</th></tr></thead>
           <tbody>
-            <tr><td>Talent</td><td>Zuverlässigkeit · Lernbereitschaft · Pünktlichkeit</td></tr>
+            <tr><td>Azubi</td><td>Zuverlässigkeit · Lernbereitschaft · Pünktlichkeit</td></tr>
             <tr><td>Betrieb</td><td>Zuverlässigkeit · Arbeitsumfeld · Wissensvermittlung</td></tr>
           </tbody>
         </table>
@@ -916,13 +1003,19 @@
             <tr><td><code>enddatum</code></td><td>String | null</td><td>Ende; ohne Angabe: Start + 3,5 Jahre</td></tr>
             <tr><td><code>kontakt_email</code></td><td>String</td><td>Kontaktadresse</td></tr>
             <tr><td><code>spezialisierungen</code></td><td>String[]</td><td>Optionale Spezialisierungen</td></tr>
-            <tr><td><code>lernziele</code></td><td>String[]</td><td>Nur Talent-Angebote</td></tr>
+            <tr><td><code>lernziele</code></td><td>String[]</td><td>Nur Azubi-Angebote</td></tr>
             <tr><td><code>mindestalter</code></td><td>Number | null</td><td>Nur Einsätze: 16 / 18 / 21 oder null</td></tr>
+            <tr><td><code>vorerfahrung</code></td><td>String | null</td><td>Nur Einsätze: Freitext</td></tr>
             <tr><td><code>aufgabenbeschreibung</code></td><td>String</td><td>Nur Einsätze: konkrete Aufgaben</td></tr>
             <tr><td><code>owner_id</code></td><td>String | null</td><td>Appwrite-User-ID des Erstellers</td></tr>
+            <tr><td><code>adresse</code></td><td>String | null</td><td>Nur Einsätze: Adresse des Einsatzorts</td></tr>
             <tr><td><code>plz</code></td><td>String | null</td><td>PLZ des Standorts</td></tr>
-            <tr><td><code>plz_umkreis</code></td><td>Number | null</td><td>Nur Talent-Angebote: Umkreis in km</td></tr>
-            <tr><td><code>handwerkskammer</code></td><td>String | null</td><td>HWK Berlin oder HWK Frankfurt (Oder)</td></tr>
+            <tr><td><code>plz_umkreis</code></td><td>Number | null</td><td>Nur Azubi-Angebote: Umkreis in km</td></tr>
+            <tr><td><code>stadt</code></td><td>String | null</td><td>Ort des Einsatzortes</td></tr>
+            <tr><td><code>bundesland</code></td><td>Bundesland | null</td><td>Wird vom Anzeigen-Formular derzeit immer auf <code>null</code> gesetzt</td></tr>
+            <tr><td><code>handwerkskammer</code></td><td>String | null</td><td>Handwerkskammer Berlin</td></tr>
+            <tr><td><code>talent_name</code></td><td>String | null</td><td>Name des/der Azubis bei Azubi-Angeboten</td></tr>
+            <tr><td><code>avatar_file_id</code></td><td>String | null</td><td>Verweis auf Profilbild im Bucket <code>avatars</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -935,16 +1028,29 @@
         <table>
           <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
           <tbody>
-            <tr><td><code>type</code></td><td>String</td><td><code>"talent"</code> oder <code>"betrieb"</code></td></tr>
+            <tr><td><code>type</code></td><td>String</td><td><code>"talent"</code> / <code>"betrieb"</code> / <code>"verbundberatung"</code></td></tr>
             <tr><td><code>user_id</code></td><td>String</td><td>Appwrite-User-ID</td></tr>
-            <tr><td><code>name</code></td><td>String</td><td>Nachname (Talent) oder Firmenname (Betrieb)</td></tr>
-            <tr><td><code>vorname</code></td><td>String | null</td><td>Nur Talent</td></tr>
-            <tr><td><code>gewerk</code></td><td>String | null</td><td>Talent: einzelnes Gewerk; Betrieb: kommagetrennte Liste</td></tr>
+            <tr><td><code>name</code></td><td>String</td><td>Nachname (Azubi) oder Firmenname (Betrieb)</td></tr>
+            <tr><td><code>vorname</code></td><td>String | null</td><td>Nur Azubi</td></tr>
+            <tr><td><code>anrede</code></td><td>Anrede | null</td><td>Herr / Frau / Enby / möchte ich nicht angeben</td></tr>
+            <tr><td><code>ort</code></td><td>String | null</td><td>Wohnort/Firmensitz</td></tr>
+            <tr><td><code>adresse</code></td><td>String | null</td><td>Straße + Hausnummer (Betrieb)</td></tr>
+            <tr><td><code>gewerk</code></td><td>String | null</td><td>Azubi: einzelnes Gewerk; Betrieb: kommagetrennte Liste</td></tr>
             <tr><td><code>handwerkskammer</code></td><td>String | null</td><td>HWK-Zugehörigkeit</td></tr>
-            <tr><td><code>lehrjahr</code></td><td>Number | null</td><td>Nur Talent: 1–4</td></tr>
-            <tr><td><code>faehigkeiten</code></td><td>String[]</td><td>Nur Talent: kommagetrennt gespeicherte Fähigkeiten</td></tr>
+            <tr><td><code>talent_name</code></td><td>String | null</td><td>Anzeigename des Azubis</td></tr>
+            <tr><td><code>lehrjahr</code></td><td>Number | null</td><td>Nur Azubi: 1–4</td></tr>
+            <tr><td><code>unternehmen</code></td><td>String | null</td><td>Ausbildungsbetrieb</td></tr>
+            <tr><td><code>berufsschule</code></td><td>String | null</td><td>Nur Azubi</td></tr>
+            <tr><td><code>beschulungsmodell</code></td><td>String | null</td><td>Teilzeit / Block / unklar, mit Unterform/Freitext</td></tr>
+            <tr><td><code>ausbildungsbeauftragter_email</code></td><td>String | null</td><td>Nur Azubi; löst die Freigabe-Mail bei Bewerbungen aus</td></tr>
+            <tr><td><code>faehigkeiten</code></td><td>String[]</td><td>Nur Azubi: kommagetrennt gespeicherte Fähigkeiten</td></tr>
+            <tr><td><code>ansprechpartner</code></td><td>String | null</td><td>Nur Betrieb: Name der Ansprechperson</td></tr>
             <tr><td><code>ansprechpartner_email</code></td><td>String | null</td><td>Nur Betrieb</td></tr>
             <tr><td><code>spezialisierung</code></td><td>String[]</td><td>Nur Betrieb</td></tr>
+            <tr><td><code>role</code></td><td>"user" | "verbundberatung" | null</td><td>Zugriffsrolle, getrennt vom fachlichen <code>type</code></td></tr>
+            <tr><td><code>approved</code></td><td>Boolean | null</td><td>Nur Verbundberatung: Freigabestatus</td></tr>
+            <tr><td><code>approval_token</code></td><td>String | null</td><td>Nur Verbundberatung: Token für Freigabe-Link</td></tr>
+            <tr><td><code>avatar_file_id</code></td><td>String | null</td><td>Verweis auf Profilbild im Bucket <code>avatars</code></td></tr>
           </tbody>
         </table>
       </div>
@@ -955,12 +1061,15 @@
           <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
           <tbody>
             <tr><td><code>apprenticeship_id</code></td><td>String</td><td>ID der Anzeige</td></tr>
+            <tr><td><code>apprenticeship_titel</code></td><td>String | null</td><td>Kopie des Anzeige-Titels, u. a. für Benachrichtigungen/Mails</td></tr>
             <tr><td><code>applicant_user_id</code></td><td>String</td><td>User-ID des Bewerbers</td></tr>
             <tr><td><code>applicant_name</code></td><td>String | null</td><td>Name des Bewerbers (Kopie)</td></tr>
             <tr><td><code>posting_owner_id</code></td><td>String</td><td>User-ID des Anzeigen-Erstellers</td></tr>
             <tr><td><code>nachricht</code></td><td>String</td><td>Bewerbungstext</td></tr>
-            <tr><td><code>status</code></td><td>String</td><td><code>ausstehend</code> / <code>angenommen</code> / <code>abgelehnt</code> / <code>zurueckgezogen</code></td></tr>
+            <tr><td><code>status</code></td><td>String</td><td><code>ausstehend_freigabe</code> / <code>ausstehend</code> / <code>angenommen</code> / <code>abgelehnt</code> / <code>zurueckgezogen</code></td></tr>
             <tr><td><code>dokument_ids</code></td><td>String[]</td><td>IDs der angehängten Dokumente</td></tr>
+            <tr><td><code>freigabe_token</code></td><td>String | null</td><td>Token für den Ausbi-Freigabe-Link</td></tr>
+            <tr><td><code>freigabe_token_expires</code></td><td>String | null</td><td>Ablaufzeitpunkt des Freigabe-Tokens</td></tr>
           </tbody>
         </table>
       </div>
@@ -975,6 +1084,7 @@
           <tbody>
             <tr><td><code>bewerbung_id</code></td><td>String</td><td>ID der zugehörigen Bewerbung</td></tr>
             <tr><td><code>rated_user_id</code></td><td>String</td><td>User-ID der bewerteten Person</td></tr>
+            <tr><td><code>rater_user_id</code></td><td>String</td><td>User-ID der bewertenden Person</td></tr>
             <tr><td><code>rated_type</code></td><td>String</td><td><code>"talent"</code> oder <code>"betrieb"</code></td></tr>
             <tr><td><code>kat1</code></td><td>Number</td><td>Wert 1–5 (Zuverlässigkeit)</td></tr>
             <tr><td><code>kat2</code></td><td>Number</td><td>Wert 1–5 (Lernbereitschaft / Arbeitsumfeld)</td></tr>
@@ -984,7 +1094,7 @@
         </table>
       </div>
 
-      <h3>Collection: <code>dokumente</code> &amp; Storage Bucket</h3>
+      <h3>Collection: <code>dokumente</code> &amp; Storage Buckets</h3>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Feld</th><th>Typ</th><th>Beschreibung</th></tr></thead>
@@ -998,6 +1108,7 @@
         </table>
       </div>
       <p>Storage Bucket-ID: <code>dokumente</code> – Zugriff über kurzlebige JWT-Token (Cross-Origin-Downloads).</p>
+      <p>Bucket <code>avatars</code> – separater Storage-Bucket für Profilbilder von Azubi- und Betrieb-Profilen, referenziert über <code>avatar_file_id</code>.</p>
     </div>
 
     <hr class="divider">
@@ -1007,12 +1118,12 @@
       <div class="section-eyebrow">Kapitel 06</div>
       <h2 class="section-title">Filter &amp; Suche</h2>
 
-      <p>Die Talentleihe-Seite (<code>/anzeigen</code>) bietet einen ausklappbaren Filterbereich.</p>
+      <p>Die Anzeigen-Seite (<code>/anzeigen</code>) bietet einen ausklappbaren Filterbereich.</p>
 
       <h3>Gewerk-Filter</h3>
       <ul>
         <li>Mehrfachauswahl (Multi-Picker mit Suche)</li>
-        <li>Vorausfüllung aus Profil: Talent → eigenes Gewerk; Betrieb → alle Gewerke vorausgewählt</li>
+        <li>Vorausfüllung aus Profil: Azubi → eigenes Gewerk; Betrieb → alle Gewerke vorausgewählt</li>
         <li>Matching via <code>gewerkStamm()</code>-Funktion (toleriert Singular/Plural-Varianten)</li>
       </ul>
 
@@ -1033,8 +1144,8 @@
 
       <h3>Handwerkskammer-Filter</h3>
       <ul>
-        <li>Dropdown: „Beide Kammern" oder eine der zwei Berliner Regionalkammern</li>
-        <li>Standardmäßig werden immer nur Anzeigen aus diesen zwei Kammern geladen</li>
+        <li>Regionale Eingrenzung läuft über die Handwerkskammer</li>
+        <li>Geladen werden ausschließlich Anzeigen der Handwerkskammer Berlin</li>
       </ul>
 
       <h3>Mindestalter-Filter</h3>
@@ -1045,9 +1156,9 @@
 
       <h3>Kartenansicht</h3>
       <ul>
-        <li>Nur für Talents verfügbar</li>
+        <li>Nur für Azubis verfügbar</li>
         <li>Anzeigen auf interaktiver Karte (<code>AnzeigenMap</code>-Komponente)</li>
-        <li>Kammer-Gebiete als Flächen eingeblendet</li>
+        <li>Kammer-Gebiet als Fläche eingeblendet (Pinfarbe: Azubi-Angebot = teal, Einsatz = dunkelblau)</li>
         <li>Klick auf Pin → Anzeige-Detailseite</li>
         <li>Koordinaten werden einmalig geocodiert und gecacht</li>
       </ul>
@@ -1062,9 +1173,10 @@
 
       <h3>Voraussetzungen</h3>
       <ul>
-        <li>Node.js ab Version 18</li>
+        <li>Node.js ab Version 20</li>
         <li>npm (wird mit Node.js mitgeliefert)</li>
         <li>Zugang zur Appwrite-Cloud-Instanz (oder lokale Appwrite-Instanz)</li>
+        <li>Für native Builds: macOS + Xcode (iOS), optional Android Studio (Android)</li>
       </ul>
 
       <ol class="steps">
@@ -1084,7 +1196,8 @@ cd Talentleihe-Berlin</code></pre>
         <li>
           <div class="step-content">
             <div class="step-title">Umgebungsvariablen anlegen</div>
-            <p>Datei <code>.env.local</code> im Projektroot anlegen:</p>
+            <pre><span class="code-lang">bash</span><code>cp .env.example .env.local</code></pre>
+            <p>In <code>.env.local</code> die Project-ID eintragen (zu finden in der Appwrite-Konsole oben im Projekt-Header):</p>
             <pre><span class="code-lang">env</span><code>VITE_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
 VITE_APPWRITE_PROJECT_ID=&lt;deine-project-id&gt;</code></pre>
           </div>
@@ -1100,7 +1213,7 @@ npm run dev
 
 # Windows / PowerShell (falls npx nicht greift):
 node_modules\.bin\vite.cmd</code></pre>
-            <p>Die App ist dann unter <strong>http://localhost:5173</strong> erreichbar.</p>
+            <p>Die App ist dann unter <strong>http://localhost:5173</strong> erreichbar. Auf der Startseite zeigt ein Button „Verbindung prüfen", ob die Appwrite-Anbindung funktioniert.</p>
             <div class="callout callout-warn">
               <strong>Windows-Hinweis:</strong> Der direkte <code>vite</code>-Befehl schlägt unter PowerShell manchmal fehl. Die explizite Angabe <code>node_modules\.bin\vite.cmd</code> umgeht dieses Problem zuverlässig.
             </div>
@@ -1113,6 +1226,17 @@ node_modules\.bin\vite.cmd</code></pre>
             <p>Der Build wird im Ordner <code>dist/</code> abgelegt.</p>
           </div>
         </li>
+        <li>
+          <div class="step-content">
+            <div class="step-title">Native Apps bauen (Capacitor)</div>
+            <p>Plattformen einmalig hinzufügen:</p>
+            <pre><span class="code-lang">bash</span><code>npm run build           # baut die Web-Version nach dist/
+npm run cap:add:ios     # legt das ios/-Projekt an (nur einmal)
+npm run cap:add:android # legt das android/-Projekt an (nur einmal)</code></pre>
+            <p>Danach nach jeder Code-Änderung:</p>
+            <pre><span class="code-lang">bash</span><code>npm run cap:sync        # neuer Web-Build + Sync ins native Projekt</code></pre>
+          </div>
+        </li>
       </ol>
     </div>
 
@@ -1123,9 +1247,9 @@ node_modules\.bin\vite.cmd</code></pre>
       <div class="section-eyebrow">Kapitel 08</div>
       <h2 class="section-title">Deployment</h2>
 
-      <p>Die App wird über <strong>Appwrite Sites</strong> gehostet und ist mit dem GitHub-Repository verbunden.</p>
+      <p>Die Web-App wird über <strong>Appwrite Sites</strong> gehostet und ist mit dem GitHub-Repository verbunden.</p>
 
-      <h3>Ablauf</h3>
+      <h3>Ablauf (Web)</h3>
       <ol class="steps">
         <li>
           <div class="step-content">
@@ -1154,6 +1278,14 @@ node_modules\.bin\vite.cmd</code></pre>
       <div class="callout">
         Die Variablen <code>VITE_APPWRITE_ENDPOINT</code> und <code>VITE_APPWRITE_PROJECT_ID</code> müssen auch in den Appwrite-Sites-Einstellungen unter <strong>Environment Variables</strong> hinterlegt werden. Sie werden beim Build eingebettet (Vite <code>import.meta.env</code>).
       </div>
+
+      <h3>Appwrite Functions deployen</h3>
+      <div class="callout callout-warn">
+        Die fünf Functions aus <code>functions/</code> (Kapitel 02) sind nicht Teil des automatischen Sites-Builds. Sie werden separat über die Appwrite-Konsole (Functions → Deployment) oder die Appwrite CLI deployt und mit eigenen Umgebungsvariablen (z. B. API-Keys, Absender-Adressen für Mails) versehen.
+      </div>
+
+      <h3>Native Apps (App Stores)</h3>
+      <p>Der Rollout von iOS-/Android-Builds in die App Stores läuft über die jeweiligen nativen Build-Ketten (Xcode/App Store Connect, Android Studio/Play Console) und ist nicht Teil des automatisierten Web-Deployments.</p>
     </div>
 
     <hr class="divider">
@@ -1169,6 +1301,7 @@ node_modules\.bin\vite.cmd</code></pre>
         <li>Position: <code>fixed</code>, <code>z-index: 9999</code></li>
         <li>Der <code>IonHeader</code> auf Einzelseiten liegt <em>hinter</em> der TopNav und ist nicht sichtbar – er wird für Hilfszwecke beibehalten</li>
         <li>Seiteninhalte haben oben ausreichend Abstand, damit sie nicht hinter der TopNav verschwinden</li>
+        <li>Global auf allen Seiten: ein schwebender Hilfe-Button mit Link zur externen Kontaktseite</li>
       </ul>
 
       <h3>Zurück-Button: eigene ZurueckButton-Komponente</h3>
@@ -1199,23 +1332,32 @@ selectedGewerke.join(", ")</code></pre>
       </div>
 
       <h3>Anzeigen warten auf <code>profileLoading</code> (Race Condition Fix)</h3>
-      <p>Die Talentleihe-Seite würde bei sofortigem Laden kurz alle Anzeigen beider Typen anzeigen, bevor der Profil-State fertig ist. Der Fix:</p>
+      <p>Die Anzeigen-Seite würde bei sofortigem Laden kurz alle Anzeigen beider Typen anzeigen, bevor der Profil-State fertig ist. Der Fix:</p>
       <pre><span class="code-lang">typescript</span><code>// Aus Anzeigen.tsx
 if (profileLoading) return;</code></pre>
 
       <h3>Anzeige-Typ ist unveränderlich nach dem Erstellen</h3>
       <p>Der <code>type</code> einer Anzeige (<code>einsatz</code> / <code>talent_angebot</code>) richtet sich nach dem Profiltyp des Erstellers und kann nachträglich <strong>nicht</strong> geändert werden.</p>
 
-      <h3>Regionalbeschränkung auf Berlin und Ostbrandenburg</h3>
+      <h3>Logout beendet alle aktiven Sessions</h3>
+      <p><code>logout()</code> ruft <code>account.deleteSessions()</code> auf und löscht damit alle aktiven Sessions des Nutzers, nicht nur die aktuelle. Grund laut Code-Kommentar: so werden „Mehrere Sessions aktiv"-Fehler beim erneuten Login vermieden.</p>
+
+      <h3>Verbundberatung-Admin-Benachrichtigung läuft über die Registrierung, nicht über die Verifizierung</h3>
+      <p>Die Benachrichtigung an den Verbundberatung-Admin wird bereits beim Anlegen des Profils verschickt (<code>saveVerbundbueroProfile</code>), nicht erst nach Bestätigung der Verifizierungs-E-Mail. Grund laut Code-Kommentar: Der Verifizierungslink kann in einem Browser-Tab ohne aktive Session geöffnet werden – in diesem Fall fehlen die Berechtigungen für den nötigen Function-Aufruf.</p>
+
+      <h3>Freigabe-Link für Ausbildungsbeauftragte hat ein Ablaufdatum</h3>
+      <p>Der Freigabe-Link für eine einzelne Bewerbung basiert auf einem Token mit Ablaufzeitpunkt (7 Tage). Nach Ablauf ist der Link nicht mehr gültig. Der Bestätigungslink für die einmalige Konto-Freigabe ist dagegen nicht zeitlich befristet.</p>
+
+      <h3>Regionalbeschränkung</h3>
       <p>Alle Anzeigen-Abfragen enthalten einen festen serverseitigen Filter:</p>
       <pre><span class="code-lang">typescript</span><code>Query.equal("handwerkskammer", [...BERLIN_REGION_KAMMERN])</code></pre>
-      <p>Anzeigen anderer Kammern werden weder geladen noch können sie erstellt werden (das HWK-Dropdown im Formular enthält nur die zwei Berliner Regionalkammern).</p>
+      <p><code>BERLIN_REGION_KAMMERN</code> enthält im aktuellen Code nur noch <code>"Handwerkskammer Berlin"</code> – die Handwerkskammer Frankfurt (Oder)/Ostbrandenburg ist nicht mehr Teil der aktiven Filterung, auch wenn eine bundesweite Kammer-Liste (<code>HANDWERKSKAMMERN</code>) und ein <code>Bundesland</code>-Typ bereits im Code vorbereitet sind. Anzeigen anderer Kammern werden weder geladen noch können sie erstellt werden.</p>
     </div>
 
     <!-- FOOTER -->
     <div style="margin-top:64px;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted);">
-      <span>Talentleihe Berlin – Technisches Handbuch</span>
-      <span>Stand: Juni 2026 · Verbundberatung Berlin // HSBA</span>
+      <span>VerbundPraxis Berlin – Technisches Handbuch</span>
+      <span>Stand: Juli 2026 · Verbundberatung Berlin // HSBA</span>
     </div>
 
   </main>
